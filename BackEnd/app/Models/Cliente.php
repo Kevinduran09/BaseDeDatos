@@ -25,9 +25,13 @@ class Cliente extends Model
         "correoElectronico",
         "nombreUsuario",
         "contrasena",
-        "telefono"
+
     ];
 
+    public function telefonos()
+    {
+        return $this->hasMany(Telefono::class, "idCliente");
+    }
 
 
 

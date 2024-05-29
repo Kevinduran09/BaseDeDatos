@@ -47,7 +47,7 @@ class ClienteController extends Controller
         "correoElectronico" => "required|email",
         "nombreUsuario" => "required",
         "contrasena" => "required",
-        "telefono" => "required"
+       
         ]
     );
 
@@ -70,8 +70,6 @@ class ClienteController extends Controller
                 "correoElectronico" => $request->correoElectronico,
                 "nombreUsuario" => $request->nombreUsuario,
                 "contrasena" =>   $request->contrasena,
-                "telefono" => $request->telefono
-
            
         ]);
 
@@ -139,7 +137,6 @@ class ClienteController extends Controller
         "correoElectronico" => "required|email",
         "nombreUsuario" => "required",
         "contrasena" => "required",
-        "telefono" => "required"
 
             ]
         );
@@ -159,7 +156,6 @@ class ClienteController extends Controller
         $cliente->correoElectronico = $request->correoElectronico;
         $cliente->nombreUsuario = $request->nombreUsuario;
         $cliente->contrasena = hash('sha256', $request->contrasena);
-        $cliente->telefono = $request->telefono;
         $cliente->save();
 
         $data = [
