@@ -97,7 +97,7 @@ class ClienteController extends Controller
         $cliente = Cliente::find( $id );        
 
         if (!$cliente) {
-            return response()->json(['message' => 'Paciente no encontrado b'], 404);
+            return response()->json(['message' => 'cliente no encontrado b'], 404);
         }
 
         return response()->json($cliente, 200);
@@ -159,7 +159,7 @@ class ClienteController extends Controller
         $cliente->save();
 
         $data = [
-            'message' => 'Datos del paciente fueron actualizados.',
+            'message' => 'Los  datos del cliente fueron actualizados.',
             'medico' => $cliente,
             'status' => 200
         ];
@@ -174,7 +174,7 @@ class ClienteController extends Controller
         $cliente = Cliente::find($id);
 
         if (!$cliente) {
-            return response()->json(['message' => 'Cliente no fue encontrado'], 404);
+            return response()->json(['message' => 'cliente no fue encontrado'], 404);
         }
 
         $cliente->delete();

@@ -2,33 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Recorrido;
 use App\Http\Controllers\Controller;
-use App\Models\Vehiculo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-class VehiculoController extends Controller
+class RecorridoController extends Controller
 {
-    public function index() //funcion para mostrar todos los datos
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        $vehiculo = Vehiculo::all();
+        $recorrido = Recorrido::all();
 
-        if (count($vehiculo) === 0) {
+        if (count($recorrido) === 0) {
             $response = [
                 "status" => 200,
-                "message" => "El sistema no cuenta con vehiculos"
+                "message" => "El sistema no cuenta con recorridos"
             ];
         } else {
             $response = [
                 "status" => 200,
-                "message" => "vehiculo obtenidos correctamente",
-                "data" => $vehiculo
+                "message" => "recorridos obtenidos correctamente",
+                "data" => $recorrido
             ];
         }
 
         return response()->json($response, 200);
-    } 
+    }
 
-
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -38,13 +47,9 @@ class VehiculoController extends Controller
 
        $validator= Validator::make($request->all(), 
         [
-        
-        "tipoTransporte"=> "required",
-        "placa" => "required",
-        "capacidad" => "required",
-    
-       
-    
+        "estado"=> "required",
+        "fechaLlegada"=> "required",
+        "HoraLlegada"=> "required"
         ]
     );
 
@@ -59,22 +64,23 @@ class VehiculoController extends Controller
             return response()->json($data, 400);
         }
 
-        $vehiculo = Vehiculo::create(
+        $recorrido = Recorrido::create(
             [
-                "tipoTransporte"=> $request->tipoTransporte,
-                "placa"=> $request->placa,
-                "capacidad" => $request->capacidad
+                "estado"=> $request->estado,
+                "fechaLlegada"=> $request->fechaLlegada,
+                "HoraLlegada" => $request->HoraLlegada
+                
         ]);
 
-        if(!$vehiculo) {
+        if(!$recorrido) {
             $data = [
-                'message' => 'Error al crear el vehiculo',
+                'message' => 'Error al crear el recorrido',
                 'status' => 500
             ];
             return response()->json($data, 500);
         } else {
             $data = [
-                'vehiculo' => $vehiculo,
+                'recorrido' => $recorrido,
                 'status' => 201
             ];
             return response()->json($data, 201);
@@ -87,13 +93,21 @@ class VehiculoController extends Controller
      */
     public function show($id)
     {
-        $vehiculo = Vehiculo::find( $id );        
+        $recorrido = Recorrido::find( $id );        
 
-        if (!$vehiculo) {
-            return response()->json(['message' => 'vehiculo no encontrado'], 404);
+        if (!$recorrido) {
+            return response()->json(['message' => 'recorrido no encontrado'], 404);
         }
 
-        return response()->json($vehiculo, 200);
+        return response()->json($recorrido, 200);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Recorrido $recorrido)
+    {
+        //
     }
 
     /**
@@ -102,11 +116,11 @@ class VehiculoController extends Controller
     public function update(Request $request, $id)
     {
 
-        $vehiculo = Vehiculo::find($id);
+        $recorrido = Recorrido::find($id);
 
-        if (!$vehiculo) {
+        if (!$recorrido) {
             $data = [
-                'message' => 'vehiculo no encontrado',
+                'message' => 'recorrido no encontrado',
                 'status' => 404
             ];
             return response()->json($data, 404);
@@ -116,9 +130,9 @@ class VehiculoController extends Controller
             [
 
 
-                "tipoTransporte"=> "required",
-                "placa" => "required",
-                "capacidad" => "required",
+                "estado"=> "estado",
+                "fechaLlegada" => "fechaLlegada",
+                "horaLlegada" => "horaLlegada",
     
 
             ]
@@ -133,14 +147,14 @@ class VehiculoController extends Controller
             return response()->json($data, 400);
         }
         
-        $vehiculo->tipoTransporte = $request->tipoTransporte;
-        $vehiculo->placa = $request->placa;
-        $vehiculo->capacidad = $request->capacidad;
-        $vehiculo->save();
+        $recorrido->estado = $request->estado;
+        $recorrido->fechaLlegada = $request->fechaLlegada;
+        $recorrido->horaLlegada = $request->horaLlegada;
+        $recorrido->save();
 
         $data = [
-            'message' => 'Datos del vehiculo fueron actualizados.',
-            'vehiculo' => $vehiculo,
+            'message' => 'Datos del recorrido fueron actualizados.',
+            'recorrido' => $recorrido,
             'status' => 200
         ];
         return response()->json($data, 200);
@@ -151,19 +165,14 @@ class VehiculoController extends Controller
      */
     public function destroy($id)
     {
-        $vehiculo = Vehiculo::find($id);
+        $recorrido = Recorrido::find($id);
 
-        if (!$vehiculo) {
-            return response()->json(['message' => 'vehiculo no fue encontrado'], 404);
+        if (!$recorrido) {
+            return response()->json(['message' => 'recorrido no fue encontrado'], 404);
         }
 
-        $vehiculo->delete();
+        $recorrido->delete();
 
-        return response()->json(['message' => 'vehiculo eliminado correctamente'], 200);
+        return response()->json(['message' => 'recorrido eliminado correctamente'], 200);
     }
-
-
-
-
-
 }

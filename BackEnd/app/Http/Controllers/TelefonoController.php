@@ -81,11 +81,16 @@ class TelefonoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Telefono $telefono)
+    public function show($id)
     {
-        //
-    }
+        $telefono = Telefono::find( $id );        
 
+        if (!$telefono) {
+            return response()->json(['message' => 'telefono no encontrado'], 404);
+        }
+
+        return response()->json($telefono, 200);
+    }
     /**
      * Show the form for editing the specified resource.
      */
@@ -97,16 +102,61 @@ class TelefonoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Telefono $telefono)
+    public function update(Request $request, $id)
     {
-        //
+
+        $telefono = Telefono::find($id);
+
+        if (!$telefono) {
+            $data = [
+                'message' => 'telefono no encontrado',
+                'status' => 404
+            ];
+            return response()->json($data, 404);
+        }
+        $validator = Validator::make(
+            $request->all(),
+            [
+
+
+                "telefonos"=> "required",
+            ]
+        );
+        if ($validator->fails()) {
+            $data =
+                [
+                    'message' => 'Error en la validacion de los datos',
+                    'error' => $validator->errors(),
+                    'status' => 400
+                ];
+            return response()->json($data, 400);
+        }
+        
+        $telefono->telefonos = $request->telefonos;
+        $telefono->idCliente = $request->idCliente;
+        $telefono->save();
+
+        $data = [
+            'message' => 'Datos del telefono fueron actualizados.',
+            'telefono' => $telefono,
+            'status' => 200
+        ];
+        return response()->json($data, 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Telefono $telefono)
+    public function destroy($id)
     {
-        //
+        $telefono = Telefono::find($id);
+
+        if (!$telefono) {
+            return response()->json(['message' => 'telefono no fue encontrado'], 404);
+        }
+
+        $telefono->delete();
+
+        return response()->json(['message' => 'telefono eliminado correctamente'], 200);
     }
 }

@@ -1,8 +1,8 @@
 <?php
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\TelefonoController;
 use App\Http\Controllers\VehiculoController;
 
@@ -11,5 +11,6 @@ use App\Http\Controllers\VehiculoController;
             Route::resource('/cliente', ClienteController::class, ['except' => ['create', 'edit']]);
             Route::resource('/telefono', TelefonoController::class, ['except' => ['create', 'edit']]);
             Route::resource('/vehiculo', VehiculoController::class, ['except' => ['create', 'edit']]);
+            Route::resource('/recorrido', RecorridoController::class, ['except' => ['create', 'edit']]);
         }
     );
