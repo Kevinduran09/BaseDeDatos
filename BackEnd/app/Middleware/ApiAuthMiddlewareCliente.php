@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Helpers\JwtAuth;
 
-class ApiAuthMiddlewarePac
+class ApiAuthMiddlewareCliente
 {
     /**
      * Handle an incoming request.
@@ -24,7 +24,7 @@ class ApiAuthMiddlewarePac
             return $next($request);
         } else {
             $response = array(
-                'message' => 'El paciente no tiene la autorización para acceder',
+                'message' => 'El cliente no tiene la autorización para acceder',
                 'status' => 401,
             );
             return response()->json($response, 401);

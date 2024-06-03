@@ -69,8 +69,7 @@ class ClienteController extends Controller
                 "apellido" => $request->apellido,
                 "correoElectronico" => $request->correoElectronico,
                 "nombreUsuario" => $request->nombreUsuario,
-                "contrasena" =>   $request->contrasena,
-           
+                "contrasena" => hash('sha256', $request->contrasena)
         ]);
 
         if(!$cliente) {
