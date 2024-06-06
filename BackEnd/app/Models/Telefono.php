@@ -20,7 +20,7 @@ class Telefono extends Model
         "telefono",
         "idCliente"
     ];
-    public function paciente()
+    public function Cliente()
     {
         return $this->belongsTo(Cliente::class, 'idCliente');
     }

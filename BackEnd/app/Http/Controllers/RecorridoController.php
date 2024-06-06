@@ -49,7 +49,8 @@ class RecorridoController extends Controller
         [
         "estado"=> "required",
         "fechaLlegada"=> "required",
-        "HoraLlegada"=> "required"
+        "HoraLlegada"=> "required",
+        "idCliente" => "required"
         ]
     );
 
@@ -68,8 +69,8 @@ class RecorridoController extends Controller
             [
                 "estado"=> $request->estado,
                 "fechaLlegada"=> $request->fechaLlegada,
-                "HoraLlegada" => $request->HoraLlegada
-                
+                "HoraLlegada" => $request->HoraLlegada,
+                "idCliente"  => $request->idCliente
         ]);
 
         if(!$recorrido) {
@@ -132,9 +133,8 @@ class RecorridoController extends Controller
 
                 "estado"=> "estado",
                 "fechaLlegada" => "fechaLlegada",
-                "horaLlegada" => "horaLlegada",
-    
-
+                "horaLlegada" => "horaLlegada"
+                
             ]
         );
         if ($validator->fails()) {
@@ -150,6 +150,7 @@ class RecorridoController extends Controller
         $recorrido->estado = $request->estado;
         $recorrido->fechaLlegada = $request->fechaLlegada;
         $recorrido->horaLlegada = $request->horaLlegada;
+        $recorrido->idCliente = $request->idCliente;
         $recorrido->save();
 
         $data = [

@@ -21,5 +21,11 @@ class Recorrido extends Model
         "estado",
         "fechaLlegada",
         "HoraLlegada",
+        "idCliente"
+       
     ];
+     public function paciente()
+        {
+            return $this->belongsTo(Cliente::class, 'idCliente');
+        }
 }
