@@ -1,0 +1,12 @@
+.Hero-contenedor{
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(rgba(5,7,12,0.75),rgba(5,7,12,0.75)), url(../assets/Fondo1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
