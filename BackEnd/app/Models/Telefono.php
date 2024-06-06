@@ -17,7 +17,8 @@ class Telefono extends Model
 
     protected $fillable = [
         "idTelefono",
-        "telefono",
+        "numeroTelefono",
+        "tipoTelefono",
         "idCliente"
     ];
     public function Cliente()
