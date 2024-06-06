@@ -45,8 +45,8 @@ class ClienteController extends Controller
         "nombre"=> "required",
         "apellido" => "required",
         "correoElectronico" => "required|email",
-        "nombreUsuario" => "required",
-        "contrasena" => "required",
+        "direccion"=> "required",
+        "fechaIngreso" => "required"
        
         ]
     );
@@ -68,8 +68,9 @@ class ClienteController extends Controller
                 "nombre"=> $request->nombre,
                 "apellido" => $request->apellido,
                 "correoElectronico" => $request->correoElectronico,
-                "nombreUsuario" => $request->nombreUsuario,
-                "contrasena" => hash('sha256', $request->contrasena)
+                "direccion"=> $request->direccion,
+                "fechaIngreso"=> $request->direccion
+
         ]);
 
         if(!$cliente) {
@@ -134,8 +135,8 @@ class ClienteController extends Controller
         "nombre"=> "required",
         "apellido" => "required",
         "correoElectronico" => "required|email",
-        "nombreUsuario" => "required",
-        "contrasena" => "required",
+        "direccion"=> "required",
+        "fechaIngreso" => "required"
 
             ]
         );
@@ -153,8 +154,9 @@ class ClienteController extends Controller
         $cliente->nombre = $request->nombre;
         $cliente->apellido = $request->apellido;
         $cliente->correoElectronico = $request->correoElectronico;
-        $cliente->nombreUsuario = $request->nombreUsuario;
-        $cliente->contrasena = hash('sha256', $request->contrasena);
+        $cliente->direccion =  $request->direccion;
+        $cliente->fechaIngreso =  $request->fechaIngreso;
+
         $cliente->save();
 
         $data = [

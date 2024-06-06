@@ -48,8 +48,6 @@ class RecorridoController extends Controller
        $validator= Validator::make($request->all(), 
         [
         "estado"=> "required",
-        "fechaLlegada"=> "required",
-        "HoraLlegada"=> "required",
         "idCliente" => "required"
         ]
     );
@@ -68,8 +66,6 @@ class RecorridoController extends Controller
         $recorrido = Recorrido::create(
             [
                 "estado"=> $request->estado,
-                "fechaLlegada"=> $request->fechaLlegada,
-                "HoraLlegada" => $request->HoraLlegada,
                 "idCliente"  => $request->idCliente
         ]);
 
@@ -132,8 +128,7 @@ class RecorridoController extends Controller
 
 
                 "estado"=> "estado",
-                "fechaLlegada" => "fechaLlegada",
-                "horaLlegada" => "horaLlegada"
+               
                 
             ]
         );
@@ -148,8 +143,6 @@ class RecorridoController extends Controller
         }
         
         $recorrido->estado = $request->estado;
-        $recorrido->fechaLlegada = $request->fechaLlegada;
-        $recorrido->horaLlegada = $request->horaLlegada;
         $recorrido->idCliente = $request->idCliente;
         $recorrido->save();
 

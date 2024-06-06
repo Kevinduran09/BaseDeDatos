@@ -23,9 +23,8 @@ class Cliente extends Model
         "nombre",
         "apellido",
         "correoElectronico",
-        "nombreUsuario",
-        "contrasena",
-
+       "direccion",
+       "fechaIngreso"
     ];
 
     public function telefonos()

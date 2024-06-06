@@ -19,8 +19,6 @@ class Recorrido extends Model
 
         "idRecorrido",
         "estado",
-        "fechaLlegada",
-        "HoraLlegada",
         "idCliente"
        
     ];
