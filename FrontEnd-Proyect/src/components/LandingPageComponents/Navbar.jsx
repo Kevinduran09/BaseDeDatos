@@ -7,7 +7,7 @@ export const Navbar = () => {
     <Fragment>
     <nav className='contenedor'>
      <ul>
-        <li>Servicios</li>
+        <li>Solicitar Servicio</li>
         <li> <NavLink to="/Login"> Ingresar </NavLink></li>
         <li>Nosotros</li>
      </ul>
