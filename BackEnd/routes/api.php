@@ -16,7 +16,16 @@ use App\Http\Middleware\ApiAuthMiddlewareCliente;
             Route::resource('/recorrido', RecorridoController::class, ['except' => ['create', 'edit']]);
             Route::resource('/destino', DestinoController::class, ['except' => ['create', 'edit']]);
 
-            Route::post('/loginCli', [ClienteController::class, 'loginCli'])->withoutMiddleware(ApiAuthMiddlewareCliente::class);
+          
             
+            Route::group(['prefix' => '/cliente'], function () {
+                  Route::post('/loginCli', [ClienteController::class, 'loginCli'])->withoutMiddleware(ApiAuthMiddlewareCliente::class);
+                  Route::post('/editarDatos', [ClienteController::class, 'update'])->withoutMiddleware(ApiAuthMiddlewareCliente::class);
+
+                
+            });
+    
+
+
         }
     );
