@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use Illuminate\Support\Facades\Validator;
-
+use App\Helpers\JwtAuth;
 class ClienteController extends Controller
 {
     /**
@@ -47,7 +47,7 @@ class ClienteController extends Controller
         "correoElectronico" => "required|email",
         "nombreUsuario" => "required",
         "contrasena" => "required",
-        "telefono" => "required"
+       
         ]
     );
 
@@ -69,10 +69,7 @@ class ClienteController extends Controller
                 "apellido" => $request->apellido,
                 "correoElectronico" => $request->correoElectronico,
                 "nombreUsuario" => $request->nombreUsuario,
-                "contrasena" =>   $request->contrasena,
-                "telefono" => $request->telefono
-
-           
+                "contrasena" => hash('sha256', $request->contrasena)
         ]);
 
         if(!$cliente) {
@@ -99,7 +96,7 @@ class ClienteController extends Controller
         $cliente = Cliente::find( $id );        
 
         if (!$cliente) {
-            return response()->json(['message' => 'Paciente no encontrado b'], 404);
+            return response()->json(['message' => 'cliente no encontrado b'], 404);
         }
 
         return response()->json($cliente, 200);
@@ -139,7 +136,6 @@ class ClienteController extends Controller
         "correoElectronico" => "required|email",
         "nombreUsuario" => "required",
         "contrasena" => "required",
-        "telefono" => "required"
 
             ]
         );
@@ -159,11 +155,10 @@ class ClienteController extends Controller
         $cliente->correoElectronico = $request->correoElectronico;
         $cliente->nombreUsuario = $request->nombreUsuario;
         $cliente->contrasena = hash('sha256', $request->contrasena);
-        $cliente->telefono = $request->telefono;
         $cliente->save();
 
         $data = [
-            'message' => 'Datos del paciente fueron actualizados.',
+            'message' => 'Los  datos del cliente fueron actualizados.',
             'medico' => $cliente,
             'status' => 200
         ];
@@ -178,11 +173,31 @@ class ClienteController extends Controller
         $cliente = Cliente::find($id);
 
         if (!$cliente) {
-            return response()->json(['message' => 'Cliente no fue encontrado'], 404);
+            return response()->json(['message' => 'cliente no fue encontrado'], 404);
         }
 
         $cliente->delete();
 
         return response()->json(['message' => 'cliente eliminado correctamente'], 200);
     }
+
+    public function loginCli(Request $request)
+    {
+        $rules = ['cedula' => 'required', 'contrasena' => 'required'];
+        $isValid = validator($request->all(), $rules);
+
+        if (!$isValid->fails()) {
+            $jwt =  new JwtAuth();
+            $response = $jwt->getTokenCliente($request->cedula, $request->contrasena);
+            return response()->json($response);
+        } else {
+            $response = array(
+                'message' => 'Error al validar los datos',
+                'errors' => $isValid->errors(),
+                'status' => 406,
+            );
+            return response()->json($response, 406);
+        }
+    }
+
 }
