@@ -76,7 +76,7 @@ class TelefonoController extends Controller
 }
 
     
-
+// :x
 
     /**
      * Display the specified resource.

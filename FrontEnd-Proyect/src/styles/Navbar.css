@@ -1,4 +1,4 @@
-nav {
+.navbarsec {
     width: 100%;
     color: #fff;
     padding: 4px 0;
@@ -8,7 +8,7 @@ nav {
     justify-content:end;
 }
 
-nav ul li{
+.nav-list-item{
     display: inline-block;
     list-style: none;
     margin: 5px 20px;

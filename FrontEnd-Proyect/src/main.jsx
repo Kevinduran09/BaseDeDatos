@@ -1,22 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import {App} from './App.jsx'
 import './styles/index.css'
-import  {Navbar} from './components/LandingPageComponents/Navbar.jsx'
-import { Hero } from './components/LandingPageComponents/Hero.jsx'
-import { Servicios } from './components/LandingPageComponents/Servicios.jsx'
-import { TituloServicios } from './components/LandingPageComponents/TituloServicios.jsx'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { LandingPage } from './components/pages/LandingPage.jsx'
+import { AdminPage } from './components/pages/AdminPage.jsx'
+import { RouterApp } from './components/router/RouterApp.jsx'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-   <BrowserRouter>
-     <Navbar/>
-    <div className="content">
-    <Hero/>
-    <TituloServicios/>
-    <Servicios/>
-    </div>
-    </BrowserRouter>
+      <RouterApp />    
   </React.StrictMode>
 )
