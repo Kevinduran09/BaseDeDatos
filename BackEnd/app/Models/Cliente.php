@@ -33,7 +33,7 @@ class Cliente extends Model
     }
     public function Recorridos()
     {
-        return $this->hasMany(Telefono::class, "idCliente");
+        return $this->hasMany(Recorrido::class, "idCliente");
     }
 
 

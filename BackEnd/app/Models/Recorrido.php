@@ -22,7 +22,7 @@ class Recorrido extends Model
         "idCliente"
        
     ];
-     public function paciente()
+     public function cliente()
         {
             return $this->belongsTo(Cliente::class, 'idCliente');
         }

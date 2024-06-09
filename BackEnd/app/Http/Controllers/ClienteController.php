@@ -201,5 +201,52 @@ class ClienteController extends Controller
             return response()->json($response, 406);
         }
     }
+    public function registerCli(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "cedula"=> "required",
+            "nombre"=> "required",
+            "apellido" => "required",
+            "correoElectronico" => "required|email",
+            "direccion"=> "required",
+            "fechaIngreso" => "required"
+        ]);
+
+        if ($validator->fails()) {
+            $data = [
+                'message' => 'Error en la validación de datos',
+                'errors' => $validator->errors(),
+                'status' => 400
+            ];
+            return response()->json($data, 400);
+        }
+
+        $cliente = Cliente::create(
+            [
+                "cedula"=> $request->cedula,
+                "nombre"=> $request->nombre,
+                "apellido" => $request->apellido,
+                "correoElectronico" => $request->correoElectronico,
+                "direccion"=> $request->direccion,
+                "fechaIngreso"=> $request->direccion
+
+        ]);
+
+        if (!$cliente) {
+            $data = [
+                'message' => 'Error al guardar el cliente',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        }
+
+        $data = [
+            'message' => 'cliente creado correctamente',
+            'cliente' =>  $cliente,
+            'status' => 201
+        ];
+
+        return response()->json($data, 201);
+    }
 
 }
