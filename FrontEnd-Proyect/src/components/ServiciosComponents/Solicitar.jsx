@@ -51,7 +51,7 @@ export const Solicitar = () => {
 
   return (
     <Fragment>
-      <div className="div-solicitar">
+      <div className="div-solicitar bg-white">
         <form className="form-solicitar">
         <FormControl sx={{ m: 1, width: 300 }}>
         <InputLabel id="demo-multiple-name-label">Servicios</InputLabel>
