@@ -6,6 +6,8 @@ use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\TelefonoController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\DestinoController;
+use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\UsuarioController;
 use App\Http\Middleware\ApiAuthMiddlewareCliente;
 use App\Http\Middleware\ApiAuthMiddlewareVerifyCliente;
 
@@ -24,6 +26,8 @@ use App\Http\Middleware\ApiAuthMiddlewareVerifyCliente;
                   Route::put('/modificarTel', [TelefonoController::class, 'update'])->middleware(ApiAuthMiddlewareCliente::class);
                   Route::delete('/eliminarTel/{id}', [ClienteController::class, 'destroy'])->middleware([ApiAuthMiddlewareCliente::class,ApiAuthMiddlewareVerifyCliente::class]);
             });
+            Route::resource('/usuario', UsuarioController::class, ['except' => ['create', 'edit']]);
+            Route::resource('/solicitud', SolicitudController::class, ['except' => ['create', 'edit']]);
     
 
 /*Route::resource('/cliente', ClienteController::class, ['except' => ['create', 'edit']]);

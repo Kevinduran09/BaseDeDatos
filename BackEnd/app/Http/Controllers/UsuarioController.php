@@ -2,34 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Recorrido;
-use App\Http\Controllers\Controller;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-class RecorridoController extends Controller
+
+class UsuarioController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index() //funcion para mostrar todos los datos
     {
-        $recorrido = Recorrido::all();
+        $usuario = Usuario::all();
 
-        if (count($recorrido) === 0) {
+        if (count($usuario) === 0) {
             $response = [
                 "status" => 200,
-                "message" => "El sistema no cuenta con recorridos"
+                "message" => "El sistema no cuenta con usuarios"
             ];
         } else {
             $response = [
                 "status" => 200,
-                "message" => "recorridos obtenidos correctamente",
-                "data" => $recorrido
+                "message" => "usuarios obtenidos correctamente",
+                "data" => $usuario
             ];
         }
 
         return response()->json($response, 200);
-    }
+    } 
 
     /**
      * Show the form for creating a new resource.
@@ -47,9 +47,8 @@ class RecorridoController extends Controller
 
        $validator= Validator::make($request->all(), 
         [
-        "estado"=> "required",
-        "idCliente" => "required",
-        "idSolicitud" => "required"
+        "nombreUsuario"=> "required",
+        "contrasena"=> "required"
         ]
     );
 
@@ -64,22 +63,25 @@ class RecorridoController extends Controller
             return response()->json($data, 400);
         }
 
-        $recorrido = Recorrido::create(
+        $usuario = Usuario::create(
             [
-                "estado"=> $request->estado,
-                "idCliente"  => $request->idCliente,
-                "idSolicitud"  => $request->idSolicitud
+                "nombreUsuario"=> $request->nombreUsuario,
+                "contrasena"=> $request->contrasena,
+                "idCliente" => $request->idCliente
+                //"idEmpleado" => $request->idEmpleado
+    
+
         ]);
 
-        if(!$recorrido) {
+        if(!$usuario) {
             $data = [
-                'message' => 'Error al crear el recorrido',
+                'message' => 'Error al crear el usuario',
                 'status' => 500
             ];
             return response()->json($data, 500);
         } else {
             $data = [
-                'recorrido' => $recorrido,
+                'usuario' => $usuario,
                 'status' => 201
             ];
             return response()->json($data, 201);
@@ -92,19 +94,19 @@ class RecorridoController extends Controller
      */
     public function show($id)
     {
-        $recorrido = Recorrido::find( $id );        
+        $usuario = Usuario::find( $id );        
 
-        if (!$recorrido) {
-            return response()->json(['message' => 'recorrido no encontrado'], 404);
+        if (!$usuario) {
+            return response()->json(['message' => 'usuario no encontrado'], 404);
         }
 
-        return response()->json($recorrido, 200);
+        return response()->json($usuario, 200);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Recorrido $recorrido)
+    public function edit(Usuario $usuario)
     {
         //
     }
@@ -115,11 +117,11 @@ class RecorridoController extends Controller
     public function update(Request $request, $id)
     {
 
-        $recorrido = Recorrido::find($id);
+        $usuario = Usuario::find($id);
 
-        if (!$recorrido) {
+        if (!$usuario) {
             $data = [
-                'message' => 'recorrido no encontrado',
+                'message' => 'usuario no encontrado',
                 'status' => 404
             ];
             return response()->json($data, 404);
@@ -129,9 +131,9 @@ class RecorridoController extends Controller
             [
 
 
-                "estado"=> "estado",
-               
-                
+        "nombreUsuario"=> "required",
+        "contrasena"=> "required",
+
             ]
         );
         if ($validator->fails()) {
@@ -143,14 +145,17 @@ class RecorridoController extends Controller
                 ];
             return response()->json($data, 400);
         }
-        
-        $recorrido->estado = $request->estado;
-        $recorrido->idCliente = $request->idCliente;
-        $recorrido->save();
+
+        $usuario->nombreUsuario = $request->nombreUsuario;
+        $usuario->contrasena = $request->contrasena;
+        $usuario->idCliente = $request->idCliente;
+        //$usuario->idEmpleado = $request->idEmpleado;
+     
+        $usuario->save();
 
         $data = [
-            'message' => 'Datos del recorrido fueron actualizados.',
-            'recorrido' => $recorrido,
+            'message' => 'Los  datos del usuario fueron actualizados.',
+            'medico' => $usuario,
             'status' => 200
         ];
         return response()->json($data, 200);
@@ -161,14 +166,15 @@ class RecorridoController extends Controller
      */
     public function destroy($id)
     {
-        $recorrido = Recorrido::find($id);
+        $usuario = Usuario::find($id);
 
-        if (!$recorrido) {
-            return response()->json(['message' => 'recorrido no fue encontrado'], 404);
+        if (!$usuario) {
+            return response()->json(['message' => 'usuario no fue encontrado'], 404);
         }
 
-        $recorrido->delete();
+        $usuario->delete();
 
-        return response()->json(['message' => 'recorrido eliminado correctamente'], 200);
+        return response()->json(['message' => 'usuario eliminado correctamente'], 200);
     }
+
 }

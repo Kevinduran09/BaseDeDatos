@@ -19,11 +19,15 @@ class Recorrido extends Model
 
         "idRecorrido",
         "estado",
-        "idCliente"
+        "idCliente",
+        "idSolicitud"
        
     ];
      public function cliente()
         {
             return $this->belongsTo(Cliente::class, 'idCliente');
+        }
+        public function Solicitud(){
+            return $this->belongsTo(Solicitud::class,"idSolicitud");
         }
 }

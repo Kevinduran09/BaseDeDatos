@@ -97,7 +97,7 @@ class ClienteController extends Controller
         $cliente = Cliente::find( $id );        
 
         if (!$cliente) {
-            return response()->json(['message' => 'cliente no encontrado b'], 404);
+            return response()->json(['message' => 'cliente no encontrado'], 404);
         }
 
         return response()->json($cliente, 200);
