@@ -13,6 +13,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@fortawesome/fontawesome-free": "^6.5.1",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@mui/icons-material": "^5.15.19",
     "@mui/material": "^5.15.19",
     "@mui/x-data-grid": "^7.6.2",
@@ -21,8 +22,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.1",
+    "styled-components": "^6.1.11",
     "sweetalert2": "^11.6.13",
-    "sweetalert2-react-content": "^5.0.7",
+    "sweetalert2-react-content": "^5.0.7"
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
