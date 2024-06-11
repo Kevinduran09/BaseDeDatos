@@ -1,0 +1,34 @@
+@import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+
+.fixed-height-row td,
+.fixed-height-row th {
+    height: 50px;
+    /* Altura fija para las filas */
+    max-height: 50px;
+    /* Altura máxima para las filas */
+    overflow: hidden;
+    /* Ocultar contenido que desborda */
+    text-overflow: ellipsis;
+    /* Mostrar "..." para contenido que no cabe */
+    white-space: nowrap;
+    /* Evitar que el texto se envuelva */
+}
+
+.fixed-width-column {
+    width: 100px;
+    max-width: 150px;
+    min-width: 150px;
+    overflow: hidden;
+    /* Ancho máximo para las columnas */
+    overflow: hidden;
+    /* Ocultar contenido que desborda */
+    text-overflow: ellipsis;
+    /* Mostrar "..." para contenido que no cabe */
+    white-space: nowrap;
+    /* Evitar que el texto se envuelva */
+}
+
+.hover-effect:hover{
+    background-color: #000;
+    color: #fff;
+}

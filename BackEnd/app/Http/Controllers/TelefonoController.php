@@ -56,7 +56,6 @@ class TelefonoController extends Controller
             return response()->json($data, 400);
         }
 
-        
         $telefonos = [];
 
         // Iterar sobre los teléfonos recibidos y crear registros de Telefono
