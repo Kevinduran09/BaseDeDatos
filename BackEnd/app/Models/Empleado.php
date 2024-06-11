@@ -37,4 +37,10 @@ class Empleado extends Model
     {
         return $this->belongsToMany(Viaje::class, "Tripulacion");
     }
+
+    public function Usuario()
+    {
+        return $this->hasOne(Usuario::class, 'idEmpleado');
+    }
+    
 }

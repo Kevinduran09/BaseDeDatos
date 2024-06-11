@@ -23,7 +23,7 @@ class Solicitud extends Model
         "estado",
         "idCliente",
         "idDestino",
-        //"idServicio"
+        "idServicio"
     ];
 
     public function cliente()
@@ -36,12 +36,12 @@ class Solicitud extends Model
         return $this->belongsTo(Destino::class, 'idDestino');
     }
 
-    /*
+    
     public function Servicio()
     {
         return $this->belongsTo(Servicio::class, 'idServicio');
     }
-        */
+        
         public function Recorrido()
         {
             return $this->hasOne(Recorrido::class, 'idSolicitud');

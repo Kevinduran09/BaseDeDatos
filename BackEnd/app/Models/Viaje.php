@@ -33,6 +33,6 @@ class Viaje extends Model
 
     public function recorrido()
     {
-        return $this->belongsTo(Recorrido::class, "idRecorrido");
+        return $this->belongsToMany(Recorrido::class, "idViaje");
     }
 }
