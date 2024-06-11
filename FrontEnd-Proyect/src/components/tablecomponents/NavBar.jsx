@@ -1,6 +1,7 @@
 import { NavLink, useLocation } from "react-router-dom";
 import '../../styles/main.css';
-
+import { Button } from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
 const entries = [
   { title: 'Clientes', link: 'clients', icon: "fa-solid fa-user" },
   { title: 'Empleados', link: 'employes', icon: "fa-solid fa-helmet-safety" },
@@ -55,13 +56,20 @@ export const NavBar = () => {
               {entries.map((entry, index) => (
                 <li key={index} className="list-group-item mb-3">
                   {/* Concatenar la ruta base de admin con la subruta */}
-                  <NavLink className="text-decoration-none fs-6 py-3 rounded w-100 d-inline-block p-2 hover-effect d-flex align-items-center" to={`/admin/${entry.link}`}>
+                  <NavLink className={({ isActive }) => isActive ? "text-decoration-none fs-6 py-3 rounded w-100 d-inline-block p-2 hover-effect d-flex align-items-center active" : "text-decoration-none fs-6 py-3 rounded w-100 d-inline-block p-2 hover-effect d-flex align-items-center"}
+                    to={`/admin/${entry.link}`}>
                     <i className={`${entry.icon} me-4 fs-4`}></i>
                     <span className="fs-4">{entry.title}</span>
                   </NavLink>
                 </li>
               ))}
             </ul>
+
+            
+
+          </div>
+          <div className="content-footer-nav">
+            <Button endIcon={<LogoutIcon />} variant="contained" color="error" >Cerrar Sesion</Button>
           </div>
         </div>
       </div>
