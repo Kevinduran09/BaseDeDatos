@@ -23,6 +23,10 @@ class Vehiculo extends Model
         "tipoTransporte",
         "placa",
         "capacidad",
+        "modelo",
+        "fechaCompra",
+        "anoVehiculo",
+        "fichaTecnica"
     ];
 
 

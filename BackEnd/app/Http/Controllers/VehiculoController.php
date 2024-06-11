@@ -42,7 +42,10 @@ class VehiculoController extends Controller
         "tipoTransporte"=> "required",
         "placa" => "required",
         "capacidad" => "required",
-    
+        "modelo"=> "required",
+        "fechaCompra"=> "required",
+        "anoVehiculo"=> "required",
+        "fichaTecnica"=> "required"
        
     
         ]
@@ -63,7 +66,11 @@ class VehiculoController extends Controller
             [
                 "tipoTransporte"=> $request->tipoTransporte,
                 "placa"=> $request->placa,
-                "capacidad" => $request->capacidad
+                "capacidad" => $request->capacidad,
+                "modelo"=> $request->modelo,
+                "fechaCompra"=> $request->fechaCompra,
+                "anoVehiculo"=> $request->anoVehiculo,
+                "fichaTecnica"=> $request->fichaTecnica
         ]);
 
         if(!$vehiculo) {
@@ -119,7 +126,10 @@ class VehiculoController extends Controller
                 "tipoTransporte"=> "required",
                 "placa" => "required",
                 "capacidad" => "required",
-    
+                "modelo"=> "required",
+                "fechaCompra"=> "required",
+                "anoVehiculo"=> "required",
+                "fichaTecnica"=> "required"
 
             ]
         );
@@ -136,6 +146,11 @@ class VehiculoController extends Controller
         $vehiculo->tipoTransporte = $request->tipoTransporte;
         $vehiculo->placa = $request->placa;
         $vehiculo->capacidad = $request->capacidad;
+        $vehiculo->modelo = $request->modelo;
+        $vehiculo->fechaCompra = $request->fechaCompra;
+        $vehiculo->anoVehiculo = $request->anoVehiculo;
+        $vehiculo->fichaTecnica = $request->fichaTecnica;
+        
         $vehiculo->save();
 
         $data = [

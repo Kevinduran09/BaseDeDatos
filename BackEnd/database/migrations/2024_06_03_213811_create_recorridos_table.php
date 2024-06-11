@@ -16,6 +16,10 @@ return new class extends Migration
             $table->String("estado",20);
             $table->String("fechaLlegada",40);
             $table->String("horaLlegada",40);
+            $table->unsignedBigInteger("idCliente");
+
+
+            $table->foreign('idCliente')->references('idCliente')->on('Cliente');
         });
     }
 

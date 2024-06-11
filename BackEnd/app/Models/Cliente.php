@@ -23,16 +23,21 @@ class Cliente extends Model
         "nombre",
         "apellido",
         "correoElectronico",
-        "nombreUsuario",
-        "contrasena",
-
+       "direccion",
+       "fechaIngreso"
     ];
 
     public function telefonos()
     {
         return $this->hasMany(Telefono::class, "idCliente");
     }
-
-
+    public function Recorridos()
+    {
+        return $this->hasMany(Recorrido::class, "idCliente");
+    }
+    public function Usuario()
+    {
+        return $this->hasOne(Recorrido::class, "idCliente");
+    }
 
 }
