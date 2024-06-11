@@ -1,0 +1,10 @@
+
+.registerForm input, .registerForm textarea{
+    width: 100%;
+    background: #EBECFE;
+    max-width: 100%;
+}
+
+.registerForm label{
+    color: #fff;
+}
