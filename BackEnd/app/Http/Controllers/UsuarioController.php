@@ -42,13 +42,15 @@ class UsuarioController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(request $request)
+    public function store($request)
     {
 
        $validator= Validator::make($request->all(), 
         [
         "nombreUsuario"=> "required",
-        "contrasena"=> "required"
+        "contrasena"=> "required",
+        "idCliente"=> "exists:cliente,idCliente",
+        "idEmpleado"=> "exists:empleado,idEmpleado"
         ]
     );
 
@@ -64,14 +66,8 @@ class UsuarioController extends Controller
         }
 
         $usuario = Usuario::create(
-            [
-                "nombreUsuario"=> $request->nombreUsuario,
-                "contrasena"=> $request->contrasena,
-                "idCliente" => $request->idCliente
-                //"idEmpleado" => $request->idEmpleado
-    
-
-        ]);
+            $request->all()
+        );
 
         if(!$usuario) {
             $data = [
