@@ -12,7 +12,7 @@ export const ModalComponent = ({ closeModal, title, onSave, children, isUpdate }
   };
   return (
     <div className="overlay">
-      <div className="contenedorModal">
+      <div className="contenedorModal ">
         <div className="md-header">
           <h5 className="modal-title">{title}</h5>
           <button onClick={closeModal} type="button" className="btn-close p-md"></button>

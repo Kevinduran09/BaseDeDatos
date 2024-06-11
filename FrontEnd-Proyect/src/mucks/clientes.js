@@ -5,7 +5,8 @@ const clientes = [
         "nombre": "Carlos",
         "apellido": "Santana",
         "correoElectronico": "carlos.santana@example.com",
-        "direccion": "234 Maple St"
+        "direccion": "234 Maple St",
+        "telefono":"90239024"
     },
     {
         "id": 2,
@@ -13,7 +14,8 @@ const clientes = [
         "nombre": "Maria",
         "apellido": "Gonzalez",
         "correoElectronico": "maria.gonzalez@example.com",
-        "direccion": "456 Oak St"
+        "direccion": "456 Oak St",
+        "telefono": "90239024"
     },
     {
         "id": 3,
@@ -21,7 +23,8 @@ const clientes = [
         "nombre": "Juan",
         "apellido": "Perez",
         "correoElectronico": "juan.perez@example.com",
-        "direccion": "678 Pine St"
+        "direccion": "678 Pine St",
+        "telefono":"90239024"
     },
     {
         "id": 4,
@@ -29,7 +32,8 @@ const clientes = [
         "nombre": "Ana",
         "apellido": "Lopez",
         "correoElectronico": "ana.lopez@example.com",
-        "direccion": "890 Cedar St"
+        "direccion": "890 Cedar St",
+        "telefono":"90239024"
     },
     {
         "id": 5,
@@ -37,7 +41,8 @@ const clientes = [
         "nombre": "Luis",
         "apellido": "Martinez",
         "correoElectronico": "luis.martinez@example.com",
-        "direccion": "123 Birch St"
+        "direccion": "123 Birch St",
+        "telefono":"90239024"
     },
     {
         "id": 6,
@@ -45,7 +50,8 @@ const clientes = [
         "nombre": "Sofia",
         "apellido": "Hernandez",
         "correoElectronico": "sofia.hernandez@example.com",
-        "direccion": "456 Spruce St"
+        "direccion": "456 Spruce St",
+        "telefono":"90239024"
     },
     {
         "id": 7,
@@ -53,7 +59,8 @@ const clientes = [
         "nombre": "Miguel",
         "apellido": "Garcia",
         "correoElectronico": "miguel.garcia@example.com",
-        "direccion": "789 Fir St"
+        "direccion": "789 Fir St",
+        "telefono":"90239024"
     },
     {
         "id": 8,
@@ -61,7 +68,8 @@ const clientes = [
         "nombre": "Laura",
         "apellido": "Diaz",
         "correoElectronico": "laura.diaz@example.com",
-        "direccion": "101 Cherry St"
+        "direccion": "101 Cherry St",
+        "telefono":"90239024"
     },
     {
         "id": 9,
@@ -69,7 +77,8 @@ const clientes = [
         "nombre": "Jorge",
         "apellido": "Ramirez",
         "correoElectronico": "jorge.ramirez@example.com",
-        "direccion": "234 Walnut St"
+        "direccion": "234 Walnut St",
+        "telefono":"90239024"
     },
     {
         "id": 10,
@@ -77,7 +86,8 @@ const clientes = [
         "nombre": "Carmen",
         "apellido": "Vargas",
         "correoElectronico": "carmen.vargas@example.com",
-        "direccion": "567 Hemlock St"
+        "direccion": "567 Hemlock St",
+        "telefono":"90239024"
     },
     {
         "id": 11,
@@ -85,7 +95,8 @@ const clientes = [
         "nombre": "Jose",
         "apellido": "Reyes",
         "correoElectronico": "jose.reyes@example.com",
-        "direccion": "890 Cypress St"
+        "direccion": "890 Cypress St",
+        "telefono":"90239024"
     },
     {
         "id": 12,
@@ -93,7 +104,8 @@ const clientes = [
         "nombre": "Elena",
         "apellido": "Mendoza",
         "correoElectronico": "elena.mendoza@example.com",
-        "direccion": "123 Juniper St"
+        "direccion": "123 Juniper St",
+        "telefono":"90239024"
     },
     {
         "id": 13,
@@ -101,7 +113,8 @@ const clientes = [
         "nombre": "Fernando",
         "apellido": "Castro",
         "correoElectronico": "fernando.castro@example.com",
-        "direccion": "456 Magnolia St"
+        "direccion": "456 Magnolia St",
+        "telefono":"90239024"
     },
     {
         "id": 14,
@@ -109,7 +122,8 @@ const clientes = [
         "nombre": "Isabel",
         "apellido": "Ortega",
         "correoElectronico": "isabel.ortega@example.com",
-        "direccion": "789 Ash St"
+        "direccion": "789 Ash St",
+        "telefono":"90239024"
     },
     {
         "id": 15,
@@ -117,7 +131,8 @@ const clientes = [
         "nombre": "Roberto",
         "apellido": "Ruiz",
         "correoElectronico": "roberto.ruiz@example.com",
-        "direccion": "101 Redwood St"
+        "direccion": "101 Redwood St",
+        "telefono":"90239024"
     },
     {
         "id": 16,
@@ -125,7 +140,8 @@ const clientes = [
         "nombre": "Lucia",
         "apellido": "Ramos",
         "correoElectronico": "lucia.ramos@example.com",
-        "direccion": "202 Maple St"
+        "direccion": "202 Maple St",
+        "telefono":"90239024"
     },
     {
         "id": 17,
@@ -133,7 +149,8 @@ const clientes = [
         "nombre": "Pablo",
         "apellido": "Romero",
         "correoElectronico": "pablo.romero@example.com",
-        "direccion": "303 Oak St"
+        "direccion": "303 Oak St",
+        "telefono":"90239024"
     },
     {
         "id": 18,
@@ -141,7 +158,8 @@ const clientes = [
         "nombre": "Eva",
         "apellido": "Sanchez",
         "correoElectronico": "eva.sanchez@example.com",
-        "direccion": "404 Pine St"
+        "direccion": "404 Pine St",
+        "telefono":"90239024"
     },
     {
         "id": 19,
@@ -149,7 +167,8 @@ const clientes = [
         "nombre": "Daniel",
         "apellido": "Reyes",
         "correoElectronico": "daniel.reyes@example.com",
-        "direccion": "505 Cedar St"
+        "direccion": "505 Cedar St",
+        "telefono":"90239024"
     },
     {
         "id": 20,
@@ -157,7 +176,8 @@ const clientes = [
         "nombre": "Sara",
         "apellido": "Vargas",
         "correoElectronico": "sara.vargas@example.com",
-        "direccion": "606 Birch St"
+        "direccion": "606 Birch St",
+        "telefono":"90239024"
     }
 ];
 
