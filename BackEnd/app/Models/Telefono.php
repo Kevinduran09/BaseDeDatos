@@ -17,10 +17,11 @@ class Telefono extends Model
 
     protected $fillable = [
         "idTelefono",
-        "telefono",
+        "numeroTelefono",
+        "tipoTelefono",
         "idCliente"
     ];
-    public function paciente()
+    public function Cliente()
     {
         return $this->belongsTo(Cliente::class, 'idCliente');
     }

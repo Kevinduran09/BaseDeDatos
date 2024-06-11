@@ -17,8 +17,8 @@ return new class extends Migration
                 $table->string("nombre",40);
                 $table->String("apellido",60);
                 $table->String("correoElectronico",80);
-                $table->String("nombreUsuario",40);
-                $table->String("contrasena",255);
+                $table->String("direccion",40);
+                $table->String("fechaIngreso",255);
                 
         });
     }

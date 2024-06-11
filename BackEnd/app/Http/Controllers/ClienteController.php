@@ -45,8 +45,8 @@ class ClienteController extends Controller
         "nombre"=> "required",
         "apellido" => "required",
         "correoElectronico" => "required|email",
-        "nombreUsuario" => "required",
-        "contrasena" => "required",
+        "direccion"=> "required",
+        "fechaIngreso" => "required"
        
         ]
     );
@@ -68,8 +68,9 @@ class ClienteController extends Controller
                 "nombre"=> $request->nombre,
                 "apellido" => $request->apellido,
                 "correoElectronico" => $request->correoElectronico,
-                "nombreUsuario" => $request->nombreUsuario,
-                "contrasena" => hash('sha256', $request->contrasena)
+                "direccion"=> $request->direccion,
+                "fechaIngreso"=> $request->direccion
+
         ]);
 
         if(!$cliente) {
@@ -96,7 +97,7 @@ class ClienteController extends Controller
         $cliente = Cliente::find( $id );        
 
         if (!$cliente) {
-            return response()->json(['message' => 'cliente no encontrado b'], 404);
+            return response()->json(['message' => 'cliente no encontrado'], 404);
         }
 
         return response()->json($cliente, 200);
@@ -134,8 +135,8 @@ class ClienteController extends Controller
         "nombre"=> "required",
         "apellido" => "required",
         "correoElectronico" => "required|email",
-        "nombreUsuario" => "required",
-        "contrasena" => "required",
+        "direccion"=> "required",
+        "fechaIngreso" => "required"
 
             ]
         );
@@ -153,8 +154,9 @@ class ClienteController extends Controller
         $cliente->nombre = $request->nombre;
         $cliente->apellido = $request->apellido;
         $cliente->correoElectronico = $request->correoElectronico;
-        $cliente->nombreUsuario = $request->nombreUsuario;
-        $cliente->contrasena = hash('sha256', $request->contrasena);
+        $cliente->direccion =  $request->direccion;
+        $cliente->fechaIngreso =  $request->fechaIngreso;
+
         $cliente->save();
 
         $data = [
@@ -198,6 +200,53 @@ class ClienteController extends Controller
             );
             return response()->json($response, 406);
         }
+    }
+    public function registerCli(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "cedula"=> "required",
+            "nombre"=> "required",
+            "apellido" => "required",
+            "correoElectronico" => "required|email",
+            "direccion"=> "required",
+            "fechaIngreso" => "required"
+        ]);
+
+        if ($validator->fails()) {
+            $data = [
+                'message' => 'Error en la validación de datos',
+                'errors' => $validator->errors(),
+                'status' => 400
+            ];
+            return response()->json($data, 400);
+        }
+
+        $cliente = Cliente::create(
+            [
+                "cedula"=> $request->cedula,
+                "nombre"=> $request->nombre,
+                "apellido" => $request->apellido,
+                "correoElectronico" => $request->correoElectronico,
+                "direccion"=> $request->direccion,
+                "fechaIngreso"=> $request->direccion
+
+        ]);
+
+        if (!$cliente) {
+            $data = [
+                'message' => 'Error al guardar el cliente',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        }
+
+        $data = [
+            'message' => 'cliente creado correctamente',
+            'cliente' =>  $cliente,
+            'status' => 201
+        ];
+
+        return response()->json($data, 201);
     }
 
 }

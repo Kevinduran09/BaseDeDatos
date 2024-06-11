@@ -17,8 +17,6 @@ return new class extends Migration
             $table->String("placa",20);
             $table->tinyInteger("capacidad");
             
-        
-        
         });
     }
 
