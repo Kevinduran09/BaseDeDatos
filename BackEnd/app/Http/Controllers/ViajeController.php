@@ -6,6 +6,7 @@ use App\Models\Viaje;
 use App\Http\Controllers\Controller;
 use illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\JwtAuth;
 
 class ViajeController extends Controller
 {
@@ -135,6 +136,48 @@ class ViajeController extends Controller
         $response = [
             'message' => 'Viaje eliminado correctamente',
             'status' => 200
+        ];
+        return response()->json($response, 200);
+    }
+
+    public function indexViajeChofer(Request $request)
+    {
+        $jwt = new JwtAuth();
+        $idCho = $jwt->verifyToken($request->bearerToken(), true);
+
+        $viajes = Viaje::with(["empleado", "vehiculo", "recorrido"])->where("idEmpleado", $idCho->issEmpleado)->get();
+
+        if ($viajes->isEmpty()) {
+            $response = [
+                'message' => 'Viajes no existentes',
+                'status' => 200
+            ];
+            return response()->json($response, 200);
+        } else {
+            $response = [
+                'message' => 'Viajes obtenidos correctamente',
+                'status' => 200,
+                'data' => $viajes
+            ];
+            return response()->json($response, 200);
+        }
+    }
+
+    public function showViajeChofer($id, Request $request)
+    {
+        $jwt = new JwtAuth();
+        $idCho = $jwt->verifyToken($request->bearerToken(), true);
+
+        $viaje = Viaje::with(["empleado", "vehiculo", "recorrido"])->where(["idViaje" => $id, "idEmpleado", $idCho->issEmpleado])->get();
+
+        if (!$viaje) {
+            return response()->json(['message' => 'Viaje no encontrado'], 404);
+        }
+
+        $response = [
+            'message' => 'Viaje encontrado correctamente',
+            'status' => 201,
+            'viaje' => $viaje,
         ];
         return response()->json($response, 200);
     }
