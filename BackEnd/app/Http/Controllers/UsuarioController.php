@@ -124,11 +124,8 @@ class UsuarioController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-
-
                 "nombreUsuario" => "required",
                 "contrasena" => "required",
-
             ]
         );
         if ($validator->fails()) {
@@ -144,7 +141,7 @@ class UsuarioController extends Controller
         $usuario->nombreUsuario = $request->nombreUsuario;
         $usuario->contrasena = $request->contrasena;
         $usuario->idCliente = $request->idCliente;
-        //$usuario->idEmpleado = $request->idEmpleado;
+        $usuario->idEmpleado = $request->idEmpleado;
 
         $usuario->save();
 

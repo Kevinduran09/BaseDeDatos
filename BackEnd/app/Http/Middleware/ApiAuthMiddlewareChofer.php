@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Helpers\JwtAuth;
 
-class ApiAuthMiddlewareVerifyCliente
+class ApiAuthMiddlewareChofer
 {
     /**
      * Handle an incoming request.
@@ -18,16 +18,16 @@ class ApiAuthMiddlewareVerifyCliente
     {
         $jwt = new JwtAuth();
         $token = $request->bearerToken();
-        $logged = $jwt->verifyToken($token, true);
+        $logged = $jwt->verifyToken($token);
 
-        if (!is_bool($logged) && $logged->iss == $request->route('id')) {
+        if ($logged && $logged->tipo == "empleado" && $logged->cargo == "Chofer") {
             return $next($request);
         } else {
-            $response = [
-                "status" => 400,
-                "message" => "El cliente no tiene autorizacion para acceder al perfil de otro cliente",
-            ];
-            return response()->json($response, 400);
+            $response = array(
+                'message' => 'El empleado no tiene la autorización para acceder',
+                'status' => 401,
+            );
+            return response()->json($response, 401);
         }
     }
 }

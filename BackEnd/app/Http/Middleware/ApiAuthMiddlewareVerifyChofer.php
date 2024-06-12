@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Helpers\JwtAuth;
 
-class ApiAuthMiddlewareVerifyCliente
+class ApiAuthMiddlewareVerifyChofer
 {
     /**
      * Handle an incoming request.
@@ -25,7 +25,7 @@ class ApiAuthMiddlewareVerifyCliente
         } else {
             $response = [
                 "status" => 400,
-                "message" => "El cliente no tiene autorizacion para acceder al perfil de otro cliente",
+                "message" => "El empleado no tiene autorizacion para acceder al perfil de otro empleado",
             ];
             return response()->json($response, 400);
         }
