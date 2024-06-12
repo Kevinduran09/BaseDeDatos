@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class SolicitudController extends Controller
 {
     /**
@@ -28,7 +29,7 @@ class SolicitudController extends Controller
         }
 
         return response()->json($response, 200);
-    } 
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -41,66 +42,64 @@ class SolicitudController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-   
-     public function store(request $request)
-     {
- 
-        $validator= Validator::make($request->all(), 
-         [
-       
-        "fecha"=> "required",
-        "estado"=> "required",
-        "idCliente"=> "exists:cliente,idCliente",
-        "idDestino"=> "exists:destino,idDestino",
-        "idServicio"=> "exists:servicio,idServicio",
-        "observacion"=> "required",
-         ]
-     );
- 
-         if ($validator->fails())
-         {
-             $data = 
-             [
-                 'message' => 'Error en la validacion de los datos',
-                 'error' => $validator->errors(),
-                 'status' => 400
-             ];
-             return response()->json($data, 400);
-         }
- 
-         $solicitud = Solicitud::create(
-             [
-                 "fecha"=> $request->fecha,
-                 "observacion"=> $request->observacion,
-                 "estado"=> $request->estado,
-                 "idCliente" => $request->idCliente,
-                 "idServicio" => $request->idServicio,
-                 "idDestino" => $request->idDestino
-             
-         ]);
- 
-         if(!$solicitud) {
-             $data = [
-                 'message' => 'Error al crear la solicitud',
-                 'status' => 500
-             ];
-             return response()->json($data, 500);
-         } else {
-             $data = [
-                 'solicitud' => $solicitud,
-                 'status' => 201
-             ];
-             return response()->json($data, 201);
-         }
- 
-     }
+
+    public function store(request $request)
+    {
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+
+                "fecha" => "required",
+                "estado" => "",
+                "cliente" => "required|exists:cliente,idCliente",
+                "destino" => "required|exists:destino,idDestino",
+                "servicio" => 'required|exists:servicio,idServicio'
+            ]
+        );
+
+        if ($validator->fails()) {
+            $data =
+                [
+                    'message' => 'Error en la validacion de los datos',
+                    'error' => $validator->errors(),
+                    'status' => 400
+                ];
+            return response()->json($data, 400);
+        }
+
+        $solicitud = Solicitud::create(
+            [
+                "fecha" => $request->fecha,
+                "observacion" => $request->observacion,
+                "estado" => 'pendiente',
+                "idCliente" => $request->cliente,
+                "idDestino" => $request->destino,
+                'idServicio' => $request->servicio
+            ]
+        );
+
+        if (!$solicitud) {
+            $data = [
+                'message' => 'Error al crear la solicitud',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        } else {
+            $data = [
+                'solicitud' => $solicitud,
+                'status' => 201
+            ];
+            return response()->json($data, 201);
+        }
+    }
 
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        $solicitud = Solicitud::find( $id );        
+        $solicitud = Solicitud::find($id);
 
         if (!$solicitud) {
             return response()->json(['message' => 'solicitud no encontrada'], 404);
@@ -136,12 +135,9 @@ class SolicitudController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-
-
                 "fecha"=> "required",
                 "estado"=> "required",
                 "observacion"=> "required",
-
             ]
         );
         if ($validator->fails()) {
@@ -153,11 +149,11 @@ class SolicitudController extends Controller
                 ];
             return response()->json($data, 400);
         }
-      
+
         $solicitud->fecha = $request->fecha;
         $solicitud->estado = $request->estado;
         $solicitud->observacion = $request->observacion;
-     
+
         $solicitud->save();
 
         $data = [

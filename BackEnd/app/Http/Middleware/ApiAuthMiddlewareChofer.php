@@ -18,7 +18,7 @@ class ApiAuthMiddlewareChofer
     {
         $jwt = new JwtAuth();
         $token = $request->bearerToken();
-        $logged = $jwt->verifyToken($token);
+        $logged = $jwt->verifyToken($token,true);
 
         if ($logged && $logged->tipo == "empleado" && $logged->cargo == "Chofer") {
             return $next($request);

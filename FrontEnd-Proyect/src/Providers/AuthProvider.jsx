@@ -1,13 +1,31 @@
-import React, { Fragment, useState, useEffect, createContext, useContext } from 'react';
-import { AuthContext } from './AuthContext';
+// AuthContext.js
+import React, { createContext, useState,useEffect,useContext } from 'react';
+
+export const AuthContext = createContext();
+
 export const AuthProvider = ({ children }) => {
-    const [isLogged, setIsLogged] = useState(false);
-
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     useEffect(() => {
-        // Verificar si el usuario está autenticado (por ejemplo, a través de sessionStorage)
-        const current = sessionStorage.getItem('current');
-        setIsLogged(current ? true : false);
+        // Cargar el estado de autenticación desde sessionStorage
+        const storedAuth = sessionStorage.getItem('current');
+        setIsAuthenticated(!!storedAuth); // Convertir a booleano
     }, []);
+    const login = (userData) => {
+        setIsAuthenticated(true);
+        console.log(userData);
+        sessionStorage.setItem('current', JSON.stringify(userData));
+    };
 
-    return <AuthContext.Provider value={isLogged}>{children}</AuthContext.Provider>;
+    const logout = () => {
+        setIsAuthenticated(false);
+        sessionStorage.removeItem('current');
+    };
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
+export const useAuth = () => {
+    return useContext(AuthContext);
 };

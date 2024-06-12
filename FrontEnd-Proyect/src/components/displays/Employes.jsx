@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import CustomModal from './CustomModal';
-import { getClients } from '../../../Api/ClientAPI';
 import { ClientsTable } from '../client/ClientsTable';
 import empleados from '../../mucks/empleados'
 import { Actions } from '../helpers/Actions';
 import { EmployForm } from '../forms/EmployForm'
 import { useForm } from 'react-hook-form'
+import dayjs from 'dayjs';
 export const Employes = () => {
     const { register, handleSubmit, formState: { errors },reset, control, setValue } = useForm();
     const [employes, setEmplyes] = useState([]);
     const onSubmit = (data) => {
+
+        data["fechaNacimiento"] = dayjs(data.fechaNacimiento).format('YYYY-MM-DD')
+        data["fechaContratacion"] = dayjs(data.fechaContratacion).format('YYYY-MM-DD')
         console.log(data);
-        reset()
+        // reset()
     }
     useEffect(() => {
         // fetchClients();
@@ -40,7 +43,7 @@ export const Employes = () => {
         { field: 'nombre', headerName: 'Nombre', width: 150 },
         { field: 'apellido', headerName: 'Apellido', width: 150 },
         { field: 'cedula', headerName: 'Cedula', width: 150 },
-        { field: 'correoElectronico', headerName: 'Email', width: 150 },
+        { field: 'correoElectronico', headerName: 'Email', width: 150},
         { field: 'telefono', headerName: 'Telefono', width: 150 },
         { field: 'direccion', headerName: 'Direccion', width: 150 },
         { field: 'fechaNacimiento', headerName: 'FechaNacimiento', align: 'right', width: 150 },

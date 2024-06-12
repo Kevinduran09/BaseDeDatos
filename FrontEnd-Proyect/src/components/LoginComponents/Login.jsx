@@ -1,35 +1,36 @@
 import React, { Fragment } from 'react'
 import '../../styles/login.css'
-import { NavLink, Navigate, json } from 'react-router-dom'
+import { useContext } from 'react'
+import { NavLink,  } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
-import { login, current } from '../../../Api/AuthAPI'
+import { loginSession, current } from '../../../Api/AuthAPI'
 import { show_alert } from '../../functions'
+import { useAuth } from '../../Providers/AuthProvider'
 export const Login = () => {
   const { register, formState: { errors }, handleSubmit, reset } = useForm();
   const [isLoading, setisLoading] = useState(false)
   const navigate = useNavigate();
-
+  const { login } = useAuth();
 
   const handletLogin = async (formdata) => {
     setisLoading(true)
     try {
-      const res = await login(formdata)
+      const res = await loginSession(formdata)
 
       if (res) sessionStorage.setItem('token', res.data)
       setisLoading(false)
 
       try {
         const instance = await current()
-       
-        sessionStorage.setItem('current', JSON.stringify(instance.data))
-       
         if (instance.data.cargo && instance.data.cargo == 'Administrador') {
           navigate('/admin'); // 
         } else if (instance.data.cargo && instance.data.cargo == 'chofer'){
           // route chofer
         }else{
+          console.log(instance);
+          login(instance.data)
           navigate('/client')
         }
         

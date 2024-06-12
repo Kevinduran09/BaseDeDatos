@@ -14,7 +14,7 @@ export const ClientsTable = ({data,columns}) => {
                   <DataGrid
                       columns={columns}
                       rows={data}
-                    
+                        getRowId={(row)=>row.idCliente}
                       initialState={{
                           pagination: { paginationModel: { pageSize: 5 } },
                       }}
@@ -23,7 +23,7 @@ export const ClientsTable = ({data,columns}) => {
                       disableColumnSelector={true}
                       disableRowSelectionOnClick
                       showCellVerticalBorder={false}
-                      autoHeight={true}
+                      autoHeight
                   slots={{ toolbar: Toolbar }}
                         slotProps={{
                             toolbar: {

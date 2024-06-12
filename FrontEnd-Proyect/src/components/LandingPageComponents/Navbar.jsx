@@ -1,23 +1,36 @@
-import React, { Fragment , useContext } from 'react';
+import React, { Fragment } from 'react';
 import '../../styles/Navbar.css';
 import { NavLink } from 'react-router-dom';
-import { AuthContext } from '../../Providers/AuthContext';
+import { useAuth } from '../../Providers/AuthProvider';
+import YabiLogo from '../../assets/YabiLogo.png';
+
 export const Navbar = () => {
-  const isLogged = useContext(AuthContext);
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <Fragment>
       <nav className='contenedor navbarsec'>
-        <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-          <img src='../../' alt="" />
-        </a>
-        <ul>
-          {isLogged && <li className='nav-list-item'>  <NavLink to="/client/Solicitar">Solicitar Servicio </NavLink></li>}
-          <li className='nav-list-item'> <NavLink to="/client/Login"> Ingresar </NavLink></li>
-          <li className='nav-list-item'>Nosotros</li>
-        </ul>
+        <div>
+          <div className='d-flex align-items-center ms-3 mt-2'>
+            <NavLink to={'/client'}>
+              <img src={YabiLogo} alt="Yabi Logo" className="logo-image" />
+            </NavLink>
+          </div>
+        </div>
+       <div className="d-flex align-items-center">
+          <ul>
+            {isAuthenticated ? (
+              <>
+                <li className='nav-list-item'><NavLink to="/client/Solicitar">Solicitar Servicio</NavLink></li>
+                <li className='nav-list-item'><NavLink to="/client" onClick={logout}>Cerrar Sesion</NavLink></li>
+              </>
+            ) : (
+              <li className='nav-list-item'><NavLink to="/client/Login">Ingresar</NavLink></li>
+            )}
+            <li className='nav-list-item'>Nosotros</li>
+          </ul>
+       </div>
       </nav>
     </Fragment>
   );
 };
-
