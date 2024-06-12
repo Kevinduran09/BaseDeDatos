@@ -50,7 +50,7 @@ class EmpleadoController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                "puesto" => "required|numeric|exists:Puesto,idPuesto",
+                "idPuesto" => "required|numeric|exists:Puesto,idPuesto",
                 "cedula" => "required",
                 "nombre" => "required",
                 "apellido" => "required",
@@ -74,7 +74,7 @@ class EmpleadoController extends Controller
 
         $empleado = Empleado::create(
             [
-                "puesto" => $request->puesto,
+                "idPuesto" => $request->idPuesto,
                 "cedula" => $request->cedula,
                 "nombre" => $request->nombre,
                 "apellido" => $request->apellido,
@@ -86,6 +86,13 @@ class EmpleadoController extends Controller
             ]
         );
 
+        if (!$empleado) {
+            $data = [
+                'message' => 'Error al crear el registro de empleado',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        }
         $user = new UsuarioController();
 
         $usuario = $user->store([
@@ -93,22 +100,16 @@ class EmpleadoController extends Controller
             'contrasena' => $request->contrasena,
             'idEmpleado' => $empleado->idEmpleado
         ]);
-
-        return response()->json($usuario->load('empleado'),200);
-
-        if (!$empleado) {
+        if(!$usuario){
             $data = [
-                'message' => 'Error al crear el registro de empleado',
+                'message' => 'Error al crear el registro de usuario',
                 'status' => 500
             ];
             return response()->json($data, 500);
-        } else {
-            $data = [
-                'empleado' => $empleado,
-                'status' => 201
-            ];
-            return response()->json($data, 201);
         }
+
+        return response()->json($usuario,200);
+        
     }
 
     /**
@@ -154,7 +155,7 @@ class EmpleadoController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            "puesto" => 'exists:puesto,idPuesto',
+            "idPuesto" => 'exists:puesto,idPuesto',
             "cedula" => 'required',
             "nombre" => 'required',
             "apellido" => 'required',
@@ -174,7 +175,7 @@ class EmpleadoController extends Controller
             return response()->json($response, 400);
         }
 
-        $empleado->puesto = $request->puesto;
+        $empleado->idPuesto = $request->idPuesto;
         $empleado->cedula = $request->cedula;
         $empleado->nombre = $request->nombre;
         $empleado->apellido = $request->apellido;

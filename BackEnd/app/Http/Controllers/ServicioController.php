@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Servicio;
 use App\Http\Controllers\Controller;
-use illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ServicioController extends Controller
@@ -14,7 +14,7 @@ class ServicioController extends Controller
      */
     public function index()
     {
-        $servicio = Servicio::with(["solicitud"])->get();
+        $servicio = Servicio::all();
 
         if ($servicio->isEmpty()) {
             $response = [
@@ -92,7 +92,7 @@ class ServicioController extends Controller
      */
     public function show($id)
     {
-        $servicio = Servicio::with(["solicitud"])->where("idservicio", "=", $id)->first();
+        $servicio = Servicio::where("idservicio", "=", $id)->first();
 
         if (!$servicio) {
             return response()->json(['message' => 'servicio no encontrado'], 404);

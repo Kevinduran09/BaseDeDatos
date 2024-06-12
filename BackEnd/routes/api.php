@@ -22,7 +22,7 @@ Route::prefix('v1')->group(
     function () {
 
         Route::group(['prefix' => '/cliente'], function () {
-                  Route::post('/registerCli', [ClienteController::class, 'registerCli']); 
+                  Route::post('/register', [ClienteController::class, 'register']); 
                   Route::get('/verinfo/{id}', [ClienteController::class, 'show'])->middleware([ApiAuthMiddlewareCliente::class,ApiAuthMiddlewareVerifyCliente::class]);
                   Route::put('/actulizarCli/{id}', [ClienteController::class, 'update'])->middleware([ApiAuthMiddlewareCliente::class,ApiAuthMiddlewareVerifyCliente::class]);
 
@@ -54,7 +54,10 @@ Route::prefix('v1')->group(
             Route::resource('/viaje', ViajeController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
             Route::resource('/usuario', UsuarioController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
         });
-
+        Route::put('/empleadoUp/{id}', [EmpleadoController::class, 'update'])->middleware(ApiAuthMiddlewareAdmin::class);
+        Route::delete('/empleadoDet/{id}', [EmpleadoController::class, 'destroy'])->middleware(ApiAuthMiddlewareAdmin::class);
+        Route::put('/servicio/{17}', [ServicioController::class,'update'])->middleware(ApiAuthMiddlewareAdmin::class);
         Route::post('/login', [UsuarioController::class, 'login']);
+        Route::post('/current', [UsuarioController::class, 'current']);
     }
 );
