@@ -18,8 +18,13 @@ use App\Http\Middleware\ApiAuthMiddlewareVerifyCliente;
           
             
             Route::group(['prefix' => '/cliente'], function () {
+<<<<<<< Updated upstream
                   Route::post('/registerCli', [ClienteController::class, 'registerCli']); 
                   Route::post('/loginCli',[UsuarioController::class, 'login']);
+=======
+                  Route::post('/registerCli', [ClienteController::class, 'registerCli']);
+                  Route::post('/loginCli', [ClienteController::class, 'loginCli'])->withoutMiddleware(ApiAuthMiddlewareCliente::class);
+>>>>>>> Stashed changes
                   Route::get('/verinfo/{id}', [ClienteController::class, 'show'])->middleware([ApiAuthMiddlewareCliente::class,ApiAuthMiddlewareVerifyCliente::class]);
                   Route::put('/actulizarCli/{id}', [ClienteController::class, 'update'])->middleware([ApiAuthMiddlewareCliente::class,ApiAuthMiddlewareVerifyCliente::class]);
 
