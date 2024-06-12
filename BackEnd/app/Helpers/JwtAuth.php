@@ -31,7 +31,7 @@ class JwtAuth
         } else if (is_object($user) && $user->idEmpleado != null) {
             $token = [
                 'iss' => $user->idUsuario,
-                'issCliente' => $user->idEmpleado,
+                'issEmpleado' => $user->idEmpleado,
                 'tipo' => 'empleado',
                 'cargo' => $user->empleado->puesto->cargo,
                 'exp' => time() + (1200000) //(20 * 60) //Equivale a 20 minutos
