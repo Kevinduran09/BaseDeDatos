@@ -20,7 +20,7 @@ class ApiAuthMiddlewareVerifyCliente
         $token = $request->bearerToken();
         $logged = $jwt->verifyToken($token, true);
 
-        if (!is_bool($logged) && $logged->iss == $request->route('id')) {
+        if (is_object($logged) && $logged->issCliente == $request->route('id')) {
             return $next($request);
         } else {
             $response = [

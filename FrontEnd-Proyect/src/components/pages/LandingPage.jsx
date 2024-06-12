@@ -9,13 +9,14 @@ export const LandingPage = () => {
     <>
       <AuthProvider>
         <Navbar />
+        <div className="content">
+          <Hero />
+          <TituloServicios />
+          <Servicios />
+        </div>
       </AuthProvider>
 
-      <div className="content">
-        <Hero />
-        <TituloServicios />
-        <Servicios />
-      </div>
+
     </>
 
   )

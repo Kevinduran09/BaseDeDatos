@@ -17,7 +17,7 @@ class ClienteController extends Controller
      */
     public function index() //funcion para mostrar todos los datos
     {
-        $cliente = Cliente::all();
+        $cliente = Cliente::with('telefonos')->get();
 
         if (count($cliente) === 0) {
             $response = [

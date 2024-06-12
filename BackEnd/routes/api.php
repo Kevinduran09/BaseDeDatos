@@ -22,14 +22,17 @@ Route::prefix('v1')->group(
     function () {
 
         Route::group(['prefix' => '/cliente'], function () {
-                  Route::post('/register', [ClienteController::class, 'register']); 
-                  Route::get('/verinfo/{id}', [ClienteController::class, 'show'])->middleware([ApiAuthMiddlewareCliente::class,ApiAuthMiddlewareVerifyCliente::class]);
-                  Route::put('/actulizarCli/{id}', [ClienteController::class, 'update'])->middleware([ApiAuthMiddlewareCliente::class,ApiAuthMiddlewareVerifyCliente::class]);
+            Route::post('/register', [ClienteController::class, 'register']);
+            Route::get('/verinfo/{id}', [ClienteController::class, 'show'])->middleware([ApiAuthMiddlewareCliente::class, ApiAuthMiddlewareVerifyCliente::class]);
+            Route::put('/actulizarCli/{id}', [ClienteController::class, 'update'])->middleware([ApiAuthMiddlewareCliente::class, ApiAuthMiddlewareVerifyCliente::class]);
 
-                  Route::post('/agregarTel', [TelefonoController::class, 'store'])->middleware(ApiAuthMiddlewareCliente::class);
-                  Route::put('/modificarTel', [TelefonoController::class, 'update'])->middleware(ApiAuthMiddlewareCliente::class);
-                  Route::delete('/eliminarTel/{id}', [ClienteController::class, 'destroy'])->middleware([ApiAuthMiddlewareCliente::class,ApiAuthMiddlewareVerifyCliente::class]);
-            });
+            Route::post('/agregarTel', [TelefonoController::class, 'store'])->middleware(ApiAuthMiddlewareCliente::class);
+            Route::put('/modificarTel', [TelefonoController::class, 'update'])->middleware(ApiAuthMiddlewareCliente::class);
+            Route::delete('/eliminarTel/{id}', [ClienteController::class, 'destroy'])->middleware([ApiAuthMiddlewareCliente::class, ApiAuthMiddlewareVerifyCliente::class]);
+            Route::get('/destinos', [DestinoController::class, 'index']);
+            Route::get('/servicio', [ServicioController::class, 'index']);
+            Route::post('/solicitud/{id}',[SolicitudController::class,'store'])->middleware([ApiAuthMiddlewareCliente::class, ApiAuthMiddlewareVerifyCliente::class]);
+        });
 
         Route::group(['prefix' => '/chofer'], function () {
             Route::get('/{id}', [EmpleadoController::class, 'show'])->middleware([ApiAuthMiddlewareChofer::class, ApiAuthMiddlewareVerifyChofer::class]);
@@ -56,6 +59,6 @@ Route::prefix('v1')->group(
         });
 
         Route::post('/login', [UsuarioController::class, 'login']);
-        Route::post('/current', [UsuarioController::class, 'current']);
+        Route::options('/current', [UsuarioController::class, 'current']);
     }
 );

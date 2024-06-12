@@ -6,7 +6,7 @@ const AuthAPI = axios.create({
 })
 
 
-export const login = async (data) => {
+export const loginSession = async (data) => {
 
    return await AuthAPI.post('/login', data)
 

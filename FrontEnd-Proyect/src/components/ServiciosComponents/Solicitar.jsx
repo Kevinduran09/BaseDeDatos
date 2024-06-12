@@ -1,20 +1,21 @@
-import { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import '../../styles/SolicitarServicio.css';
-import { useTheme } from '@mui/material/styles';
-import { OutlinedInput } from '@mui/material';
-import { InputLabel } from '@mui/material';
-import { MenuItem } from '@mui/material';
-import { FormControl } from '@mui/material';
-import {Input} from '@mui/material';
-import { Select } from '@mui/material';
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import {
+  OutlinedInput,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  TextField,
+  Button,
+  Grid
+} from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/LocalizationProvider';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { TextField } from '@mui/material';
-import { Button } from '@mui/material';
-import { Grid } from '@mui/material';
-import { Box } from '@mui/material';
+import { getDestinos, getServicios,postsolicitud } from '../../../Api/ClientAPI';
+import dayjs from 'dayjs';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -28,146 +29,156 @@ const MenuProps = {
   },
 };
 
-const names = [
-  'Cash in Transit',
-  'Cash Managment Solutions',
-  'Cash Technology',
-];
-
-const placesList = [
-  'San José',
-  'Alajuela',
-  'Cartago',
-  'Heredia',
-  'Guanacaste',
-  'Puntarenas',
-  'Limón',
-];
-
-function getStylesService(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
-
-function getStylesPlaces(place, selectedPlaces, theme) {
-  return {
-    fontWeight:
-      selectedPlaces.indexOf(place) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
-
 export const Solicitar = () => {
-  const theme = useTheme();
-  const [personName, setPersonName] = useState([]);
-  const [selectedPlaces, setSelectedPlaces] = useState([]);
+  const { register, handleSubmit, control, formState: { errors } } = useForm();
+  const [destinos, setDestinos] = useState([]);
+  const [servicios, setServicios] = useState([]);
 
-  const handleChange = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setPersonName(
-      typeof value === 'string' ? value.split(',') : value,
-    );
+  useEffect(() => {
+    fetchDestinos();
+    fetchServicios();
+  }, []);
+
+  const fetchDestinos = async () => {
+    try {
+      const res = await getDestinos();
+      if (res) {
+        setDestinos(res.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleChange2 = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setSelectedPlaces(
-      typeof value === 'string' ? value.split(',') : value,
-    );
+  const fetchServicios = async () => {
+    try {
+      const res = await getServicios();
+      if (res) {
+        setServicios(res.data.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmit = async (data) => {
+    const formattedDate = dayjs(data.fecha).format('YYYY-MM-DD HH:MM');
+    const formattedData = { ...data, fecha: formattedDate };
+    const cliente = JSON.parse(sessionStorage.getItem('current'))
+    formattedData['cliente'] = cliente.issCliente
+    console.log(formattedData);
+
+    try {
+      const res = await postsolicitud(formattedData)
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+
   };
 
   return (
     <Fragment>
       <div className='w-100 d-flex justify-content-center'>
-        <div className="bg-white p-3 rounded" style={{width:'50%'}}>
+        <div className="bg-white p-3 rounded" style={{ width: '60%' }}>
           <div className="row mb-5">
             <h2>Formulario solicitud de servicio</h2>
           </div>
-          <form className="form-solicitar">
-
+          <form className="form-solicitar" onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={3} justifyContent={'center'} sx={{ maxWidth: '100%' }}>
 
               <Grid item xs={6}>
-                <FormControl sx={{ width: '100%' }} >
+                <FormControl sx={{ width: '100%' }} error={!!errors.servicio}>
                   <InputLabel id="demo-multiple-name-label">Servicios</InputLabel>
-                  <Select
-                    labelId="demo-multiple-name-label"
-                    id="demo-multiple-name"
-
-                    value={personName}
-                    onChange={handleChange}
-                    input={<OutlinedInput label="Name" />}
-                    MenuProps={MenuProps}
-                  >
-                    {names.map((name) => (
-                      <MenuItem
-                        key={name}
-                        value={name}
+                  <Controller
+                    name="servicio"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'Servicio es obligatorio' }}
+                    render={({ field }) => (
+                      <Select
+                        labelId="demo-multiple-name-label"
+                        id="demo-multiple-name"
+                        {...field}
+                        input={<OutlinedInput label="Servicio" />}
+                        MenuProps={MenuProps}
                       >
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                        {servicios.map((servicio) => (
+                          <MenuItem key={servicio.idServicio} value={servicio.idServicio}>
+                            {servicio.tipoServicio}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.servicio && <span className="requiredAlert">{errors.servicio.message}</span>}
                 </FormControl>
               </Grid>
 
               <Grid item xs={6}>
-                <FormControl sx={{ width: '100%' }}  >
+                <FormControl sx={{ width: '100%' }} error={!!errors.destino}>
                   <InputLabel id="demo-multiple-places-label">Destino</InputLabel>
-                  <Select
-                    labelId="demo-multiple-places-label"
-                    id="demo-multiple-places"
-
-                    value={selectedPlaces}
-                    onChange={handleChange2}
-                    input={<OutlinedInput label="Place" />}
-                    MenuProps={MenuProps}
-                  >
-                    {placesList.map((place) => (
-                      <MenuItem
-                        key={place}
-                        value={place}
+                  <Controller
+                    name="destino"
+                    control={control}
+                    defaultValue=""
+                    rules={{ required: 'Destino es obligatorio' }}
+                    render={({ field }) => (
+                      <Select
+                        labelId="demo-multiple-places-label"
+                        id="demo-multiple-places"
+                        {...field}
+                        input={<OutlinedInput label="Destino" />}
+                        MenuProps={MenuProps}
                       >
-                        {place}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                        {destinos.map((destino) => (
+                          <MenuItem key={destino.idDestino} value={destino.idDestino}>
+                            {destino.descripcionValor}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.destino && <span className="requiredAlert">{errors.destino.message}</span>}
                 </FormControl>
               </Grid>
 
               <Grid item xs={6}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer
-                    components={[
-                      'DateTimePicker',
-                    ]}
-                  >
-                    <DemoItem
-                      InputLabel={<InputLabel componentName="DateTimePicker" valueType="date time" />}
-                    >
-                      <DateTimePicker />
-                    </DemoItem>
-                  </DemoContainer>
+                  <Controller
+                    name="fecha"
+                    control={control}
+                    defaultValue={null}
+                    rules={{ required: 'Fecha es obligatoria' }}
+                    render={({ field }) => (
+                      <DateTimePicker
+                        inputFormat="DD/MM/YYYY :HH:mm"
+                        value={field.value ? dayjs(field.value) : null}
+                        onChange={(date) => field.onChange(date)}
+                        sx={{ width: '100%' }}
+                        label="Fecha"
+                        renderInput={(params) => <TextField {...params} variant="standard" />}
+                      />
+                    )}
+                  />
+                  {errors.fecha && <span className="requiredAlert">{errors.fecha.message}</span>}
                 </LocalizationProvider>
               </Grid>
 
               <Grid item xs={6}>
-                <FormControl fullWidth>
-                  <TextField id="outlined-basic" label="Observacion" multiline variant="outlined" />
+                <FormControl fullWidth error={!!errors.observacion}>
+                  <TextField
+                    label="Observacion"
+                    multiline
+                    variant="outlined"
+                    {...register('observacion', { required: 'Observacion es obligatoria' })}
+                  />
+                  {errors.observacion && <span className="requiredAlert">{errors.observacion.message}</span>}
                 </FormControl>
               </Grid>
 
-              <Grid item xs={4}>
-                <Button variant="contained">
+              <Grid item xs={12} container justifyContent="center" alignItems="center" >
+                <Button type="submit" variant="contained">
                   Enviar Solicitud
                 </Button>
               </Grid>
