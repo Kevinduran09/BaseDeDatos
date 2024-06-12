@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Viaje;
 use App\Http\Controllers\Controller;
-use illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\JwtAuth;
 
@@ -15,7 +15,7 @@ class ViajeController extends Controller
      */
     public function index()
     {
-        $viaje = Viaje::with(["empleado", "vehiculo", "recorrido"])->get();
+        $viaje = Viaje::with(["empleado", "vehiculo"])->get();
 
         if ($viaje->isEmpty()) {
             $response = [

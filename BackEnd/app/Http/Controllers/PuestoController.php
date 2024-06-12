@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Puesto;
 use App\Http\Controllers\Controller;
-use illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class PuestoController extends Controller

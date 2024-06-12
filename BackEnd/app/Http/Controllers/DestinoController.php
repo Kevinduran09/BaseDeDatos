@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Destino;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class DestinoController extends Controller
 {
@@ -42,17 +43,69 @@ class DestinoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(request $request)
     {
-        //
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+               
+                "descripcionValor" => "required",
+                "direccionFisica" => "required",
+                "ciudad" => "required",
+                "provincia" => "required",
+                "pais" => "required"
+            ]
+        );
+
+        if ($validator->fails()) {
+            $data =
+                [
+                    'message' => 'Error en la validacion de los datos',
+                    'error' => $validator->errors(),
+                    'status' => 400
+                ];
+            return response()->json($data, 400);
+        }
+
+        $destino = Destino::create(
+            [
+                "descripcionValor" => $request->descripcionValor,
+                "direccionFisica" => $request->direccionFisica,
+                "ciudad" => $request->ciudad,
+                "provincia" => $request->provincia,
+                "pais" => $request->pais
+                
+            ]
+        );
+
+        if (!$destino) {
+            $data = [
+                'message' => 'Error al crear el destino',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        } else {
+            $data = [
+                'destino' => $destino,
+                'status' => 201
+            ];
+            return response()->json($data, 201);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Destino $destino)
+    public function show($id)
     {
-        //
+        $destino = Destino::find($id);
+
+        if (!$destino) {
+            return response()->json(['message' => 'destino no encontrado'], 404);
+        }
+
+        return response()->json($destino, 200);
     }
 
     /**
@@ -66,16 +119,71 @@ class DestinoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Destino $destino)
+    public function update(Request $request, $id)
     {
-        //
+
+        $destino = Destino::find($id);
+
+        if (!$destino) {
+            $data = [
+                'message' => 'destino no encontrado',
+                'status' => 404
+            ];
+            return response()->json($data, 404);
+        }
+        $validator = Validator::make(
+            $request->all(),
+            [
+
+
+                "descripcionValor" => "required",
+                "direccionFisica" => "required",
+                "ciudad" => "required",
+                "provincia" => "required",
+                "pais" => "required"
+            ]
+        );
+        if ($validator->fails()) {
+            $data =
+                [
+                    'message' => 'Error en la validacion de los datos',
+                    'error' => $validator->errors(),
+                    'status' => 400
+                ];
+            return response()->json($data, 400);
+        }
+
+        $destino->descripcionValor = $request->descripcionValor;
+        $destino->direccionFisica = $request->direccionFisica;
+        $destino->ciudad = $request->ciudad;
+        $destino->provincia = $request->provincia;
+        $destino->pais =  $request->pais;
+     
+
+        $destino->save();
+
+        $data = [
+            'message' => 'Los  datos del destino fueron actualizados.',
+            'destino' => $destino,
+            'status' => 200
+        ];
+        return response()->json($data, 200);
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Destino $destino)
+    public function destroy($id)
     {
-        //
+        $destino = Destino::find($id);
+
+        if (!$destino) {
+            return response()->json(['message' => 'destino no fue encontrado'], 404);
+        }
+
+        $destino->delete();
+
+        return response()->json(['message' => 'destino eliminado correctamente'], 200);
     }
 }

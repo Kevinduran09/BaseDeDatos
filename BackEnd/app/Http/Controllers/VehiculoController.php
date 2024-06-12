@@ -39,7 +39,7 @@ class VehiculoController extends Controller
        $validator= Validator::make($request->all(), 
         [
         
-        "tipoTransporte"=> "required",
+        "tipoVehiculo"=> "required",
         "placa" => "required",
         "capacidad" => "required",
         "modelo"=> "required",
@@ -64,7 +64,7 @@ class VehiculoController extends Controller
 
         $vehiculo = Vehiculo::create(
             [
-                "tipoTransporte"=> $request->tipoTransporte,
+                "tipoVehiculo"=> $request->tipoVehiculo,
                 "placa"=> $request->placa,
                 "capacidad" => $request->capacidad,
                 "modelo"=> $request->modelo,
@@ -123,7 +123,7 @@ class VehiculoController extends Controller
             [
 
 
-                "tipoTransporte"=> "required",
+                "tipoVehiculo"=> "required",
                 "placa" => "required",
                 "capacidad" => "required",
                 "modelo"=> "required",
@@ -143,7 +143,7 @@ class VehiculoController extends Controller
             return response()->json($data, 400);
         }
         
-        $vehiculo->tipoTransporte = $request->tipoTransporte;
+        $vehiculo->tipoVehiculo = $request->tipoVehiculo;
         $vehiculo->placa = $request->placa;
         $vehiculo->capacidad = $request->capacidad;
         $vehiculo->modelo = $request->modelo;
