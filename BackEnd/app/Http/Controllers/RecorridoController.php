@@ -6,6 +6,8 @@ use App\Models\Recorrido;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Helpers\JwtAuth;
+
 class RecorridoController extends Controller
 {
     /**
@@ -45,33 +47,34 @@ class RecorridoController extends Controller
     public function store(request $request)
     {
 
-       $validator= Validator::make($request->all(), 
-        [
-        "estado"=> "required",
-        "idCliente" => "required",
-        "idSolicitud" => "required"
-        ]
-    );
-
-        if ($validator->fails())
-        {
-            $data = 
+        $validator = Validator::make(
+            $request->all(),
             [
-                'message' => 'Error en la validacion de los datos',
-                'error' => $validator->errors(),
-                'status' => 400
-            ];
+                "estado" => "required",
+                "idCliente" => "required|exists:Cliente,idCliente",
+                "idSolicitud" => "required|exists:Solicitud,idSolicitud"
+            ]
+        );
+
+        if ($validator->fails()) {
+            $data =
+                [
+                    'message' => 'Error en la validacion de los datos',
+                    'error' => $validator->errors(),
+                    'status' => 400
+                ];
             return response()->json($data, 400);
         }
 
         $recorrido = Recorrido::create(
             [
-                "estado"=> $request->estado,
+                "estado" => $request->estado,
                 "idCliente"  => $request->idCliente,
                 "idSolicitud"  => $request->idSolicitud
-        ]);
+            ]
+        );
 
-        if(!$recorrido) {
+        if (!$recorrido) {
             $data = [
                 'message' => 'Error al crear el recorrido',
                 'status' => 500
@@ -84,7 +87,6 @@ class RecorridoController extends Controller
             ];
             return response()->json($data, 201);
         }
-
     }
 
     /**
@@ -92,7 +94,7 @@ class RecorridoController extends Controller
      */
     public function show($id)
     {
-        $recorrido = Recorrido::find( $id );        
+        $recorrido = Recorrido::find($id);
 
         if (!$recorrido) {
             return response()->json(['message' => 'recorrido no encontrado'], 404);
@@ -124,16 +126,9 @@ class RecorridoController extends Controller
             ];
             return response()->json($data, 404);
         }
-        $validator = Validator::make(
-            $request->all(),
-            [
-
-
-                "estado"=> "estado",
-               
-                
-            ]
-        );
+        $validator = Validator::make($request->all(), [
+            "estado" => "required",
+        ]);
         if ($validator->fails()) {
             $data =
                 [
@@ -143,9 +138,9 @@ class RecorridoController extends Controller
                 ];
             return response()->json($data, 400);
         }
-        
+
         $recorrido->estado = $request->estado;
-        $recorrido->idCliente = $request->idCliente;
+
         $recorrido->save();
 
         $data = [
@@ -164,11 +159,52 @@ class RecorridoController extends Controller
         $recorrido = Recorrido::find($id);
 
         if (!$recorrido) {
-            return response()->json(['message' => 'recorrido no fue encontrado'], 404);
+            return response()->json(['message' => 'Recorrido no fue encontrado'], 404);
         }
 
         $recorrido->delete();
 
-        return response()->json(['message' => 'recorrido eliminado correctamente'], 200);
+        return response()->json(['message' => 'Recorrido eliminado correctamente'], 200);
+    }
+
+    public function updateRecorridoChofer($id, Request $request)
+    {
+        $jwt = new JwtAuth();
+        $idCho = $jwt->verifyToken($request->bearerToken(), true);
+
+        $recorrido = Recorrido::where(["idRecorrido" => $id, "idEmpleado" => $idCho->issEmpleado])->first();
+
+        if (!$recorrido) {
+            $response = [
+                'message' => 'Recorrido no encontrado',
+                'status' => 404
+            ];
+            return response()->json($response, 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'estado' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response = [
+                'message' => 'Error al validar los datos',
+                'errors' => $validator->errors(),
+                'status' => 400
+            ];
+            return response()->json($response, 400);
+        }
+
+        $recorrido->estado = $request->estado;
+
+        $recorrido->save();
+
+        $response = [
+            'message' => 'Recorrido actualizado correctamente',
+            'status' => 201,
+            'recorrido' => $recorrido,
+        ];
+
+        return response()->json($response, 200);
     }
 }

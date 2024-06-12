@@ -6,7 +6,6 @@ use App\Models\Empleado;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Helpers\JwtAuth;
 use App\Http\Controllers\UsuarioController;
 
 class EmpleadoController extends Controller
