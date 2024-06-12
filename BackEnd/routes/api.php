@@ -57,8 +57,15 @@ Route::prefix('v1')->group(
             Route::resource('/viaje', ViajeController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
             Route::resource('/usuario', UsuarioController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
         });
-
+        Route::put('/empleadoUp/{id}', [EmpleadoController::class, 'update'])->middleware(ApiAuthMiddlewareAdmin::class);
+        Route::delete('/empleadoDet/{id}', [EmpleadoController::class, 'destroy'])->middleware(ApiAuthMiddlewareAdmin::class);
+        Route::put('/servicio/{17}', [ServicioController::class,'update'])->middleware(ApiAuthMiddlewareAdmin::class);
         Route::post('/login', [UsuarioController::class, 'login']);
+
         Route::options('/current', [UsuarioController::class, 'current']);
+
+        Route::post('/current', [UsuarioController::class, 'current']);
+        
+
     }
 );

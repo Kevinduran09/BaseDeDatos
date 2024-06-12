@@ -33,8 +33,9 @@ class JwtAuth
                 'iss' => $user->idUsuario,
                 'issEmpleado' => $user->idEmpleado,
                 'tipo' => 'empleado',
-                'cargo' => $user->empleado->puesto->cargo,
+                'cargo' => $user->empleado->Puesto->cargo,
                 'exp' => time() + (1200000) //(20 * 60) //Equivale a 20 minutos
+                
             ];
             $response = JWT::encode($token, $this->key, 'HS256');
             return $response;

@@ -171,7 +171,7 @@ class ClienteController extends Controller
 
         $data = [
             'message' => 'Los  datos del cliente fueron actualizados.',
-            'medico' => $cliente,
+            'cliente' => $cliente,
             'status' => 200
         ];
         return response()->json($data, 200);
