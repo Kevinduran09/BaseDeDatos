@@ -14,6 +14,13 @@
     /* Evitar que el texto se envuelva */
 }
 
+.sidebar .active {
+    background-color: #000 !important;
+    /* Ejemplo: cambia el fondo cuando está activo */
+    color: #fff !important;
+    /* Cambia el color del texto cuando está activo */
+}
+
 .fixed-width-column {
     width: 100px;
     max-width: 150px;
@@ -28,7 +35,29 @@
     /* Evitar que el texto se envuelva */
 }
 
-.hover-effect:hover{
+.hover-effect:hover {
     background-color: #000;
-    color: #fff;
+    color: #fffdfd;
+}
+
+.sidebar ul li a:not(.active):not(:hover) {
+    color: rgb(0, 0, 0);
+}
+
+.content-footer-nav {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    border-top: 1.5px solid rgba(131, 122, 122, 0.4);
+}
+
+.requiredAlert{
+    display: block;
+    color: tomato;
+    font-size: x-small;
 }

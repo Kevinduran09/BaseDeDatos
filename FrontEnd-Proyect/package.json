@@ -22,10 +22,13 @@
     "@mui/x-date-pickers": "^7.6.2",
     "axios": "^1.6.4",
     "bootstrap": "^5.3.2",
+
     "date-fns": "^3.6.0",
+
     "dayjs": "^1.11.11",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.51.5",
     "react-router-dom": "^6.22.1",
     "styled-components": "^6.1.11",
     "sweetalert2": "^11.6.13",

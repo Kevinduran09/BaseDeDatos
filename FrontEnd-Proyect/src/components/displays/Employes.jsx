@@ -4,17 +4,20 @@ import { getClients } from '../../../Api/ClientAPI';
 import { ClientsTable } from '../client/ClientsTable';
 import empleados from '../../mucks/empleados'
 import { Actions } from '../helpers/Actions';
-import { alignProperty } from '@mui/material/styles/cssUtils';
-
+import { EmployForm } from '../forms/EmployForm'
+import { useForm } from 'react-hook-form'
 export const Employes = () => {
-    const [modalContent, setModalContent] = useState("Contenido dinámico");
+    const { register, handleSubmit, formState: { errors },reset, control, setValue } = useForm();
     const [employes, setEmplyes] = useState([]);
+    const onSubmit = (data) => {
+        console.log(data);
+        reset()
+    }
     useEffect(() => {
         // fetchClients();
         setEmplyes(empleados)
-        console.log(empleados);
     }, []);
-
+    const resetForm = () => reset()
     const fetchClients = async () => {
         try {
             const response = await getClients();
@@ -25,9 +28,11 @@ export const Employes = () => {
 
         }
     };
-    const handleSave = () => {
-        // Lógica para guardar cambios
-    };
+    const selectedClient = (client) => {
+        Object.keys(client).forEach(key => {
+            setValue(key, client[key])
+        })
+    }
 
     const columns = [
         { field: 'id', headerName: 'ID', width: 50 },
@@ -42,7 +47,7 @@ export const Employes = () => {
         { field: 'fechaContratacion', headerName: 'FechaContratacion', width: 150 },
         {
             field: 'Edit', headerName: 'Editar', width: 100, renderCell: (params) => (<>
-                <Actions {...{ params }} />
+                <Actions {...{ params }} editFuntion={selectedClient} />
             </>)
         }
     ];
@@ -52,10 +57,10 @@ export const Employes = () => {
             <div className="container-fluid mt-3">
                 <ClientsTable data={employes} columns={columns} />
                 <CustomModal
-                    title="Modal title"
-                    content={modalContent}
-                    onSave={handleSave}
-                    onClose={() => setModalContent("")}
+                    reset={resetForm}
+                    form={'employ-form'}
+                    title="Formulario Empleado"
+                    content={<EmployForm control={control}  handleSave={handleSubmit(onSubmit)} errors={errors} register={register} />}
                 />
             </div>
         </>
