@@ -86,6 +86,13 @@ class EmpleadoController extends Controller
             ]
         );
 
+        if (!$empleado) {
+            $data = [
+                'message' => 'Error al crear el registro de empleado',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        }
         $user = new UsuarioController();
 
         $usuario = $user->store([
@@ -93,22 +100,16 @@ class EmpleadoController extends Controller
             'contrasena' => $request->contrasena,
             'idEmpleado' => $empleado->idEmpleado
         ]);
-
-        return response()->json($usuario->load('empleado'),200);
-
-        if (!$empleado) {
+        if(!$usuario){
             $data = [
-                'message' => 'Error al crear el registro de empleado',
+                'message' => 'Error al crear el registro de usuario',
                 'status' => 500
             ];
             return response()->json($data, 500);
-        } else {
-            $data = [
-                'empleado' => $empleado,
-                'status' => 201
-            ];
-            return response()->json($data, 201);
         }
+
+        return response()->json($usuario,200);
+        
     }
 
     /**

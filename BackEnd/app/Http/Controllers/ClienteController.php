@@ -193,7 +193,7 @@ class ClienteController extends Controller
         return response()->json(['message' => 'cliente eliminado correctamente'], 200);
     }
 
-        public function registerCli(Request $request)
+    public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
             "cedula" => "required",
@@ -201,7 +201,9 @@ class ClienteController extends Controller
             "apellido" => "required",
             "correoElectronico" => "required|email",
             "direccion" => "required",
-            "fechaIngreso" => "required"
+            "fechaIngreso" => "required",
+            'nombreUsuario' => 'required|unique:Usuario',
+            'contrasena' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -221,12 +223,17 @@ class ClienteController extends Controller
                 "correoElectronico" => $request->correoElectronico,
                 "direccion" => $request->direccion,
                 "fechaIngreso" => $request->fechaIngreso
-
             ]
         );
+        if (!$cliente) {
+            $data = [
+                'message' => 'Error al crear el cliente',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        }
 
-        
-        
+
         $user = new UsuarioController();
 
         $usuario = $user->store([
@@ -234,20 +241,14 @@ class ClienteController extends Controller
             'contrasena' => $request->contrasena,
             'idCliente' => $cliente->idCliente
         ]);
-
-        return response()->json($usuario);
-        if (!$cliente) {
+        if (!$usuario) {
             $data = [
-                'message' => 'Error al crear el cliente',
+                'message' => 'Error al crear el registro de usuario',
                 'status' => 500
             ];
             return response()->json($data, 500);
-        } else {
-            $data = [
-                'cliente' => $cliente,
-                'status' => 201
-            ];
-            return response()->json($data, 201);
         }
-}
+
+        return response()->json($usuario,200);
+    }
 }
