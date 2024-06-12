@@ -14,7 +14,7 @@
     /* Evitar que el texto se envuelva */
 }
 
-.active {
+.sidebar .active {
     background-color: #000 !important;
     /* Ejemplo: cambia el fondo cuando está activo */
     color: #fff !important;
