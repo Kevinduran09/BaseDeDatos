@@ -13,24 +13,24 @@ class Empleado extends Model
 
     protected $primaryKey = "idEmpleado";
 
-    protected $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = [
         "idEmpleado",
-        "puesto",
+        "idPuesto",
         "cedula",
         "nombre",
         "apellido",
         "correoElectronico",
         "telefono",
         "direccion",
-        "fehaNacimmiento",
+        "fechaNacimiento",
         "fechaContratacion"
     ];
 
     public function puesto()
     {
-        return $this->belongsTo(Puesto::class, "puesto");
+        return $this->belongsTo(Puesto::class, "idPuesto");
     }
 
     public function viaje()

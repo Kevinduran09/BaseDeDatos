@@ -6,6 +6,7 @@ use App\Http\Controllers\RecorridoController;
 use App\Http\Controllers\TelefonoController;
 use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\DestinoController;
+use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Middleware\ApiAuthMiddlewareCliente;
@@ -28,8 +29,8 @@ use App\Http\Middleware\ApiAuthMiddlewareVerifyCliente;
             });
             Route::resource('/usuario', UsuarioController::class, ['except' => ['create', 'edit']]);
             Route::resource('/solicitud', SolicitudController::class, ['except' => ['create', 'edit']]);
-    
-
+            Route::resource('/empleado',EmpleadoController::class, ['except' => ['create', 'edit']]);
+            Route::post('/login',[UsuarioController::class, 'login']);
 /*Route::resource('/cliente', ClienteController::class, ['except' => ['create', 'edit']]);
             Route::resource('/telefono', TelefonoController::class, ['except' => ['create', 'edit']]);
             Route::resource('/vehiculo', VehiculoController::class, ['except' => ['create', 'edit']]);
