@@ -37,12 +37,16 @@ class TelefonoController extends Controller
      */
     public function store(Request $request)
 {
+    // Validar los datos recibidos en la solicitud
     $validator = Validator::make($request->all(), [
         "telefonos" => "required|array",
-        "telefonos.*" => "required|string",
-        "idCliente" => "required"
+        "telefonos." => "required|string",
+        "tipoTelefono" => "required|array",
+        "tipoTelefono." => "required|string",
+        "idCliente" => "required|integer"
     ]);
 
+    // Comprobar si la validación falla
     if ($validator->fails()) {
         $data = [
             'message' => 'Error en la validación de los datos',
@@ -53,13 +57,23 @@ class TelefonoController extends Controller
     }
 
     $telefonos = [];
-    foreach ($request->telefonos as $telefono) {
-        $telefonos[] = Telefono::create([
-            "telefono" => $telefono,
+
+    // Iterar sobre los teléfonos recibidos y crear registros de Telefono
+    foreach ($request->telefonos as $index => $numeroTelefono) {
+        // Verificar si se proporciona un tipo de teléfono para cada número
+        $tipoTelefono = $request->tipoTelefono[$index] ?? null;
+
+        // Crear un nuevo registro de Telefono
+        $nuevoTelefono = Telefono::create([
+            "numeroTelefono" => $numeroTelefono,
+            "tipoTelefono" => $tipoTelefono,
             "idCliente" => $request->idCliente
         ]);
+
+        $telefonos[] = $nuevoTelefono;
     }
 
+    // Comprobar si no se han creado teléfonos
     if (empty($telefonos)) {
         $data = [
             'message' => 'Error al crear los Teléfonos',
@@ -69,6 +83,7 @@ class TelefonoController extends Controller
     } else {
         $data = [
             'Telefonos' => $telefonos,
+            'message' => 'Teléfonos creados exitosamente',
             'status' => 201
         ];
         return response()->json($data, 201);
