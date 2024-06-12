@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use App\Helpers\JwtAuth;
 class UsuarioController extends Controller
 {
     /**
@@ -29,7 +29,7 @@ class UsuarioController extends Controller
         }
 
         return response()->json($response, 200);
-    } 
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -45,31 +45,31 @@ class UsuarioController extends Controller
     public function store($request)
     {
 
-       $validator= Validator::make($request->all(), 
-        [
-        "nombreUsuario"=> "required",
-        "contrasena"=> "required",
-        "idCliente"=> "exists:cliente,idCliente",
-        "idEmpleado"=> "exists:empleado,idEmpleado"
-        ]
-    );
-
-        if ($validator->fails())
-        {
-            $data = 
+        $validator = Validator::make(
+            $request,
             [
-                'message' => 'Error en la validacion de los datos',
-                'error' => $validator->errors(),
-                'status' => 400
-            ];
+                "nombreUsuario" => "required",
+                "contrasena" => "required",
+                "idCliente" => "exists:cliente,idCliente",
+                "idEmpleado" => "exists:empleado,idEmpleado"
+            ]
+        );
+
+        if ($validator->fails()) {
+            $data =
+                [
+                    'message' => 'Error en la validacion de los datos',
+                    'error' => $validator->errors(),
+                    'status' => 400
+                ];
             return response()->json($data, 400);
         }
 
         $usuario = Usuario::create(
-            $request->all()
+            $request
         );
 
-        if(!$usuario) {
+        if (!$usuario) {
             $data = [
                 'message' => 'Error al crear el usuario',
                 'status' => 500
@@ -80,9 +80,8 @@ class UsuarioController extends Controller
                 'usuario' => $usuario,
                 'status' => 201
             ];
-            return response()->json($data, 201);
+            return $usuario;
         }
-
     }
 
     /**
@@ -90,7 +89,7 @@ class UsuarioController extends Controller
      */
     public function show($id)
     {
-        $usuario = Usuario::find( $id );        
+        $usuario = Usuario::find($id);
 
         if (!$usuario) {
             return response()->json(['message' => 'usuario no encontrado'], 404);
@@ -127,8 +126,8 @@ class UsuarioController extends Controller
             [
 
 
-        "nombreUsuario"=> "required",
-        "contrasena"=> "required",
+                "nombreUsuario" => "required",
+                "contrasena" => "required",
 
             ]
         );
@@ -146,7 +145,7 @@ class UsuarioController extends Controller
         $usuario->contrasena = $request->contrasena;
         $usuario->idCliente = $request->idCliente;
         //$usuario->idEmpleado = $request->idEmpleado;
-     
+
         $usuario->save();
 
         $data = [
@@ -172,5 +171,30 @@ class UsuarioController extends Controller
 
         return response()->json(['message' => 'usuario eliminado correctamente'], 200);
     }
+    public function login(request $request)
+    {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "nombreUsuario" => "required|exists:Usuario,nombreUsuario",
+                "contrasena" => "required"
+            ]
+        );
 
+        if ($validator->fails()) {
+            $data =
+                [
+                    'message' => 'Error en la validacion de los datos',
+                    'error' => $validator->errors(),
+                    'status' => 400
+                ];
+            return response()->json($data, 400);
+        }
+
+        $user = Usuario::with(['empleado.puesto','cliente'])->where(["nombreUsuario" => $request->nombreUsuario, "contrasena" => $request->contrasena])->first();
+
+        $jwt =  new JwtAuth();
+        $response = $jwt->getToken($user);
+        return response($response);
+    }
 }

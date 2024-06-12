@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Empleado;
 use App\Http\Controllers\Controller;
-use illuminate\Http\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\JwtAuth;
 use App\Http\Controllers\UsuarioController;
@@ -47,18 +47,19 @@ class EmpleadoController extends Controller
      */
     public function store(request $request)
     {
+    
         $validator = Validator::make(
             $request->all(),
             [
-                "puesto" => 'exists:puesto,idPuesto',
-                "cedula" => 'required',
-                "nombre" => 'required',
-                "apellido" => 'required',
-                "correoElectronico" => 'required | email',
-                "telefono" => 'required',
-                "direccion" => 'required',
-                "fechaNacimiento" => 'required',
-                "fechaContratacion" => 'required'
+                "puesto" => "required|numeric|exists:Puesto,idPuesto",
+                "cedula" => "required",
+                "nombre" => "required",
+                "apellido" => "required",
+                "correoElectronico" => "required | email",
+                "telefono" => "required",
+                "direccion" => "required",
+                "fechaNacimiento" => "required",
+                "fechaContratacion" => "required"
             ]
         );
 
@@ -94,7 +95,7 @@ class EmpleadoController extends Controller
             'idEmpleado' => $empleado->idEmpleado
         ]);
 
-        return response()->json($usuario);
+        return response()->json($usuario->load('empleado'),200);
 
         if (!$empleado) {
             $data = [

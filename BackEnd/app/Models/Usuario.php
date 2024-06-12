@@ -25,15 +25,15 @@ class Usuario extends Model
 
 
     ];
-    public function Cliente()
+    public function cliente()
     {
-        return $this->hasOne(Cliente::class, 'idCliente');
+        return $this->belongsTo(Cliente::class, 'idCliente');
     }
 
-         
-    public function Empleado()
+        
+    public function empleado()
     {
-        return $this->hasOne(Empleado::class, 'idEmpleado');
+        return $this->belongsTo(Empleado::class, 'idEmpleado');
     }
-       
+        
 }

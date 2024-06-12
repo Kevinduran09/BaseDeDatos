@@ -13,7 +13,7 @@ class Puesto extends Model
 
     protected $primaryKey = "idPuesto";
 
-    protected $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = [
         "idPuesto",

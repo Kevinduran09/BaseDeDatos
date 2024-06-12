@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\UsuarioController;
 use App\Helpers\JwtAuth;
+
 class ClienteController extends Controller
 {
     /**
@@ -31,7 +33,7 @@ class ClienteController extends Controller
         }
 
         return response()->json($response, 200);
-    } 
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -39,39 +41,39 @@ class ClienteController extends Controller
     public function store(request $request)
     {
 
-       $validator= Validator::make($request->all(), 
-        [
-        "cedula"=> "required|unique:cliente",
-        "nombre"=> "required",
-        "apellido" => "required",
-        "correoElectronico" => "required|email",
-        "direccion"=> "required",
-        "fechaIngreso" => "required"
-       
-        ]
-    );
-
-        if ($validator->fails())
-        {
-            $data = 
+        $validator = Validator::make(
+            $request->all(),
             [
-                'message' => 'Error en la validacion de los datos',
-                'error' => $validator->errors(),
-                'status' => 400
-            ];
+                "cedula" => "required|unique:cliente",
+                "nombre" => "required",
+                "apellido" => "required",
+                "correoElectronico" => "required|email",
+                "direccion" => "required",
+                "fechaIngreso" => "required"
+
+            ]
+        );
+
+        if ($validator->fails()) {
+            $data =
+                [
+                    'message' => 'Error en la validacion de los datos',
+                    'error' => $validator->errors(),
+                    'status' => 400
+                ];
             return response()->json($data, 400);
         }
 
         $cliente = Cliente::create(
             [
-                "cedula"=> $request->cedula,
-                "nombre"=> $request->nombre,
+                "cedula" => $request->cedula,
+                "nombre" => $request->nombre,
                 "apellido" => $request->apellido,
                 "correoElectronico" => $request->correoElectronico,
-                "direccion"=> $request->direccion,
-                "fechaIngreso"=> $request->direccion
-
-        ]);
+                "direccion" => $request->direccion,
+                "fechaIngreso" => $request->direccion
+            ]
+        );
 
         $user = new UsuarioController();
 
@@ -82,8 +84,7 @@ class ClienteController extends Controller
         ]);
 
         return response()->json($usuario);
-
-        if(!$cliente) {
+        if (!$cliente) {
             $data = [
                 'message' => 'Error al crear el cliente',
                 'status' => 500
@@ -96,7 +97,6 @@ class ClienteController extends Controller
             ];
             return response()->json($data, 201);
         }
-
     }
 
     /**
@@ -104,7 +104,7 @@ class ClienteController extends Controller
      */
     public function show($id)
     {
-        $cliente = Cliente::find( $id );        
+        $cliente = Cliente::find($id);
 
         if (!$cliente) {
             return response()->json(['message' => 'cliente no encontrado'], 404);
@@ -141,12 +141,12 @@ class ClienteController extends Controller
             [
 
 
-        "cedula"=> "required",
-        "nombre"=> "required",
-        "apellido" => "required",
-        "correoElectronico" => "required|email",
-        "direccion"=> "required",
-        "fechaIngreso" => "required"
+                "cedula" => "required",
+                "nombre" => "required",
+                "apellido" => "required",
+                "correoElectronico" => "required|email",
+                "direccion" => "required",
+                "fechaIngreso" => "required"
 
             ]
         );
@@ -193,15 +193,14 @@ class ClienteController extends Controller
         return response()->json(['message' => 'cliente eliminado correctamente'], 200);
     }
 
-   
-    public function registerCli(Request $request)
+        public function registerCli(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "cedula"=> "required",
-            "nombre"=> "required",
+            "cedula" => "required",
+            "nombre" => "required",
             "apellido" => "required",
             "correoElectronico" => "required|email",
-            "direccion"=> "required",
+            "direccion" => "required",
             "fechaIngreso" => "required"
         ]);
 
@@ -216,14 +215,15 @@ class ClienteController extends Controller
 
         $cliente = Cliente::create(
             [
-                "cedula"=> $request->cedula,
-                "nombre"=> $request->nombre,
+                "cedula" => $request->cedula,
+                "nombre" => $request->nombre,
                 "apellido" => $request->apellido,
                 "correoElectronico" => $request->correoElectronico,
-                "direccion"=> $request->direccion,
-                "fechaIngreso"=> $request->direccion
+                "direccion" => $request->direccion,
+                "fechaIngreso" => $request->direccion
 
-        ]);
+            ]
+        );
 
         if (!$cliente) {
             $data = [
@@ -241,5 +241,4 @@ class ClienteController extends Controller
 
         return response()->json($data, 201);
     }
-
 }
