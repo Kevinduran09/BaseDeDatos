@@ -39,20 +39,9 @@ class JwtAuth
                 'cargo'=>$user->empleado->puesto->cargo,
                 'exp' => time() + (1200000) //(20 * 60) //Equivale a 20 minutos
             ];
-            $response = JWT::encode($token, $this->key, 'HS256');
+            $response = JWT::encode($token, $this->key, 'HS256'); 
             return $response;
-        }
-
-
-        if (is_object($user)) {
-            $token = array(
-                'iss' => $user->id,
-                
-                'tipo' => 'paciente',
-              
-            );
-            $response = JWT::encode($token, $this->key, 'HS256');
-        } else {
+        }else {
             $response = array(
                 'message' => 'Datos de autentificacion incorrectos',
                 'status' => 401,

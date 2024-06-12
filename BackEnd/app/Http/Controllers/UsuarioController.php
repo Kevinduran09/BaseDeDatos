@@ -197,4 +197,12 @@ class UsuarioController extends Controller
         $response = $jwt->getToken($user);
         return response($response);
     }
+
+    public function current(request $request){
+        $token = $request->bearerToken();
+
+        $jwt = new JwtAuth();
+       
+    }
+
 }

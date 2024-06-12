@@ -6,7 +6,7 @@ export const Navbar = () => {
   return (
     <Fragment>
       <nav className='contenedor navbarsec'>
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+        <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
          <img src='../../' alt="" />
         </a>
         <ul>
