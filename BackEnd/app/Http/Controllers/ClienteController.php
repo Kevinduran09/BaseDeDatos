@@ -73,6 +73,16 @@ class ClienteController extends Controller
 
         ]);
 
+        $user = new UsuarioController();
+
+        $usuario = $user->store([
+            'nombreUsuario' => $request->nombreUsuario,
+            'contrasena' => $request->contrasena,
+            'idCliente' => $cliente->idCliente
+        ]);
+
+        return response()->json($usuario);
+
         if(!$cliente) {
             $data = [
                 'message' => 'Error al crear el cliente',
@@ -183,24 +193,7 @@ class ClienteController extends Controller
         return response()->json(['message' => 'cliente eliminado correctamente'], 200);
     }
 
-    public function loginCli(Request $request)
-    {
-        $rules = ['cedula' => 'required', 'contrasena' => 'required'];
-        $isValid = validator($request->all(), $rules);
-
-        if (!$isValid->fails()) {
-            $jwt =  new JwtAuth();
-            $response = $jwt->getTokenCliente($request->cedula, $request->contrasena);
-            return response()->json($response);
-        } else {
-            $response = array(
-                'message' => 'Error al validar los datos',
-                'errors' => $isValid->errors(),
-                'status' => 406,
-            );
-            return response()->json($response, 406);
-        }
-    }
+   
     public function registerCli(Request $request)
     {
         $validator = Validator::make($request->all(), [
