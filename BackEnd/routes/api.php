@@ -31,7 +31,7 @@ use App\Http\Middleware\ApiAuthMiddlewareVerifyCliente;
             Route::resource('/solicitud', SolicitudController::class, ['except' => ['create', 'edit']]);
             Route::resource('/empleado',EmpleadoController::class, ['except' => ['create', 'edit']]);
             Route::post('/login',[UsuarioController::class, 'login']);
-            Route::options('/current', [UsuarioController::class, 'current'])
+            Route::options('/current', [UsuarioController::class, 'current']);
 /*Route::resource('/cliente', ClienteController::class, ['except' => ['create', 'edit']]);
             Route::resource('/telefono', TelefonoController::class, ['except' => ['create', 'edit']]);
             Route::resource('/vehiculo', VehiculoController::class, ['except' => ['create', 'edit']]);
