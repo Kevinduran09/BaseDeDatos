@@ -5,15 +5,16 @@ import { OutlinedInput } from '@mui/material';
 import { InputLabel } from '@mui/material';
 import { MenuItem } from '@mui/material';
 import { FormControl } from '@mui/material';
+import {Input} from '@mui/material';
 import { Select } from '@mui/material';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
-import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/LocalizationProvider';
-import {DateTimePicker} from '@mui/x-date-pickers/DateTimePicker';
-import {TextField} from '@mui/material';
-import {Button} from '@mui/material';
-import {Grid} from '@mui/material';
-import {Box} from '@mui/material';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { TextField } from '@mui/material';
+import { Button } from '@mui/material';
+import { Grid } from '@mui/material';
+import { Box } from '@mui/material';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -86,95 +87,94 @@ export const Solicitar = () => {
 
   return (
     <Fragment>
-      <div className="div-solicitar bg-white">
-        <form className="form-solicitar">
-        <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={1}>
+      <div className='w-100 d-flex justify-content-center'>
+        <div className="bg-white p-3 rounded" style={{width:'50%'}}>
+          <div className="row mb-5">
+            <h2>Formulario solicitud de servicio</h2>
+          </div>
+          <form className="form-solicitar">
 
-        <Grid item xs={4}>
-        <FormControl sx={{ m: 1, width: 300 }}>
-          <InputLabel id="demo-multiple-name-label">Servicios</InputLabel>
-          <Select 
-            labelId="demo-multiple-name-label"
-            id="demo-multiple-name"
-            multiple
-            value={personName}
-            onChange={handleChange}
-            input={<OutlinedInput label="Name" />}
-            MenuProps={MenuProps}
-          >
-            {names.map((name) => (
-              <MenuItem
-                key={name}
-                value={name}
-              >
-                {name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        </Grid>
+            <Grid container spacing={3} justifyContent={'center'} sx={{ maxWidth: '100%' }}>
 
-        <Grid item xs={4}>
-        <FormControl sx={{ m: 1, width: 300 }}>
-          <InputLabel id="demo-multiple-places-label">Destino</InputLabel>
-          <Select 
-            labelId="demo-multiple-places-label"
-            id="demo-multiple-places"
-            multiple
-            value={selectedPlaces}
-            onChange={handleChange2}
-            input={<OutlinedInput label="Place" />}
-            MenuProps={MenuProps}
-          >
-            {placesList.map((place) => (
-              <MenuItem
-                key={place}
-                value={place}
-              >
-                {place}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        </Grid>
-        
-        <Grid item xs={3}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer
-        components={[
-          'DateTimePicker',
-        ]}
-      >
-        <DemoItem
-          InputLabel={<InputLabel componentName="DateTimePicker" valueType="date time" />}
-        >
-          <DateTimePicker />
-        </DemoItem>
-      </DemoContainer>
-    </LocalizationProvider>
-    </Grid>
+              <Grid item xs={6}>
+                <FormControl sx={{ width: '100%' }} >
+                  <InputLabel id="demo-multiple-name-label">Servicios</InputLabel>
+                  <Select
+                    labelId="demo-multiple-name-label"
+                    id="demo-multiple-name"
 
-    <Grid item xs={4}>
-    <div className="text-field">
-    <TextField
-          id="outlined-multiline-static"
-          multiline
-          rows={4}
-          defaultValue="Describa el servicio detalladamente, por favor."
-        />
-    </div>
-    </Grid>
+                    value={personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Name" />}
+                    MenuProps={MenuProps}
+                  >
+                    {names.map((name) => (
+                      <MenuItem
+                        key={name}
+                        value={name}
+                      >
+                        {name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
 
-    <Grid item xs={4}>
-    <Button variant="contained">
-        Enviar Solicitud
-      </Button>
-      </Grid>
+              <Grid item xs={6}>
+                <FormControl sx={{ width: '100%' }}  >
+                  <InputLabel id="demo-multiple-places-label">Destino</InputLabel>
+                  <Select
+                    labelId="demo-multiple-places-label"
+                    id="demo-multiple-places"
 
-      </Grid>
-      </Box>
-      </form>
+                    value={selectedPlaces}
+                    onChange={handleChange2}
+                    input={<OutlinedInput label="Place" />}
+                    MenuProps={MenuProps}
+                  >
+                    {placesList.map((place) => (
+                      <MenuItem
+                        key={place}
+                        value={place}
+                      >
+                        {place}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={6}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DemoContainer
+                    components={[
+                      'DateTimePicker',
+                    ]}
+                  >
+                    <DemoItem
+                      InputLabel={<InputLabel componentName="DateTimePicker" valueType="date time" />}
+                    >
+                      <DateTimePicker />
+                    </DemoItem>
+                  </DemoContainer>
+                </LocalizationProvider>
+              </Grid>
+
+              <Grid item xs={6}>
+                <FormControl fullWidth>
+                  <TextField id="outlined-basic" label="Observacion" multiline variant="outlined" />
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={4}>
+                <Button variant="contained">
+                  Enviar Solicitud
+                </Button>
+              </Grid>
+
+            </Grid>
+          </form>
+        </div>
       </div>
     </Fragment>
   );
