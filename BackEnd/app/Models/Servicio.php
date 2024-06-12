@@ -13,7 +13,7 @@ class Servicio extends Model
 
     protected $primaryKey = "idServicio";
 
-    protected $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = [
         "idServicio",

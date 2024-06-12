@@ -8,7 +8,7 @@ use Firebase\JWT\ExpiredException;
 
 use App\Models\Cliente;
 use App\Models\Empleado;
-
+use App\Models\Usuario;
 
 class JwtAuth
 {
@@ -19,17 +19,37 @@ class JwtAuth
         $this->key = "wasdxyz02468auuu";
     }
 
-    public function getTokenCliente($cedula, $contrasena)
+    public function getToken($user)
     {
-        $cliente = Cliente::where(['cedula' => $cedula, 'contrasena' => hash('sha256', $contrasena)])->first();
-
-        if (is_object($cliente)) {
-            $token = array(
-                'iss' => $cliente->idPaciente,
-                'cedula' => $cliente->cedula,
-                'nombre' => $cliente->nombre,
-                'tipo' => 'paciente',
+      
+        if(is_object($user) && $user->idCliente != null){
+            $token = [
+                'iss'=>$user->idUsuario,
+                'issCliente'=>$user->idCliente,
+                'tipo'=>'cliente',
                 'exp' => time() + (1200000) //(20 * 60) //Equivale a 20 minutos
+            ];
+            $response = JWT::encode($token, $this->key, 'HS256');
+             return $response;
+        }else if(is_object($user) && $user->idEmpleado != null){
+            $token = [
+                'iss' => $user->idUsuario,
+                'issCliente' => $user->idEmpleado,
+                'tipo' => 'empleado',
+                'cargo'=>$user->empleado->puesto->cargo,
+                'exp' => time() + (1200000) //(20 * 60) //Equivale a 20 minutos
+            ];
+            $response = JWT::encode($token, $this->key, 'HS256');
+            return $response;
+        }
+
+
+        if (is_object($user)) {
+            $token = array(
+                'iss' => $user->id,
+                
+                'tipo' => 'paciente',
+              
             );
             $response = JWT::encode($token, $this->key, 'HS256');
         } else {

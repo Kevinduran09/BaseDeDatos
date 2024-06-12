@@ -21,19 +21,19 @@ class Usuario extends Model
         "nombreUsuario",
         "contrasena",
         "idCliente",
-        //"idEmpleado"
+        "idEmpleado"
 
 
     ];
-    public function Cliente()
+    public function cliente()
     {
         return $this->belongsTo(Cliente::class, 'idCliente');
     }
 
-         /*
-    public function Empleado()
+        
+    public function empleado()
     {
         return $this->belongsTo(Empleado::class, 'idEmpleado');
     }
-        */
+        
 }

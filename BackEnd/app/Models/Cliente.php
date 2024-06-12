@@ -17,7 +17,6 @@ class Cliente extends Model
 
 
     protected $fillable = [
-
         "idCliente",
         "cedula",
         "nombre",
