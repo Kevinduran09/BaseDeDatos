@@ -18,9 +18,9 @@ class ApiAuthMiddlewareCliente
     {
         $jwt = new JwtAuth();
         $token = $request->bearerToken();
-        $logged = $jwt->verifyTokenCliente($token);
+        $logged = $jwt->verifyToken($token);
 
-        if ($logged) {
+        if ($logged && $logged->tipo == "cliente") {
             return $next($request);
         } else {
             $response = array(
