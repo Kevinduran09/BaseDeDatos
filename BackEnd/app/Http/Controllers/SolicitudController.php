@@ -50,8 +50,10 @@ class SolicitudController extends Controller
        
         "fecha"=> "required",
         "estado"=> "required",
-        "idCliente"=> "required",
-        "idDestino"=> "required",
+        "idCliente"=> "exists:cliente,idCliente",
+        "idDestino"=> "exists:destino,idDestino",
+        "idServicio"=> "exists:servicio,idServicio",
+        "observacion"=> "required",
          ]
      );
  
@@ -72,6 +74,7 @@ class SolicitudController extends Controller
                  "observacion"=> $request->observacion,
                  "estado"=> $request->estado,
                  "idCliente" => $request->idCliente,
+                 "idServicio" => $request->idServicio,
                  "idDestino" => $request->idDestino
              
          ]);
@@ -137,6 +140,8 @@ class SolicitudController extends Controller
 
                 "fecha"=> "required",
                 "estado"=> "required",
+                "observacion"=> "required",
+
             ]
         );
         if ($validator->fails()) {
@@ -151,18 +156,16 @@ class SolicitudController extends Controller
       
         $solicitud->fecha = $request->fecha;
         $solicitud->estado = $request->estado;
-        $solicitud->idCliente = $request->idCliente;
-        $solicitud->idDestino = $request->idDestino;
         $solicitud->observacion = $request->observacion;
      
         $solicitud->save();
 
         $data = [
             'message' => 'Los  datos de la solicitud fueron actualizados.',
-            'medico' => $solicitud,
+            'mesolicituddico' => $solicitud,
             'status' => 200
         ];
-        
+        return response()->json($data, 200);
     }
     /**
      * Remove the specified resource from storage.

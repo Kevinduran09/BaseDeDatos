@@ -59,5 +59,6 @@ Route::prefix('v1')->group(
         Route::put('/servicio/{17}', [ServicioController::class,'update'])->middleware(ApiAuthMiddlewareAdmin::class);
         Route::post('/login', [UsuarioController::class, 'login']);
         Route::post('/current', [UsuarioController::class, 'current']);
+        
     }
 );

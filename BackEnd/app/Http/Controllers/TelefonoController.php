@@ -37,17 +37,14 @@ class TelefonoController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar los datos recibidos en la solicitud
         $validator = Validator::make($request->all(), [
             "telefonos" => "required|array",
-            "telefonos." => "required|string",
-
+            "telefonos.*" => "required|string", 
             "tipoTelefono" => "required|array",
-            "tipoTelefono." => "required|string",
-
-            "idCliente" => "required|integer" 
+            "tipoTelefono.*" => "required|string", 
+            "idCliente" => "required|integer"
         ]);
-
+    
         if ($validator->fails()) {
             $data = [
                 'message' => 'Error en la validación de los datos',
@@ -56,24 +53,24 @@ class TelefonoController extends Controller
             ];
             return response()->json($data, 400);
         }
-
+    
         $telefonos = [];
-
+    
         // Iterar sobre los teléfonos recibidos y crear registros de Telefono
         foreach ($request->telefonos as $index => $numeroTelefono) {
             // Verificar si se proporciona un tipo de teléfono para cada número
             $tipoTelefono = $request->tipoTelefono[$index] ?? null;
-
+    
             // Crear un nuevo registro de Telefono
             $nuevoTelefono = Telefono::create([
                 "numeroTelefono" => $numeroTelefono,
                 "tipoTelefono" => $tipoTelefono,
                 "idCliente" => $request->idCliente
             ]);
-
+    
             $telefonos[] = $nuevoTelefono;
         }
-
+    
         if (empty($telefonos)) {
             $data = [
                 'message' => 'Error al crear los Teléfonos',
@@ -89,6 +86,7 @@ class TelefonoController extends Controller
             return response()->json($data, 201);
         }
     }
+    
 
     
 // :x
@@ -132,9 +130,8 @@ class TelefonoController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-
-
-                "telefonos"=> "required",
+                "numeroTelefono"=> "required",
+               "tipoTelefono" => "required"
             ]
         );
         if ($validator->fails()) {
@@ -147,8 +144,9 @@ class TelefonoController extends Controller
             return response()->json($data, 400);
         }
         
-        $telefono->telefonos = $request->telefonos;
-        $telefono->idCliente = $request->idCliente;
+        $telefono->numeroTelefono = $request->numeroTelefono;
+        $telefono->tipoTelefono = $request->tipoTelefono;
+
         $telefono->save();
 
         $data = [
