@@ -71,7 +71,7 @@ class ClienteController extends Controller
                 "apellido" => $request->apellido,
                 "correoElectronico" => $request->correoElectronico,
                 "direccion" => $request->direccion,
-                "fechaIngreso" => $request->direccion
+                "fechaIngreso" => $request->fechaIngreso
             ]
         );
 
@@ -220,25 +220,34 @@ class ClienteController extends Controller
                 "apellido" => $request->apellido,
                 "correoElectronico" => $request->correoElectronico,
                 "direccion" => $request->direccion,
-                "fechaIngreso" => $request->direccion
+                "fechaIngreso" => $request->fechaIngreso
 
             ]
         );
 
+        
+        
+        $user = new UsuarioController();
+
+        $usuario = $user->store([
+            'nombreUsuario' => $request->nombreUsuario,
+            'contrasena' => $request->contrasena,
+            'idCliente' => $cliente->idCliente
+        ]);
+
+        return response()->json($usuario);
         if (!$cliente) {
             $data = [
-                'message' => 'Error al guardar el cliente',
+                'message' => 'Error al crear el cliente',
                 'status' => 500
             ];
             return response()->json($data, 500);
+        } else {
+            $data = [
+                'cliente' => $cliente,
+                'status' => 201
+            ];
+            return response()->json($data, 201);
         }
-
-        $data = [
-            'message' => 'cliente creado correctamente',
-            'cliente' =>  $cliente,
-            'status' => 201
-        ];
-
-        return response()->json($data, 201);
-    }
+}
 }

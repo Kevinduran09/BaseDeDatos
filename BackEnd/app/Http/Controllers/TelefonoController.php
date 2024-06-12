@@ -36,44 +36,59 @@ class TelefonoController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        "telefonos" => "required|array",
-        "telefonos.*" => "required|string",
-        "idCliente" => "required"
-    ]);
+    {
+        // Validar los datos recibidos en la solicitud
+        $validator = Validator::make($request->all(), [
+            "telefonos" => "required|array",
+            "telefonos." => "required|string",
 
-    if ($validator->fails()) {
-        $data = [
-            'message' => 'Error en la validación de los datos',
-            'error' => $validator->errors(),
-            'status' => 400
-        ];
-        return response()->json($data, 400);
-    }
+            "tipoTelefono" => "required|array",
+            "tipoTelefono." => "required|string",
 
-    $telefonos = [];
-    foreach ($request->telefonos as $telefono) {
-        $telefonos[] = Telefono::create([
-            "telefono" => $telefono,
-            "idCliente" => $request->idCliente
+            "idCliente" => "required|integer" 
         ]);
-    }
 
-    if (empty($telefonos)) {
-        $data = [
-            'message' => 'Error al crear los Teléfonos',
-            'status' => 500
-        ];
-        return response()->json($data, 500);
-    } else {
-        $data = [
-            'Telefonos' => $telefonos,
-            'status' => 201
-        ];
-        return response()->json($data, 201);
+        if ($validator->fails()) {
+            $data = [
+                'message' => 'Error en la validación de los datos',
+                'error' => $validator->errors(),
+                'status' => 400
+            ];
+            return response()->json($data, 400);
+        }
+
+        $telefonos = [];
+
+        // Iterar sobre los teléfonos recibidos y crear registros de Telefono
+        foreach ($request->telefonos as $index => $numeroTelefono) {
+            // Verificar si se proporciona un tipo de teléfono para cada número
+            $tipoTelefono = $request->tipoTelefono[$index] ?? null;
+
+            // Crear un nuevo registro de Telefono
+            $nuevoTelefono = Telefono::create([
+                "numeroTelefono" => $numeroTelefono,
+                "tipoTelefono" => $tipoTelefono,
+                "idCliente" => $request->idCliente
+            ]);
+
+            $telefonos[] = $nuevoTelefono;
+        }
+
+        if (empty($telefonos)) {
+            $data = [
+                'message' => 'Error al crear los Teléfonos',
+                'status' => 500
+            ];
+            return response()->json($data, 500);
+        } else {
+            $data = [
+                'Telefonos' => $telefonos,
+                'message' => 'Teléfonos creados exitosamente',
+                'status' => 201
+            ];
+            return response()->json($data, 201);
+        }
     }
-}
 
     
 // :x
