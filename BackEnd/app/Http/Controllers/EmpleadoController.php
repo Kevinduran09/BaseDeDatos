@@ -50,7 +50,7 @@ class EmpleadoController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                "puesto" => "required|numeric|exists:Puesto,idPuesto",
+                "idPuesto" => "required|numeric|exists:Puesto,idPuesto",
                 "cedula" => "required",
                 "nombre" => "required",
                 "apellido" => "required",
@@ -74,7 +74,7 @@ class EmpleadoController extends Controller
 
         $empleado = Empleado::create(
             [
-                "puesto" => $request->puesto,
+                "idPuesto" => $request->idPuesto,
                 "cedula" => $request->cedula,
                 "nombre" => $request->nombre,
                 "apellido" => $request->apellido,
@@ -154,7 +154,7 @@ class EmpleadoController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            "puesto" => 'exists:puesto,idPuesto',
+            "idPuesto" => 'exists:puesto,idPuesto',
             "cedula" => 'required',
             "nombre" => 'required',
             "apellido" => 'required',
@@ -174,7 +174,7 @@ class EmpleadoController extends Controller
             return response()->json($response, 400);
         }
 
-        $empleado->puesto = $request->puesto;
+        $empleado->idPuesto = $request->idPuesto;
         $empleado->cedula = $request->cedula;
         $empleado->nombre = $request->nombre;
         $empleado->apellido = $request->apellido;
