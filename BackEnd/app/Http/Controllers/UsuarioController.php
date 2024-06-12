@@ -189,9 +189,18 @@ class UsuarioController extends Controller
         }
 
         $user = Usuario::with(['empleado.puesto','cliente'])->where(["nombreUsuario" => $request->nombreUsuario, "contrasena" => $request->contrasena])->first();
-
+        if(!$user){
+            return response()->json('Error nombre usuario y/o contraseña incorrectos',400);
+        }
         $jwt =  new JwtAuth();
         $response = $jwt->getToken($user);
-        return response($response);
+        return response($response,200);
     }
+
+    public function current(request $request){
+        $jwt = new JwtAuth();
+        $token = $jwt->verifyToken($request->bearerToken(),true);
+        return response()->json($token,200);
+    }
+
 }
