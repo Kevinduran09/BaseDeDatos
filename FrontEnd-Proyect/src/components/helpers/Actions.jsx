@@ -1,7 +1,7 @@
 import { Tooltip,IconButton } from '@mui/material'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-export const Actions = ({params,editFuntion}) => {
+export const Actions = ({params,editFuntion,deleteFunction}) => {
   return (
     <>
       <Tooltip title='Editar'>
@@ -10,7 +10,12 @@ export const Actions = ({params,editFuntion}) => {
         </IconButton>
       </Tooltip>
       <Tooltip title='Eliminar'>
-        <IconButton>
+        <IconButton onClick={()=>{
+         
+          let obj = Object.keys(params.row)
+          const id = params.row[obj[0]]
+          deleteFunction(id)
+        }}>
           <DeleteForeverIcon color='error' />
         </IconButton>
       </Tooltip>

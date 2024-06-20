@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\JwtAuth;
+use App\Models\Solicitud;
 
 class RecorridoController extends Controller
 {
@@ -33,14 +34,8 @@ class RecorridoController extends Controller
         return response()->json($response, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
+   
+   
     /**
      * Store a newly created resource in storage.
      */
@@ -50,9 +45,10 @@ class RecorridoController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                "estado" => "required",
+                "estado" => "",
                 "idCliente" => "required|exists:Cliente,idCliente",
-                "idSolicitud" => "required|exists:Solicitud,idSolicitud"
+                "idSolicitud" => "required|exists:Solicitud,idSolicitud",
+                'idViaje'=>'required|exists:Viaje,idViaje'
             ]
         );
 
@@ -70,8 +66,14 @@ class RecorridoController extends Controller
             [
                 "estado" => $request->estado,
                 "idCliente"  => $request->idCliente,
-                "idSolicitud"  => $request->idSolicitud
+                "idSolicitud"  => $request->idSolicitud,
+                'idViaje'=>$request->idViaje
             ]
+        );
+
+        Solicitud::updateOrCreate(
+            ['idSolicitud'=> $request->idSolicitud],
+            ['estado'=> 'aprobada']
         );
 
         if (!$recorrido) {
@@ -94,7 +96,7 @@ class RecorridoController extends Controller
      */
     public function show($id)
     {
-        $recorrido = Recorrido::find($id);
+        $recorrido = Recorrido::with('cliente.telefonos','solicitud.destino','solicitud.servicio')->where('idRecorrido',$id)->first();
 
         if (!$recorrido) {
             return response()->json(['message' => 'recorrido no encontrado'], 404);
@@ -110,7 +112,32 @@ class RecorridoController extends Controller
     {
         //
     }
+    public function completeRecorrido($id)
+    {
+       
+        $recorrido = Recorrido::where('idSolicitud', $id)->first();
 
+        if (!$recorrido) {
+            return response()->json(['message' => 'Recorrido no encontrado'], 404);
+        }
+
+      
+        $recorrido->estado = 'completado';
+        $recorrido->save();
+
+       
+        $solicitud = Solicitud::find($id);
+
+        if (!$solicitud) {
+            return response()->json(['message' => 'Solicitud no encontrada'], 404);
+        }
+
+      
+        $solicitud->estado = 'realizado';
+        $solicitud->save();
+
+        return response()->json(['message' => 'Recorrido y solicitud completados correctamente'], 200);
+    }
     /**
      * Update the specified resource in storage.
      */

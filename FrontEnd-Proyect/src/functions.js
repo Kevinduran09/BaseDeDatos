@@ -1,38 +1,32 @@
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-export function show_alert(msj, text, icon, foco=''){
-    onfocus(foco)
+export function show_alert(data) {
+
     const MySwal = withReactContent(Swal)
-    MySwal.fire({
-        title:msj,
-        text:text,
-        icon:icon
-    })
+    MySwal.fire(
+        data
+    )
 }
-export function show_option(title,msj,icon,foco=''){
-    onfocus(foco)
+export async function  show_option(title, msj, icon,confirmText='Sí, eliminarlo')  {
+    
     const MySwal = withReactContent(Swal)
-    Swal.fire({
+    const result = await  MySwal.fire({
         title: title,
         text: msj,
         icon: icon,
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-           return true
-        }else{return false}
-    });
+        confirmButtonText: confirmText,
+        cancelButtonText: 'Cancelar'
+    })
+    if (result.isConfirmed) {
+        return true
+    } else { return false }
 }
-function onfocus(foco){
-    if(foco !== ''){
-        document.getElementById(foco).focus()
-    }
-}
-export function showMsj(msj){
+
+export function showMsj(msj,icon) {
     const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -45,7 +39,7 @@ export function showMsj(msj){
         }
     });
     Toast.fire({
-        icon: "success",
+        icon: icon,
         title: msj
     });
 }

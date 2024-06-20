@@ -1,5 +1,5 @@
 import { useEffect,useRef } from "react";
-const CustomModal = ({ title, content, reset, form }) => {
+const CustomModal = ({ title, content, reset, form, modalSize }) => {
 
    const modalref = useRef(null)
     useEffect(()=>{
@@ -14,7 +14,7 @@ const CustomModal = ({ title, content, reset, form }) => {
     },[reset])
     return (
         <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" ref={modalref}>
-            <div className="modal-dialog modal-dialog-centered">
+            <div className={modalSize ? `modal-dialog modal-dialog-centered  ${modalSize}` : `modal-dialog modal-dialog-centered`}>
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5" id="exampleModalLabel">{title}</h1>
@@ -24,8 +24,8 @@ const CustomModal = ({ title, content, reset, form }) => {
                         {content}
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
-                        <button type="submit" className="btn btn-primary" form={form} >Save changes</button>
+                        <button onClick={()=>reset()} type="button" className="btn btn-secondary" data-bs-dismiss="modal" >Cerrar</button>
+                        <button type="submit" className="btn btn-primary" form={form} >Guardar</button>
                     </div>
                 </div>
             </div>

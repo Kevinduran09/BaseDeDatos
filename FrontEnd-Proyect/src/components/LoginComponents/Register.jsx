@@ -2,7 +2,7 @@ import React, { Fragment } from 'react'
 import '../../styles/Register.css'
 import { NavLink } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { registerClient } from '../../../Api/AuthAPI'
+import { registerClient } from '../../Api/AuthAPI'
 import { showMsj, show_alert } from '../../functions'
 import { useNavigate } from 'react-router-dom'
 

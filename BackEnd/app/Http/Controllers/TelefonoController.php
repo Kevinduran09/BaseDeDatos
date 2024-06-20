@@ -38,10 +38,8 @@ class TelefonoController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "telefonos" => "required|array",
-            "telefonos.*" => "required|string", 
-            "tipoTelefono" => "required|array",
-            "tipoTelefono.*" => "required|string", 
+            "telefono" => "required|string",
+            "tipoTelefono" => "required|string",
             "idCliente" => "required|integer"
         ]);
     
@@ -53,25 +51,18 @@ class TelefonoController extends Controller
             ];
             return response()->json($data, 400);
         }
-    
-        $telefonos = [];
-    
-        // Iterar sobre los teléfonos recibidos y crear registros de Telefono
-        foreach ($request->telefonos as $index => $numeroTelefono) {
-            // Verificar si se proporciona un tipo de teléfono para cada número
-            $tipoTelefono = $request->tipoTelefono[$index] ?? null;
-    
-            // Crear un nuevo registro de Telefono
-            $nuevoTelefono = Telefono::create([
-                "numeroTelefono" => $numeroTelefono,
-                "tipoTelefono" => $tipoTelefono,
+        
+      
+
+            $nuevoTelefono = Telefono::create([            
+                "numeroTelefono" => $request->telefono,
+                "tipoTelefono" => $request->tipoTelefono,
                 "idCliente" => $request->idCliente
             ]);
     
-            $telefonos[] = $nuevoTelefono;
-        }
-    
-        if (empty($telefonos)) {
+        
+
+        if (empty($nuevoTelefono)) {
             $data = [
                 'message' => 'Error al crear los Teléfonos',
                 'status' => 500
@@ -79,8 +70,8 @@ class TelefonoController extends Controller
             return response()->json($data, 500);
         } else {
             $data = [
-                'Telefonos' => $telefonos,
-                'message' => 'Teléfonos creados exitosamente',
+                'Telefonos' => $nuevoTelefono,
+                'message' => 'Teléfono creado exitosamente',
                 'status' => 201
             ];
             return response()->json($data, 201);

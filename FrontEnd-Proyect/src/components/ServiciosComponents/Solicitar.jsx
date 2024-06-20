@@ -14,8 +14,9 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { getDestinos, getServicios,postsolicitud } from '../../../Api/ClientAPI';
+import { getDestinos, getServicios,postsolicitud } from '../../Api/ClientAPI';
 import dayjs from 'dayjs';
+import { showMsj } from '../../functions';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -30,7 +31,7 @@ const MenuProps = {
 };
 
 export const Solicitar = () => {
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
+  const { register, handleSubmit, control, formState: { errors },reset } = useForm();
   const [destinos, setDestinos] = useState([]);
   const [servicios, setServicios] = useState([]);
 
@@ -70,11 +71,14 @@ export const Solicitar = () => {
 
     try {
       const res = await postsolicitud(formattedData)
+
       console.log(res);
+      showMsj('Se realizo su solicitud con exito!')
+
     } catch (error) {
       console.log(error);
     }
-
+    reset()
   };
 
   return (

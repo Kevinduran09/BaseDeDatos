@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\Telefono;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UsuarioController;
 use App\Helpers\JwtAuth;
+use App\Models\Usuario;
 
 class ClienteController extends Controller
 {
@@ -17,7 +19,7 @@ class ClienteController extends Controller
      */
     public function index() //funcion para mostrar todos los datos
     {
-        $cliente = Cliente::with('telefonos')->get();
+        $cliente = Cliente::with('telefonos', 'usuario')->get();
 
         if (count($cliente) === 0) {
             $response = [
@@ -50,7 +52,6 @@ class ClienteController extends Controller
                 "correoElectronico" => "required|email",
                 "direccion" => "required",
                 "fechaIngreso" => "required"
-
             ]
         );
 
@@ -74,17 +75,16 @@ class ClienteController extends Controller
                 "fechaIngreso" => $request->fechaIngreso
             ]
         );
-
         $user = new UsuarioController();
-
+       
         $usuario = $user->store([
             'nombreUsuario' => $request->nombreUsuario,
             'contrasena' => $request->contrasena,
             'idCliente' => $cliente->idCliente
         ]);
 
-        return response()->json($usuario);
-        if (!$cliente) {
+
+        if (!$cliente && !$usuario) {
             $data = [
                 'message' => 'Error al crear el cliente',
                 'status' => 500
@@ -169,6 +169,10 @@ class ClienteController extends Controller
 
         $cliente->save();
 
+        $user = Usuario::updateOrCreate(
+            ['idCliente' => $request->idCliente],
+            ['nombreUsuario' => $request->nombreUsuario, 'contrasena' => $request->contrasena]
+        );
         $data = [
             'message' => 'Los  datos del cliente fueron actualizados.',
             'cliente' => $cliente,
@@ -225,6 +229,16 @@ class ClienteController extends Controller
                 "fechaIngreso" => $request->fechaIngreso
             ]
         );
+        Telefono::create([
+            'numeroTelefono' => $request->telefono1,
+            'tipoTelefono' => 'Personal',
+            'idCliente' => $cliente->idCliente
+        ]);
+        Telefono::create([
+            'numeroTelefono' => $request->telefono2,
+            'tipoTelefono' => 'Personal',
+            'idCliente' => $cliente->idCliente
+        ]);
         if (!$cliente) {
             $data = [
                 'message' => 'Error al crear el cliente',
@@ -249,6 +263,6 @@ class ClienteController extends Controller
             return response()->json($data, 500);
         }
 
-        return response()->json($usuario,200);
+        return response()->json($usuario, 200);
     }
 }

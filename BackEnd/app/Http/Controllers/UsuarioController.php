@@ -48,7 +48,7 @@ class UsuarioController extends Controller
         $validator = Validator::make(
             $request,
             [
-                "nombreUsuario" => "required",
+                "nombreUsuario" => "required|unique:Usuario",
                 "contrasena" => "required",
                 "idCliente" => "exists:cliente,idCliente",
                 "idEmpleado" => "exists:empleado,idEmpleado"

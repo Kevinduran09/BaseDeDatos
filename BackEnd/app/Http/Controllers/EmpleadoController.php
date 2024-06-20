@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UsuarioController;
-
+use App\Models\Usuario;
 class EmpleadoController extends Controller
 {
     /**
@@ -15,7 +15,7 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        $empleado = Empleado::with(["puesto"])->get();
+        $empleado = Empleado::with(["puesto",'usuario'])->get();
 
         if ($empleado->isEmpty()) {
             $response = [
@@ -186,6 +186,11 @@ class EmpleadoController extends Controller
         $empleado->fechaContratacion = $request->fechaContratacion;
 
         $empleado->save();
+
+        $user = Usuario::updateOrCreate(
+            ['idEmpleado' => $request->idEmpleado],
+            ['nombreUsuario' => $request->nombreUsuario, 'contrasena' => $request->contrasena]
+        );    
 
         $response = [
             'message' => 'Empleado actualizado correctamente',

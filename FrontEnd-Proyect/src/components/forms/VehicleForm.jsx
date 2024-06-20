@@ -10,6 +10,7 @@ export const VehicleForm = ({ register, handleSave, errors, control }) => {
         <>
             <form onSubmit={handleSave} id='vehicle-form'>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <input type="hidden" {...register('idVehiculo')} />
                     <Grid container spacing={3}>
                         <Grid item xs={6}>
                             <FormControl variant="standard" fullWidth>
@@ -48,7 +49,7 @@ export const VehicleForm = ({ register, handleSave, errors, control }) => {
                                     rules={{ required: 'Fecha de compra es obligatoria' }}
                                     render={({ field }) => (
                                         <DatePicker
-                                            views={['year']}
+                                            views={['year','month','day']}
                                             label="Fecha de Compra"
                                             value={field.value ? dayjs(field.value) : null}
                                             onChange={(date) => field.onChange(date ? date.toISOString() : null)}
