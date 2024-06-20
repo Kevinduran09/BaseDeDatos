@@ -1,42 +1,86 @@
 import React, { useState, useEffect } from 'react';
 import CustomModal from './CustomModal';
-import { ClientsTable } from '../client/ClientsTable';
+import { TableComponent } from '../client/TableComponent';
 import { Actions } from '../helpers/Actions';
 import { VehicleForm } from '../forms/VehicleForm';
 import { useForm } from 'react-hook-form';
-import vehiculos from '../../mucks/vehiculos'
+import AdminAPI from '../../Api/AdminAPI'; // Importa la clase AdminAPI
+import dayjs from 'dayjs';
+import { show_option, showMsj, show_alert } from '../../functions';
+
 export const Vehicle = () => {
-    const { register, handleSubmit, reset, formState: { errors }, setValue,control } = useForm();
+    const { register, handleSubmit, reset, formState: { errors }, setValue, control } = useForm();
     const [vehicles, setVehicles] = useState([]);
 
     useEffect(() => {
-        setVehicles(vehiculos)
+        fetchVehicles();
     }, []);
 
     const fetchVehicles = async () => {
         try {
-            // const response = await getVehicles(); // Assuming getVehicles is an API call to fetch vehicle data
-            const data = response.data.data || [];
+            const response = await AdminAPI.getVehicles(); // Usando AdminAPI para obtener vehículos
+            const data = response.data || [];
             setVehicles(data);
         } catch (error) {
             console.error(error);
         }
     };
-    const resetForm = () => reset()
-    const handleSave = (data) => {
-        // Logic to save the vehicle data
-        console.log(data);
+
+    const resetForm = () => reset({
+        idVehiculo: '',
+        tipoVehiculo: '',
+        placa: '',
+        capacidad: 0,
+        modelo: '',
+        fechaCompra: null,
+        anoVehiculo: null,
+        fichaTecnica: ''
+    });
+
+    const handleSave = async (data) => {
+        data["fechaCompra"] = dayjs(data.fechaCompra).format('YYYY-MM-DD');
+        data["anoVehiculo"] = dayjs(data.anoVehiculo).format('YYYY');
+        try {
+            let result = null;
+            console.log(data);
+            
+            if (data.idVehiculo != '') {
+                result = await AdminAPI.updateVehicle(data); // Usando AdminAPI para actualizar vehículo
+                showMsj('Actualizado con éxito el vehículo');
+            } else {
+                result = await AdminAPI.createVehicle(data); // Usando AdminAPI para crear vehículo
+                showMsj('Creado con éxito el vehículo');
+            }
+            fetchVehicles(); // Actualizar la lista después de crear o actualizar
+        } catch (error) {
+            console.error(error);
+            show_alert({ icon: 'error', title: 'No se pudo crear/actualizar el vehículo' });
+        }
         reset();
-        // Additional logic to save the data (e.g., API call)
     };
+
     const selectedVehicle = (vehicle) => {
-        console.log(vehicle);
         Object.keys(vehicle).forEach(key => {
-            setValue(key, vehicle[key])
-        })
-    }
+            setValue(key, vehicle[key]);
+        });
+    };
+
+    const handleDeleteVehicle = async (id) => {
+        try {
+            const flag = await show_option('Eliminar', '¿Desea eliminar el vehículo?', 'warning');
+            if (flag) {
+                const res = await AdminAPI.deleteVehicle(id); // Usando AdminAPI para eliminar vehículo
+                showMsj('Se eliminó con éxito');
+                fetchVehicles(); // Actualizar la lista después de eliminar
+            }
+        } catch (error) {
+            console.error(error);
+            show_alert({ icon: 'error', title: 'No se pudo eliminar el vehículo' });
+        }
+    };
+
     const columns = [
-        { field: 'id', headerName: 'ID', width: 50 },
+        { field: 'idVehiculo', headerName: 'ID', width: 50 },
         { field: 'tipoVehiculo', headerName: 'Tipo', width: 150 },
         { field: 'placa', headerName: 'Placa', width: 150 },
         { field: 'capacidad', headerName: 'Capacidad', width: 150 },
@@ -47,7 +91,7 @@ export const Vehicle = () => {
         {
             field: 'Edit', headerName: 'Editar', width: 100, renderCell: (params) => (
                 <>
-                    <Actions {...{params}} editFuntion={selectedVehicle} />
+                    <Actions {...{ params }} editFuntion={selectedVehicle} deleteFunction={handleDeleteVehicle} />
                 </>
             )
         }
@@ -55,7 +99,7 @@ export const Vehicle = () => {
 
     return (
         <div className="container-fluid mt-3">
-            <ClientsTable data={vehicles} columns={columns} />
+            <TableComponent data={vehicles} columns={columns} reset={resetForm} />
             <CustomModal
                 form={'vehicle-form'}
                 reset={resetForm}

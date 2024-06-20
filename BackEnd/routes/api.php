@@ -13,10 +13,10 @@ use App\Http\Controllers\VehiculoController;
 use App\Http\Controllers\ViajeController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Middleware\ApiAuthMiddlewareAdmin;
-use App\Http\Middleware\ApiAuthMiddlewareChofer;
-use App\Http\Middleware\ApiAuthMiddlewareVerifyChofer;
+use App\Http\Middleware\ApiAuthMiddlewareAdminChofer;
 use App\Http\Middleware\ApiAuthMiddlewareCliente;
 use App\Http\Middleware\ApiAuthMiddlewareVerifyCliente;
+use GuzzleHttp\Middleware;
 
 Route::prefix('v1')->group(
     function () {
@@ -34,32 +34,28 @@ Route::prefix('v1')->group(
             Route::post('/solicitud/{id}',[SolicitudController::class,'store'])->middleware([ApiAuthMiddlewareCliente::class, ApiAuthMiddlewareVerifyCliente::class]);
         });
 
-        Route::group(['prefix' => '/chofer'], function () {
-            Route::get('/{id}', [EmpleadoController::class, 'show'])->middleware([ApiAuthMiddlewareChofer::class, ApiAuthMiddlewareVerifyChofer::class]);
-            Route::put('/actualizarCho/{id}', [EmpleadoController::class, 'update'])->middleware([ApiAuthMiddlewareChofer::class, ApiAuthMiddlewareVerifyChofer::class]);
-
-            Route::get('/viaje/indexChofer', [ViajeController::class, 'indexViajeChofer'])->middleware(ApiAuthMiddlewareChofer::class);
-            Route::get('/viaje/{id}', [ViajeController::class, 'showViajeChofer'])->middleware(ApiAuthMiddlewareChofer::class);
-
-            Route::put('/recorrido/actualizar/{id}', [RecorridoController::class, 'updateRecorridoChofer'])->middleware(ApiAuthMiddlewareChofer::class);
-        });
-
         Route::group(['prefix' => '/administrador'], function () {
             Route::resource('/cliente', ClienteController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
             Route::resource('/destino', DestinoController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
             Route::resource('/empleado', EmpleadoController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
             Route::resource('/puesto', PuestoController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
-            Route::resource('/recorrido', RecorridoController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
+            Route::resource('/recorrido', RecorridoController::class, ['except' => ['create', 'edit']]);
             Route::resource('/servicio', ServicioController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
             Route::resource('/solicitud', SolicitudController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
             Route::resource('/telefono', TelefonoController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
             Route::resource('/vehiculo', VehiculoController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
-            Route::resource('/viaje', ViajeController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
+            Route::resource('/viaje', ViajeController::class, ['except' => ['create', 'edit']])->Middleware(ApiAuthMiddlewareAdminChofer::class);
             Route::resource('/usuario', UsuarioController::class, ['except' => ['create', 'edit']])->middleware(ApiAuthMiddlewareAdmin::class);
+            Route::post('/solicitud/cancel/{id}',[SolicitudController::class,'cancel'])->middleware(ApiAuthMiddlewareAdmin::class);
+            Route::get('/viaje/empleado/{id}',[ViajeController::class,'getByEmployee'])->Middleware(ApiAuthMiddlewareAdminChofer::class);
+            Route::post('/viaje/fecha',[ViajeController::class, 'getViajeByFecha'])->Middleware(ApiAuthMiddlewareAdmin::class);
+            Route::post('recorrido/complete/{id}',[RecorridoController::class, 'completeRecorrido'])->Middleware(ApiAuthMiddlewareAdminChofer::class);
+            
+
         });
-        Route::put('/empleadoUp/{id}', [EmpleadoController::class, 'update'])->middleware(ApiAuthMiddlewareAdmin::class);
-        Route::delete('/empleadoDet/{id}', [EmpleadoController::class, 'destroy'])->middleware(ApiAuthMiddlewareAdmin::class);
-        Route::put('/servicio/{17}', [ServicioController::class,'update'])->middleware(ApiAuthMiddlewareAdmin::class);
+       
+       
+       
         Route::post('/login', [UsuarioController::class, 'login']);
 
         Route::options('/current', [UsuarioController::class, 'current']);

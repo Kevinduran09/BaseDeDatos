@@ -33,9 +33,9 @@ class Empleado extends Model
         return $this->belongsTo(Puesto::class, "idPuesto");
     }
 
-    public function viaje()
+    public function viajes()
     {
-        return $this->belongsToMany(Viaje::class, "Tripulacion");
+        return $this->belongsToMany(Viaje::class, 'tripulacion', 'idEmpleado', 'idViaje');
     }
 
     public function Usuario()

@@ -15,7 +15,7 @@ class ViajeController extends Controller
      */
     public function index()
     {
-        $viaje = Viaje::with(["empleado", "vehiculo"])->get();
+        $viaje = Viaje::with(["empleados", "vehiculo",'recorridos.solicitud','recorridos.cliente'])->get();
 
         if ($viaje->isEmpty()) {
             $response = [
@@ -33,18 +33,33 @@ class ViajeController extends Controller
         return response()->json($response, 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+ 
+    public function getByEmployee($id)
     {
-        //
+        $viajes = Viaje::with(["empleados", "vehiculo",'recorridos.solicitud','recorridos.cliente'])->whereHas('empleados', function ($query) use ($id) {
+            $query->where('tripulacion.idEmpleado', $id);
+        })->get();
+        if ($viajes->isEmpty()) {
+            $response = [
+                "status" => 200,
+                "message" => "El sistema no cuenta con viajes",
+            ];
+        } else {
+            $response = [
+                "status" => 200,
+                "message" => "Viajes obtenidos correctamente",
+                "data" => $viajes
+            ];
+        }
+
+        return response()->json($response, 200);
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(request $request)
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'idVehiculo' => 'exists:vehiculo,idVehiculo',
@@ -60,6 +75,19 @@ class ViajeController extends Controller
             return response()->json($response, 400);
         }
 
+        // Verificar si ya existe un viaje en la fecha solicitada
+        $existingViaje = Viaje::whereDate('fechaViaje', $request->fechaViaje)->first();
+
+        if ($existingViaje) {
+            $response = [
+                'message' => 'Viaje ya existe para la fecha solicitada',
+                'status' => 200,
+                'viaje' => $existingViaje->load('empleados', 'vehiculo', 'recorridos'),
+            ];
+            return response()->json($response, 200);
+        }
+
+        // Crear un nuevo viaje
         $viaje = Viaje::create([
             'idVehiculo' => $request->idVehiculo,
             'fechaViaje' => $request->fechaViaje
@@ -72,21 +100,22 @@ class ViajeController extends Controller
             ];
             return response()->json($response, 500);
         }
-
-        $response = [
-            'message' => 'Viaje creado correctamente',
-            'status' => 201,
-            'viaje' => $viaje,
-        ];
-        return response()->json($response, 201);
+        try {
+            $viaje->empleados()->attach($request->empleados);
+        } catch (\Throwable $th) {
+            $this->destroy($viaje->idViaje);
+            echo 'se elimino';
+           }
+        return response()->json($viaje->load('empleados', 'vehiculo'), 201);
     }
+
 
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        $viaje = Viaje::with(["empleado", "vehiculo", "recorrido"])->where("idViaje", $id)->first();
+        $viaje = Viaje::with(["empleados.puesto", "vehiculo",'recorridos.solicitud.destino','recorridos.cliente'])->where("idViaje", $id)->first();
 
         if (!$viaje) {
             return response()->json(['message' => 'Viaje no encontrado'], 404);
@@ -145,7 +174,7 @@ class ViajeController extends Controller
         $jwt = new JwtAuth();
         $idCho = $jwt->verifyToken($request->bearerToken(), true);
 
-        $viajes = Viaje::with(["empleado", "vehiculo", "recorrido"])->where("idEmpleado", $idCho->issEmpleado)->get();
+        $viajes = Viaje::with(["empleados", "vehiculo", "recorrido"])->where("idEmpleado", $idCho->issEmpleado)->get();
 
         if ($viajes->isEmpty()) {
             $response = [
@@ -168,7 +197,7 @@ class ViajeController extends Controller
         $jwt = new JwtAuth();
         $idCho = $jwt->verifyToken($request->bearerToken(), true);
 
-        $viaje = Viaje::with(["empleado", "vehiculo", "recorrido"])->where(["idViaje" => $id, "idEmpleado", $idCho->issEmpleado])->get();
+        $viaje = Viaje::with(["empleados", "vehiculo", "recorrido"])->where(["idViaje" => $id, "idEmpleado", $idCho->issEmpleado])->get();
 
         if (!$viaje) {
             return response()->json(['message' => 'Viaje no encontrado'], 404);
@@ -181,4 +210,13 @@ class ViajeController extends Controller
         ];
         return response()->json($response, 200);
     }
+
+    public function getViajeByFecha(Request $request)
+    {
+        $fecha = $request['fecha'];
+        $viajes = Viaje::where('fechaViaje', $fecha)->with('recorridos.solicitud', 'empleados.puesto','vehiculo')->get();
+
+        return response()->json($viajes);
+    }
+
 }

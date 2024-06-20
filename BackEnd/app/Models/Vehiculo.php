@@ -30,5 +30,5 @@ class Vehiculo extends Model
     ];
 
 
-
+    
 }

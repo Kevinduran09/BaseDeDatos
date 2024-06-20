@@ -1,11 +1,10 @@
 import React, { Fragment } from 'react'
 import '../../styles/login.css'
-import { useContext } from 'react'
 import { NavLink,  } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { useState } from 'react'
-import { loginSession, current } from '../../../Api/AuthAPI'
+import { loginSession, current } from '../../Api/AuthAPI'
 import { show_alert } from '../../functions'
 import { useAuth } from '../../Providers/AuthProvider'
 export const Login = () => {
@@ -25,11 +24,14 @@ export const Login = () => {
       try {
         const instance = await current()
         if (instance.data.cargo && instance.data.cargo == 'Administrador') {
+          login(instance.data)
           navigate('/admin'); // 
-        } else if (instance.data.cargo && instance.data.cargo == 'chofer'){
-          // route chofer
+        } else if (instance.data.cargo && instance.data.cargo == 'Chofer'){
+          login(instance.data)
+          navigate('/admin')
         }else{
           console.log(instance);
+
           login(instance.data)
           navigate('/client')
         }

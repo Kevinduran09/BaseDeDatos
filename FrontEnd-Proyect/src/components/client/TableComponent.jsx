@@ -4,7 +4,7 @@ import { Toolbar } from '../helpers/Toolbar';
 
 
 
-export const ClientsTable = ({data,columns}) => {
+export const TableComponent = ({data,columns,reset}) => {
     
     const totalWidth = columns.reduce((acc, column) => acc + column.width, 0);
   return (
@@ -14,7 +14,10 @@ export const ClientsTable = ({data,columns}) => {
                   <DataGrid
                       columns={columns}
                       rows={data}
-                        getRowId={(row)=>row.idCliente}
+                        getRowId={(row)=>{
+                            let obj = Object.keys(row)
+                            return row[obj[0]]
+                        }}
                       initialState={{
                           pagination: { paginationModel: { pageSize: 5 } },
                       }}
@@ -29,6 +32,7 @@ export const ClientsTable = ({data,columns}) => {
                             toolbar: {
                                 showQuickFilter: true,
                                 ...{
+                                    reset: reset,
                                     data:data,
                                     fileName:"archivo"
                                 }

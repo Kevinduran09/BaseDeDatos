@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Solicitud;
+use App\Models\Recorrido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,7 +14,7 @@ class SolicitudController extends Controller
      */
     public function index() //funcion para mostrar todos los datos
     {
-        $solicitud = Solicitud::all();
+        $solicitud = Solicitud::with(['cliente.telefonos','servicio','destino'])->get();
 
         if (count($solicitud) === 0) {
             $response = [
@@ -99,7 +100,8 @@ class SolicitudController extends Controller
      */
     public function show($id)
     {
-        $solicitud = Solicitud::find($id);
+        $solicitud =
+        Solicitud::with(['cliente.telefonos', 'servicio', 'destino'])->where('idSolicitud',$id)->first();
 
         if (!$solicitud) {
             return response()->json(['message' => 'solicitud no encontrada'], 404);
@@ -177,5 +179,17 @@ class SolicitudController extends Controller
         $solicitud->delete();
 
         return response()->json(['message' => 'solicitud eliminada correctamente'], 200);
+    }
+    public function cancel($id){
+        $solicitud = Solicitud::where('idSolicitud',$id)->first();
+
+        if (!$solicitud) {
+            return response()->json(['message' => 'La solicitud no fue encontrado'], 404);
+        }
+
+        $solicitud->update(['estado' =>'cancelado']);
+        $recorrido = Recorrido::where('idSolicitud',$id);
+        $recorrido->update(['estado'=>'cancelado']);
+        return response()->json('se cambio el estado',200);
     }
 }

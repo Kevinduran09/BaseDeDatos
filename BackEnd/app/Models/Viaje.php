@@ -21,18 +21,18 @@ class Viaje extends Model
         "fechaViaje"
     ];
 
-    public function empleado()
+    public function empleados()
     {
-        return $this->belongsToMany(Empleado::class, "Tripulacion");
+        return $this->belongsToMany(Empleado::class, 'tripulacion', 'idViaje', 'idEmpleado');
     }
 
     public function vehiculo()
     {
-        return $this->hasOne(Vehiculo::class, "idVehiuclo");
+        return $this->belongsTo(Vehiculo::class, 'idVehiculo', 'idVehiculo');
     }
 
-    public function recorrido()
+    public function recorridos()
     {
-        return $this->belongsToMany(Recorrido::class, "idViaje");
+        return $this->hasMany(Recorrido::class,"idViaje");
     }
 }

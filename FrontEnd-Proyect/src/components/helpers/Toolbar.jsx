@@ -2,13 +2,13 @@ import { GridToolbarContainer, GridToolbarExport, GridToolbarQuickFilter } from 
 import { Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { DownloadXLSX } from './DownloadXLSX';
-export const Toolbar = ({ data, fileName }) => {
+export const Toolbar = ({ data, fileName,reset }) => {
   return (
       <GridToolbarContainer>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', padding: '2px' }}>
 
               <div>
-                  <Button variant="text" size="small" startIcon={<AddIcon />} data-bs-toggle="modal" data-bs-target="#exampleModal">Agregar</Button>
+                  <Button onClick={()=>reset()} variant="text" size="small" startIcon={<AddIcon />} data-bs-toggle="modal" data-bs-target="#exampleModal">Agregar</Button>
                   <DownloadXLSX data={data} fileName={fileName} />
               </div>
 

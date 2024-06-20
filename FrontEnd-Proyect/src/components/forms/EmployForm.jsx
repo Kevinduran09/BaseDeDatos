@@ -18,10 +18,11 @@ export const EmployForm = ({ register, handleSave, errors, control }) => {
         <form onSubmit={handleSave} id="employ-form">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Grid container spacing={3}>
+                    <input type="hidden" {...register('idEmpleado')} />
                     <Grid item>
                         <Controller
                             control={control}
-                            name='puesto'
+                            name='idPuesto'
                             defaultValue={0}
                             rules={{ required: 'Puesto es obligatorio', validate: value => value != 0 || 'Debe seleccionar un puesto valido' }}
                             render={({ field }) => (
@@ -57,7 +58,7 @@ export const EmployForm = ({ register, handleSave, errors, control }) => {
                         >
 
                         </Controller>
-                        {errors.puesto && <span className="requiredAlert">{errors.puesto.message}</span>}
+                        {errors.idPuesto && <span className="requiredAlert">{errors.idPuesto.message}</span>}
 
                     </Grid>
                     <Grid item>
@@ -94,11 +95,19 @@ export const EmployForm = ({ register, handleSave, errors, control }) => {
                             {errors.correoElectronico && <span className="requiredAlert">{errors.correoElectronico.message}</span>}
                         </FormControl>
                     </Grid>
+
                     <Grid item>
                         <FormControl variant="standard">
                             <InputLabel htmlFor="telefono">Teléfono</InputLabel>
                             <Input id="telefono" {...register('telefono', { required: 'Teléfono es obligatorio' })} />
                             {errors.telefono && <span className="requiredAlert">{errors.telefono.message}</span>}
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <FormControl variant="standard" sx={{ width: '100%', paddingX: '20px' }}>
+                            <InputLabel sx={{ paddingX: '23px' }} htmlFor="component-simple">Dirección</InputLabel>
+                            <Input id="component-simple" {...register('direccion', { required: 'Dirección es requerida' })} />
+                            {errors.direccion && <span className='requiredAlert'>{errors.direccion.message}</span>}
                         </FormControl>
                     </Grid>
                     <Grid item xs={6}>
@@ -107,12 +116,12 @@ export const EmployForm = ({ register, handleSave, errors, control }) => {
                             control={control}
                             defaultValue={null}
                             rules={{ required: 'Fecha de nacimiento es obligatoria' }}
-                            
+
                             render={({ field }) => (
                                 <DatePicker
                                     inputFormat="DD/MM/YYYY"
                                     label="Fecha de Nacimiento"
-                                    
+
                                     value={field.value ? dayjs(field.value) : null}
                                     onChange={(date) => field.onChange(date.toISOString())} // Convertir la fecha a formato ISO antes de establecerla en el campo
                                     renderInput={(params) => <TextField {...params} variant="standard" />}
@@ -139,7 +148,20 @@ export const EmployForm = ({ register, handleSave, errors, control }) => {
                         />
                         {errors.fechaContratacion && <span className="requiredAlert">{errors.fechaContratacion.message}</span>}
                     </Grid>
-
+                    <Grid item>
+                        <FormControl variant="standard">
+                            <InputLabel htmlFor="component-simple">Nombre de usuario</InputLabel>
+                            <Input id="component-simple" {...register('nombreUsuario', { required: 'Usuario requerido' })} />
+                            {errors.nombreUsuario && <span className='requiredAlert'>{errors.nombreUsuario.message}</span>}
+                        </FormControl>
+                    </Grid>
+                    <Grid item>
+                        <FormControl variant="standard">
+                            <InputLabel htmlFor="component-simple">contraseña</InputLabel>
+                            <Input id="component-simple" {...register('contrasena', { required: 'contraseña requerido' })} />
+                            {errors.contrasena && <span className='requiredAlert'>{errors.contrasena.message}</span>}
+                        </FormControl>
+                    </Grid>
                 </Grid>
             </LocalizationProvider>
         </form>

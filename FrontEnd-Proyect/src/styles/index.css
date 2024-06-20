@@ -79,3 +79,7 @@ a{
 .gp-5{
   gap: 0.5rem;
 }
+html{
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
