@@ -1,7 +1,7 @@
 import { InputLabel, Select, MenuItem, Input, FormControl, Grid } from '@mui/material'
 import { Controller } from 'react-hook-form'
 
-export const ClientForm = ({ register, handleSave, errors, control }) => {
+export const ClientForm = ({ register, handleSave, errors, control,getValues }) => {
     return (
         <>
             <form onSubmit={handleSave} id='client-form'>
@@ -51,7 +51,7 @@ export const ClientForm = ({ register, handleSave, errors, control }) => {
                         <FormControl variant="standard">
                             <InputLabel htmlFor="component-simple">Teléfono</InputLabel>
                             <Input id="component-simple" {...register('numeroTelefono', {
-                                required: 'Teléfono es requerido',
+                              
                                 pattern: {
                                     value: /^[0-9]+$/,
                                     message: 'Solo se permiten números'
@@ -65,7 +65,11 @@ export const ClientForm = ({ register, handleSave, errors, control }) => {
                             control={control}
                             name='tipoTelefono'
                             defaultValue={0}
-                            rules={{ required: 'Tipo de teléfono es obligatorio', validate: value => value != 0 || 'Debe seleccionar un tipo válido' }}
+                            rules={{
+                                required: getValues('numeroTelefono') ? 'Tipo de teléfono es obligatorio' : false,
+                                validate: value => value !== 0 || !getValues('numeroTelefono') || 'Debe seleccionar un tipo válido'
+                            }}
+
                             render={({ field }) => (
                                 <>
                                     <FormControl variant="standard" sx={{ m: 0, minWidth: 200 }}>

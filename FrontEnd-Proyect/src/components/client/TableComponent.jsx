@@ -1,63 +1,49 @@
-import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
-import { Toolbar } from '../helpers/Toolbar';
+import Box from "@mui/material/Box";
+import { DataGrid } from "@mui/x-data-grid";
+import { Toolbar } from "../helpers/Toolbar";
 
-
-
-export const TableComponent = ({data,columns,reset}) => {
-    
-    const totalWidth = columns.reduce((acc, column) => acc + column.width, 0);
+export const TableComponent = ({ data, columns, reset }) => {
+  const totalWidth = columns.reduce((acc, column) => acc + column.width, 0);
   return (
-      <div className="container d-flex justify-content-center">
-         
-              <Box sx={{ width: `${totalWidth + 30}px` }}>
-                  <DataGrid
-                      columns={columns}
-                      rows={data}
-                        getRowId={(row)=>{
-                            let obj = Object.keys(row)
-                            return row[obj[0]]
-                        }}
-                      initialState={{
-                          pagination: { paginationModel: { pageSize: 5 } },
-                      }}
-                      rowSelection={false}
-                      disableMultipleRowSelection={true}
-                      disableColumnSelector={true}
-                      disableRowSelectionOnClick
-                      showCellVerticalBorder={false}
-                      autoHeight
-                  slots={{ toolbar: Toolbar }}
-                        slotProps={{
-                            toolbar: {
-                                showQuickFilter: true,
-                                ...{
-                                    reset: reset,
-                                    data:data,
-                                    fileName:"archivo"
-                                }
-                            },
-                        }}
-                  />
-              </Box>
-        
-      </div>
-  )
-}
-
-
-
-
-
-
-
-
-
+    <div className="container d-flex justify-content-center">
+      <Box sx={{ width: `${totalWidth + 30}px` }}>
+        <DataGrid
+          columns={columns}
+          rows={data}
+          getRowId={(row) => {
+            let obj = Object.keys(row);
+            return row[obj[0]];
+          }}
+          initialState={{
+            pagination: { paginationModel: { pageSize: 5 } },
+          }}
+          rowSelection={false}
+          disableMultipleRowSelection={true}
+          disableColumnSelector={true}
+          disableRowSelectionOnClick
+          showCellVerticalBorder={false}
+          autoHeight
+          slots={{ toolbar: Toolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              ...{
+                reset: reset,
+                data: data,
+                fileName: "archivo",
+              },
+            },
+          }}
+        />
+      </Box>
+    </div>
+  );
+};
 
 // import React, { useEffect, useState } from 'react';
 // import { Table } from '../tablecomponents/TableComponent';
 // import { ModalComponent } from '../tablecomponents/ModalComponent';
-// import { getClients, deleteClient, createClient, updateClient } from '../../../Api/ClientAPI';
+// import { getClients, deleteClient, createClient, updateClient } from '../../../Services/ClientAPI';
 // import { show_alert } from '../../functions';
 // import { ClientFormComponent } from './ClientFormComponent';
 
@@ -65,7 +51,7 @@ export const TableComponent = ({data,columns,reset}) => {
 //     const [isModalOpen, setIsModalOpen] = useState(false);
 //     const [selectedClient, setSelectedClient] = useState({});
 //     const [clients, setClients] = useState([]);
-//     const [formData, setFormData] = useState({}); 
+//     const [formData, setFormData] = useState({});
 //     const [updateMode, setUpdateMode] = useState(false);
 //     useEffect(() => {
 //         fetchClients();
@@ -81,12 +67,10 @@ export const TableComponent = ({data,columns,reset}) => {
 //         }
 //     };
 
-    
-
 //     const deleteClientHandler = async (id) => {
 //         try {
 //             await deleteClient(id);
-            
+
 //             show_alert(`Se eliminó el registro de ID : ${id}`, "success");
 //             fetchClients();
 //         } catch (error) {
@@ -100,7 +84,7 @@ export const TableComponent = ({data,columns,reset}) => {
 //     };
 
 //     const saveClient = async () => {
-      
+
 //         try {
 //             if (updateMode) {
 //                 await updateClientHandler();
@@ -110,13 +94,13 @@ export const TableComponent = ({data,columns,reset}) => {
 //                 await createClient(formData);
 //                 show_alert("Se guardó con éxito", "success");
 //             }
-            
+
 //             fetchClients();
-          
+
 //             closeModal();
 //         } catch (error) {
 //             console.error(error);
-         
+
 //         }
 //     };
 //     const updateClientHandler = async () => {
@@ -129,19 +113,19 @@ export const TableComponent = ({data,columns,reset}) => {
 //         }
 //     };
 //     const openModal = (client) => {
-        
+
 //         if (!Object.keys(client).length) {
 //             setUpdateMode(false);
 //             setSelectedClient({})
 //             setFormData({})
 //         } else {
-            
+
 //             setUpdateMode(true);
 //             setSelectedClient(client);
-            
+
 //             setFormData(client)
 //         }
-        
+
 //         setIsModalOpen(true);
 //     };
 
@@ -175,11 +159,10 @@ export const TableComponent = ({data,columns,reset}) => {
 //     return (
 //         <>
 
-            
 //             <ClientFormComponent/>
 //             <Table data={clients} columns={columns} header={"Registro de clientes"} openModal={openModal} />
 //             {isModalOpen &&
-                
+
 //                 (<ModalComponent title={'Registro de Clientes'} closeModal={closeModal} onSave={saveClient} isUpdate={updateMode} >
 //                     <>
 //                         <input type="hidden" id="idCliente" />
