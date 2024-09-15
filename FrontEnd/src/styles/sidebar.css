@@ -1,0 +1,245 @@
+@import "./index.css";
+/* Estilos para el contenedor del Sidebar */
+.sidebar-container {
+  color: var(--icons-color);
+  background: var(--bg);
+  position: sticky;
+  /* padding-top: 20px; */
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-button {
+  position: absolute;
+  top: 48px; /* Ajusta según el diseño */
+  right: -18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-tgderecha);
+  box-shadow: 0 0 4px var(--bg3), 0 0 7px var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  transform: rotate(180deg);
+  border: none;
+  letter-spacing: inherit;
+  color: inherit;
+  font-size: inherit;
+  text-align: inherit;
+  padding: 0;
+  font-family: inherit;
+  outline: none;
+}
+.sidebar-container.active .sidebar-button {
+  transform: initial;
+}
+
+.logo-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 24px; /* Ajusta según el diseño */
+  margin-top: 25px;
+}
+
+.logo-content .img-content {
+  display: flex;
+  cursor: pointer;
+  transform: scale(1.5);
+  transition: all 0.3s;
+}
+.sidebar-container.active .img-content {
+  transform: scale(0.7);
+}
+.logo-content img {
+  max-width: 100%;
+  height: auto;
+  image-rendering: optimizeQuality;
+}
+:root[data-theme="dark"] .logo-content img {
+  filter: invert();
+}
+.logo-content h2 {
+  display: none;
+}
+.sidebar-container.active .logo-content h2 {
+  display: block;
+}
+.link-container {
+  margin: 8px 0;
+  padding: 0 15%;
+}
+
+.link-container:hover {
+  background: var(--bg3);
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  color: var(--icons-color);
+  height: 50px;
+}
+
+.link-icon {
+  padding: 0.5rem 1rem;
+  display: flex;
+}
+
+.links .link-icon svg {
+  font-size: 25px;
+}
+
+.links.active .link-icon svg {
+  color: var(--bg4);
+}
+
+.theme-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title-theme {
+  display: block;
+  padding: 10px;
+  font-weight: 700;
+  opacity: 0;
+  transition: all 0.3s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sidebar-container.active .title-theme {
+  opacity: 1;
+}
+.toggle-content {
+  margin: auto 15px;
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  transition: all 0.3s;
+  position: relative;
+}
+.sidebar-container.active .toggle-content {
+  margin: auto 40px;
+}
+.theme-container {
+  background-blend-mode: multiply, multiply;
+  transition: 0.4s;
+}
+
+/* .grid {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  height: 100vh;
+  width: 100vw;
+  font-family: "Lato", sans-serif;
+} */
+
+.demo {
+  font-size: 32px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.theme-swither {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.theme-swither:checked + .slider::before {
+  left: 4px;
+  content: "🌑";
+  transform: translateX(26px);
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--toggle-checkbox);
+  transition: 0.4s;
+}
+
+.slider::before {
+  position: absolute;
+  content: "☀️";
+  height: 0px;
+  width: 0px;
+  left: -10px;
+  top: 16px;
+  line-height: 0px;
+  transition: 0.4s;
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round::before {
+  border-radius: 50%;
+}
+
+.divider {
+  height: 1px;
+  width: 100%;
+  background: var(--bg3);
+  margin: 24px 0;
+}
+
+@media only screen and (max-width: 768px) {
+  .sidebar-container {
+    color: var(--text);
+    background: var(--bg);
+    position: sticky;
+    padding-top: 20px;
+    top: auto;
+    height: auto;
+  }
+  .content-navegation {
+    display: none;
+  }
+  .sidebar-container.active .content-navegation {
+    display: block;
+  }
+  .link-container {
+    margin: 0;
+    padding: 0;
+  }
+  .navegation-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .content-navegation span:not(.slider.round) {
+    font-size: 0.74rem;
+  }
+  .sidebar-button {
+    top: auto;
+    right: 15px;
+  }
+  .divider {
+    margin: 2px 0;
+  }
+  .sidebar-container.active .toggle-content {
+    margin: auto 40px;
+    margin-bottom: 17px;
+  }
+  .link-icon {
+    padding: 0.5rem 0.3rem;
+  }
+}
