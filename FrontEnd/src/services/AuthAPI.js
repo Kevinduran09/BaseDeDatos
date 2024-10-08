@@ -7,7 +7,7 @@ const AuthAPI = axios.create({
 export const loginSession = async (data) => {
   return await AuthAPI.post("/login", data);
 };
-export const current = async () => {
+export const currentUser = async () => {
   return await AuthAPI.options("/current", {
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("token")}`, // Agrega el token al encabezado Authorization

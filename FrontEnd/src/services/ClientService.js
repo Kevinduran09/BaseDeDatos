@@ -1,18 +1,25 @@
 import axios from "axios";
 import { URLBASE, TOKEN } from "../config";
-
+import { useAuthStore } from "../store/useAuthStore";
 const clientAPI = axios.create({
   baseURL: `${URLBASE}/api/v1/administrador/cliente`,
 });
 
+const getAuthHeaders = () => {
+  const { token } = useAuthStore().getState();
+  console.log(token);
+
+  return {
+    headers: {
+      Authorization: `Bearer ${token.state.token}`,
+    },
+  };
+};
+
 // Obtener todos los clientes
 export const getClients = async () => {
   try {
-    const res = await clientAPI.get("", {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-      },
-    });
+    const res = await clientAPI.get("", getAuthHeaders());
     return res.data.data;
   } catch (error) {
     console.error(error);

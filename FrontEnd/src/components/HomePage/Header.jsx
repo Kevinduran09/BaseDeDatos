@@ -31,7 +31,7 @@ export const Header = () => {
                 </>
               ) : (
                 <li className="nav-list-item">
-                  <NavLink to="/client/Login">Ingresar</NavLink>
+                  <NavLink to="/Login">Ingresar</NavLink>
                 </li>
               )}
               <li className="nav-list-item">Nosotros</li>

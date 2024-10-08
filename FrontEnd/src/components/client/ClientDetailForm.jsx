@@ -1,5 +1,4 @@
 import React from "react";
-
 import { useEffect } from "react";
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { FormField } from "../FormField";
@@ -8,24 +7,41 @@ import MenuItem from "@mui/material/MenuItem";
 import { Box, Typography } from "@mui/material";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+
 import Button from "@mui/material/Button";
-import { FormCheckBox } from "../FormCheckBox";
-import { Grid } from "@mui/material";
-
+import { useParams } from "react-router-dom";
+import useClientData from "./useClientData";
+import { Loading } from "../../utils/loading";
+import PhoneFields from "../PhoneFields";
+import { useClientActions } from "./handler/useClientActions";
 export const ClientDetailForm = () => {
+  const { createCliente, updateCliente } = useClientActions();
+  const { id } = useParams();
+  const { cliente, isLoading, isError } = useClientData(id);
   const methods = useForm({
-    defaultValues: {},
+    defaultValues: cliente,
   });
-  useEffect(() => {
-    methods.reset({ ...{} });
-  }, [open]);
 
-  // const { watch } = methods;
-  // const sitioWeb = watch("pagina_web");
-  // const otherSocialEnable = watch("otra_red_social_activo");
+  useEffect(() => {
+    if (cliente) {
+      methods.reset(cliente);
+    } else {
+      methods.reset();
+    }
+  }, [cliente]);
+
+  if (isLoading) return <Loading />;
+  if (isError) return <div>Error al cargar el cliente.</div>;
 
   const onSubmit = methods.handleSubmit(async (data) => {
+    console.log(id);
     console.log(data);
+
+    if (id !== ":id" && id !== null) {
+      updateCliente(data);
+    } else {
+      createCliente(data);
+    }
   });
 
   return (
@@ -50,14 +66,11 @@ export const ClientDetailForm = () => {
               <FormField label={"Cedula"} name={"cedula"} />
               <FormField
                 label={"Correo Electronico"}
-                name={"email"}
+                name={"correoElectronico"}
                 type={"email"}
               />
-              <FormField
-                label={"Nombre Usuario"}
-                name={"usuario.nombreUsuario"}
-              />
-              <FormField label={"Contraseña"} name={"usuario.contrasena"} />
+              <FormField label={"Nombre Usuario"} name={"nombreUsuario"} />
+              <FormField label={"Contraseña"} name={"contrasena"} />
             </Box>
           </Box>
           <Box mt={3}>
@@ -78,58 +91,25 @@ export const ClientDetailForm = () => {
                 label={"Nombre direccion"}
                 name={"direccion.nombreDireccion"}
               />
-              <FormField label={"País"} name={"direccion.pais"} />
+              <FormField
+                label={"País"}
+                name={"direccion.pais"}
+                isRequerided={true}
+              />
               <FormField label={"Estado"} name={"direccion.estado"} />
               <FormField label={"Ciudad"} name={"direccion.ciudad"} />
               <FormField label={"Distrito"} name={"direccion.distrito"} />
             </Box>
           </Box>
-          <Box mt={3}>
-            <Typography variant="h6">Informacion de Contacto</Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "repeat(2,1fr)",
-                  md: "repeat(3,1fr)",
-                },
-                alignItems: "baseline",
-                gap: 2,
-                rowGap: 1,
-              }}
-            >
-              <Controller
-                name={"telefono.tipoTelefono"}
+          {/* <Box mt={3}>
+            <Typography variant="h6">Teléfonos de Contacto</Typography>
+            <Box mt={3} gap={2}>
+              <PhoneFields
                 control={methods.control}
-                defaultValue=""
-                render={({ field }) => (
-                  <FormControl fullWidth>
-                    <InputLabel>Tipo Telefono</InputLabel>
-                    <Select {...field} label={"Tipo de telefono"}>
-                      <MenuItem key="personal" value="personal">
-                        Personal
-                      </MenuItem>
-                      <MenuItem key="fijo" value="fijo">
-                        Fijo
-                      </MenuItem>
-                      <MenuItem key="casa" value="casa">
-                        Casa
-                      </MenuItem>
-                      <MenuItem key="oficina" value="oficina">
-                        Oficina
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                )}
-              />
-
-              <FormField
-                label={"Numero Telefonico"}
-                name={"telefono.numeroTelefono"}
-                type={"tel"}
+                telefonos={cliente.telefonos || []}
               />
             </Box>
-          </Box>
+          </Box> */}
         </div>
         <Box>
           <Button
