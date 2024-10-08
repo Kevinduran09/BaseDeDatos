@@ -1,0 +1,28 @@
+@import "./themes/dark.css";
+@import "./themes/light.css";
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin: 2rem 0;
+}
+
+.spinner {
+  border: 0.4rem solid var(--effect-spinner);
+  border-top: 0.4rem solid var(--text-color);
+  border-radius: 50%;
+  width: 5rem;
+  height: 5rem;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
