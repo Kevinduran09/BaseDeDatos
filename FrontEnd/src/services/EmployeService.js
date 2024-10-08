@@ -6,11 +6,16 @@ const AuthAPI = axios.create({
 });
 
 // Helper para agregar el token de autorización
-const getAuthHeaders = () => ({
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
-  },
-});
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("authState");
+  console.log(token);
+
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+};
 
 // Función para obtener empleados
 export const getEmployes = async () => {

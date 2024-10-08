@@ -4,14 +4,22 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export const useAuthStore = create(
   persist(
     (set) => ({
-      isAuthenticated: true,
+      isAuthenticated: false,
       token: "",
-      currentUser: { admin: true },
-      setToken: (token) => set({ token: token }),
-      setCurrentUser: (current) => set({ currentUser: current }),
-      setIsAuth: () => set({ isAuthenticated: true }),
-      clearAuth: () =>
-        set({ isAuthenticated: false, token: "", currentUser: {} }),
+      currentUser: { admin: false },
+      login: (user, token) =>
+        set({
+          isAuthenticated: true,
+          currentUser: user,
+          token: token,
+        }),
+
+      logout: () =>
+        set({
+          isAuthenticated: false,
+          currentUser: null,
+          token: null,
+        }),
     }),
     { name: "authState", storage: createJSONStorage(() => localStorage) }
   )
