@@ -1,19 +1,13 @@
-import React from "react";
-import { useEffect } from "react";
-import { useForm, FormProvider, Controller } from "react-hook-form";
+import React, { useEffect, useState, useRef } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { FormField } from "../FormField";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import { Box, Typography } from "@mui/material";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-
-import Button from "@mui/material/Button";
+import { Box, Typography, Button } from "@mui/material";
 import { useParams } from "react-router-dom";
 import useClientData from "./useClientData";
 import { Loading } from "../../utils/loading";
-import PhoneFields from "../PhoneFields";
 import { useClientActions } from "./handler/useClientActions";
+import LocationSelector from "../map/LocationSelector"; // Importa el nuevo componente
+
 export const ClientDetailForm = () => {
   const { createCliente, updateCliente } = useClientActions();
   const { id } = useParams();
@@ -22,11 +16,13 @@ export const ClientDetailForm = () => {
     defaultValues: cliente,
   });
 
+  const [modalOpen, setModalOpen] = useState(false); // Estado para controlar el modal
+  const [coordenadas, setCoordenadas] = useState(""); // Estado para almacenar las coordenadas
+  const coordenadasRef = useRef(null); // Referencia para el campo de coordenadas
+
   useEffect(() => {
     if (cliente) {
       methods.reset(cliente);
-    } else {
-      methods.reset();
     }
   }, [cliente]);
 
@@ -34,15 +30,22 @@ export const ClientDetailForm = () => {
   if (isError) return <div>Error al cargar el cliente.</div>;
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    console.log(id);
-    console.log(data);
-
     if (id !== ":id" && id !== null) {
       updateCliente(data);
     } else {
       createCliente(data);
     }
   });
+
+  // Nueva función para manejar la selección de coordenadas
+  const handleSelectCoordinates = (coords) => {
+    const coordinatesString = coords.join(", ");
+    setCoordenadas(coordinatesString); // Actualiza las coordenadas
+    methods.setValue("direccion.coordenadas", coordinatesString); // Establece las coordenadas en el formulario
+    if (coordenadasRef.current) {
+      coordenadasRef.current.focus(); // Establece el enfoque en el campo de coordenadas
+    }
+  };
 
   return (
     <FormProvider {...methods}>
@@ -86,7 +89,19 @@ export const ClientDetailForm = () => {
                 rowGap: 1,
               }}
             >
-              <FormField label={"Coordenadas"} name={"direccion.coordenadas"} />
+              <Button
+                variant="outlined"
+                size="small" // Cambiar el tamaño del botón
+                onClick={() => setModalOpen(true)}
+                sx={{ marginTop: "16px", marginBottom: "8px" }}
+              >
+                Seleccionar Ubicación
+              </Button>
+              <FormField
+                label={"Coordenadas"}
+                name={"direccion.coordenadas"}
+                inputRef={coordenadasRef} // Establece la referencia en el campo de coordenadas
+              />
               <FormField
                 label={"Nombre direccion"}
                 name={"direccion.nombreDireccion"}
@@ -101,15 +116,6 @@ export const ClientDetailForm = () => {
               <FormField label={"Distrito"} name={"direccion.distrito"} />
             </Box>
           </Box>
-          {/* <Box mt={3}>
-            <Typography variant="h6">Teléfonos de Contacto</Typography>
-            <Box mt={3} gap={2}>
-              <PhoneFields
-                control={methods.control}
-                telefonos={cliente.telefonos || []}
-              />
-            </Box>
-          </Box> */}
         </div>
         <Box>
           <Button
@@ -122,116 +128,12 @@ export const ClientDetailForm = () => {
           </Button>
         </Box>
       </form>
+
+      <LocationSelector
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSelect={handleSelectCoordinates} // Llama a la nueva función aquí
+      />
     </FormProvider>
   );
 };
-
-/*
-
- <FormField
-                isRequerided={false}
-                disabled={!sitioWeb}
-                label={"Website URL"}
-                name={"website_url"}
-              />
-              <FormField label={"Coordenadas"} name={"coordenadas"} />
-              <FormField label={"Cantón"} name={"canton"} />
-              <FormField label={"Distrito"} name={"distrito"} />
-
-              <FormField label={"Comunidad"} name={"comunidad"} />
-              <FormField label={"Dirección exacta"} name={"direccion_exacta"} />
-              <FormField label={"Descripción"} name={"descripcion"} />
-              <FormField
-                label={"Tiempo de operación (años)"}
-                name={"tiempo_operacion_anios"}
-              />
-
-
- <Grid container spacing={2} mt={2}>
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="figura_legal"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Figura Legal</InputLabel>
-                      <Select {...field} label="Figura Legal">
-                        {figurasLegales.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="sector_empresarial"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <FormControl fullWidth>
-                      <InputLabel>Sector Empresarial</InputLabel>
-                      <Select {...field} label="Sector Empresarial">
-                        {sectoEmpresarial.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-                />
-              </Grid>
-            </Grid>
-
-
-
-<Box mt={3}>
-            <Typography variant="h6">Redes Sociales</Typography>
-            <Box mt={1}>
-              <FormCheckBox name={"pagina_web"} label={"¿Tiene página web?"} />
-              <FormCheckBox name={"facebook"} label={"Facebook activo"} />
-              <FormCheckBox name="instagram_activo" label="Instagram activo" />
-              <FormCheckBox name="youtube_activo" label="YouTube activo" />
-              <FormCheckBox name="tiktok_activo" label="TikTok activo" />
-              <FormCheckBox name="linkedin_activo" label="LinkedIn activo" />
-              <FormCheckBox name="pinterest_activo" label="Pinterest activo" />
-              <FormCheckBox name="whatsapp_activo" label="WhatsApp activo" />
-              <FormCheckBox
-                name="otra_red_social_activo"
-                label="Otra red social activa"
-              />
-              {!!otherSocialEnable && (
-                <FormField
-                  sx={{ width: "30%" }}
-                  label={"Nombre de otra red social"}
-                  name={"otra_red_social_nombre"}
-                />
-              )}
-            </Box>
-          </Box>
-          <Box mt={3}>
-            <Typography variant="h6">Sector Empresarial</Typography>
-            <Box mt={1} gap={"5px"}>
-              <FormCheckBox name={"pesca"} label={"Pesca"} />
-              <FormCheckBox name={"agricultura"} label="Agricultura" />
-              <FormCheckBox name={"agroindustria"} label={"Agroindustria"} />
-              <FormCheckBox name={"pecuario"} label={"Pecuario"} />
-            </Box>
-          </Box>
-
-          <Box mt={3}>
-            <Typography variant="h6">Inscripciones</Typography>
-            <Box mt={1}>
-              <FormCheckBox name="ccss_inscrita" label="CCSS inscrita" />
-              <FormCheckBox name="ins_inscrita" label="INS inscrita" />
-              <FormCheckBox
-                name="hacienda_inscrita"
-                label="Hacienda inscrita"
-              />
-              <FormCheckBox name="meic_inscrita" label="MEIC inscrita" />
-            </Box>
-          </Box>
-          */
