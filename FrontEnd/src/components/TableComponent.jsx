@@ -20,10 +20,12 @@ export const TableComponent = ({
   //       <NoFiles />
   //     </div>
   //   );
+  console.log(rowsSet);
 
-  const rows = rowsSet
-    ? rowsSet.map((cls) => ({ ...cls, id: Object.values(cls)[0] }))
-    : [];
+  const rows =
+    rowsSet != null
+      ? rowsSet.map((cls) => ({ ...cls, id: Object.values(cls)[0] }))
+      : [];
 
   return (
     <>
