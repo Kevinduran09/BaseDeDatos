@@ -20,7 +20,7 @@ class ClienteController extends Controller
      */
     public function index() //funcion para mostrar todos los datos
     {
-        $clientes = DB::table('vwClientesUsuarios')->get();
+        $clientes = DB::table('viTodoCliente')->get();
         // $telefonos = DB::table("vwAllPhones")->get();
 
 
