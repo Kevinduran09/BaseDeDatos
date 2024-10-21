@@ -25,7 +25,11 @@ export const RoutesApp = () => {
     {
       path: "/",
       element:
-        currentUser.admin == false ? <MainPage /> : <Navigate to="app" />,
+        currentUser.Administrador == null ? (
+          <MainPage />
+        ) : (
+          <Navigate to="app" />
+        ),
     },
     {
       path: "/login",
