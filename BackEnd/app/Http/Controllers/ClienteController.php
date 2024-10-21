@@ -108,8 +108,8 @@ class ClienteController extends Controller
         // Insertar dirección
         try {
             DB::statement('EXEC createDireccion ?, ?, ?, ?, ?, ?, ?, ?', [
-                floatval($request->direccion['coordenadas']),
-                floatval($request->direccion['coordenadas']),
+                floatval($request->direccion['lat']),
+                floatval($request->direccion['lon']),
                 $request->direccion['nombreDireccion'],
                 $request->direccion['pais'],
                 $request->direccion['estado'],
@@ -246,8 +246,8 @@ class ClienteController extends Controller
             if (isset($request->direccion['idDireccion'])) {
                 $direccionResult = DB::statement('EXEC updateDireccion ?, ?, ?, ?, ?, ?, ?, ?', [
                     $request->direccion['idDireccion'], // ID de la dirección a actualizar
-                    $request->direccion['coordenadas'],
-                    $request->direccion['coordenadas'],
+                    $request->direccion['lat'],
+                    $request->direccion['lon'],
                     $request->direccion['nombreDireccion'],
                     $request->direccion['pais'],
                     $request->direccion['estado'],
