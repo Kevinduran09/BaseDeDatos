@@ -50,8 +50,6 @@ Route::prefix('v1')->group(
             Route::get('/viaje/empleado/{id}',[ViajeController::class,'getByEmployee'])->Middleware(ApiAuthMiddlewareAdminChofer::class);
             Route::post('/viaje/fecha',[ViajeController::class, 'getViajeByFecha'])->Middleware(ApiAuthMiddlewareAdmin::class);
             Route::post('recorrido/complete/{id}',[RecorridoController::class, 'completeRecorrido'])->Middleware(ApiAuthMiddlewareAdminChofer::class);
-            
-
         });
        
        
