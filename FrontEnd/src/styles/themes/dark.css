@@ -1,0 +1,30 @@
+:root[data-theme="dark"] {
+  --body-color: #202020;
+  --text-color: #fff;
+  --body-rgba: 32, 32, 32;
+  --text-rgba: 255, 255, 255;
+  --bg: rgb(29, 28, 28);
+  --bg-alpha: rgba(0, 0, 0, 0.3);
+  --bg2: rgb(30, 30, 30);
+  --bg3: rgb(50, 50, 50);
+  --text: rgb(0, 0, 0);
+  --icons-color: rgb(210, 210, 210);
+  --effect-spinner: rgba(255, 255, 255, 0.1);
+  --primary: rgb(52, 131, 235);
+  --bg4: #9247fc;
+  --bg-total: #21252b;
+  --bg-tgderecha: #21252b;
+  --scroll-bar: #a18aff;
+  --toggle-background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(0, 0, 0, 0.15) 100%
+    ),
+    radial-gradient(
+        at top center,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(0, 0, 0, 0.4) 120%
+      )
+      #989898;
+  --toggle-checkbox: #757575;
+}
