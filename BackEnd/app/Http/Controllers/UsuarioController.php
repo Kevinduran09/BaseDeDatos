@@ -6,6 +6,7 @@ use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Helpers\JwtAuth;
+
 class UsuarioController extends Controller
 {
     /**
@@ -188,19 +189,20 @@ class UsuarioController extends Controller
             return response()->json($data, 400);
         }
 
-        $user = Usuario::with(['empleado.puesto','cliente'])->where(["nombreUsuario" => $request->nombreUsuario, "contrasena" => $request->contrasena])->first();
-        if(!$user){
-            return response()->json('Error nombre usuario y/o contraseña incorrectos',400);
+        $user = Usuario::with(['empleado.puesto', 'cliente'])->where(["nombreUsuario" => $request->nombreUsuario, "contrasena" => $request->contrasena])->first();
+        if (!$user) {
+            return response()->json('Error nombre usuario y/o contraseña incorrectos', 400);
         }
         $jwt =  new JwtAuth();
         $response = $jwt->getToken($user);
-        return response($response,200);
+        $user = $jwt->verifyToken($response, getId: true);
+        return response(['user' => $user, 'token' => $response], 200);
     }
 
-    public function current(request $request){
+    public function current(request $request)
+    {
         $jwt = new JwtAuth();
-        $token = $jwt->verifyToken($request->bearerToken(),true);
-        return response()->json($token,200);
+        $token = $jwt->verifyToken($request->bearerToken(), true);
+        return response()->json($token, 200);
     }
-
 }

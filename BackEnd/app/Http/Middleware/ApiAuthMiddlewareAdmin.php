@@ -23,7 +23,7 @@ class ApiAuthMiddlewareAdmin
             $token = $request->bearerToken();
             $logged = $jwt->verifyToken($token, true);
 
-            if ($logged && $logged->tipo == "empleado" && $logged->cargo == "administrador") {
+            if ($logged && $logged->tipo == "empleado" && $logged->cargo == "Administrador") {
                 return $next($request);
             } else {
                 $response = array(

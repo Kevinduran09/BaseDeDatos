@@ -60,3 +60,14 @@ export const SuccessDialogo = (title, tipo, accion) => {
     },
   });
 };
+
+export function msjDialogo(title, text = null, icon, onSuccess = null) {
+  Swal.fire({
+    title: title,
+    text: text,
+    icon: icon,
+    timer: 1000,
+    showConfirmButton: false,
+    willClose: onSuccess && onSuccess(),
+  });
+}

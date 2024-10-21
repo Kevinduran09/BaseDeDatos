@@ -1,18 +1,31 @@
 import axios from "axios";
-import { URLBASE, TOKEN } from "../config";
-const VehiculoAPI = axios.create({
+import { URLBASE } from "../config";
+
+// Crear instancia de axios con la baseURL
+const vehiculoAPI = axios.create({
   baseURL: `${URLBASE}/api/v1/administrador/vehiculo`,
 });
 
-const getAuthHeaders = () => ({
-  headers: {
-    Authorization: `Bearer ${TOKEN}`,
+// Interceptor para agregar el token a las solicitudes
+vehiculoAPI.interceptors.request.use(
+  (config) => {
+    // Obtener el token desde el localStorage
+    let state = localStorage.getItem("authState");
+    state = JSON.parse(state);
+    if (state && state.state.token) {
+      config.headers.Authorization = `Bearer ${state.state.token}`;
+    }
+    return config;
   },
-});
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
+// Obtener todos los vehículos
 export const getVehicles = async () => {
   try {
-    const response = await VehiculoAPI.get("", getAuthHeaders());
+    const response = await vehiculoAPI.get("");
     return response.data.data;
   } catch (error) {
     console.error("Error al obtener vehículos:", error);
@@ -20,9 +33,10 @@ export const getVehicles = async () => {
   }
 };
 
+// Crear un vehículo
 export const createVehicle = async (data) => {
   try {
-    const response = await VehiculoAPI.post("", data, getAuthHeaders());
+    const response = await vehiculoAPI.post("", data);
     return response.data;
   } catch (error) {
     console.error("Error al crear vehículo:", error);
@@ -30,13 +44,10 @@ export const createVehicle = async (data) => {
   }
 };
 
+// Actualizar un vehículo
 export const updateVehicle = async (data) => {
   try {
-    const response = await VehiculoAPI.put(
-      `/${data.idVehiculo}`,
-      data,
-      getAuthHeaders()
-    );
+    const response = await vehiculoAPI.put(`/${data.idVehiculo}`, data);
     return response.data;
   } catch (error) {
     console.error("Error al actualizar vehículo:", error);
@@ -44,9 +55,10 @@ export const updateVehicle = async (data) => {
   }
 };
 
+// Eliminar un vehículo
 export const deleteVehicle = async (id) => {
   try {
-    const response = await VehiculoAPI.delete(`/${id}`, getAuthHeaders());
+    const response = await vehiculoAPI.delete(`/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error al eliminar vehículo:", error);

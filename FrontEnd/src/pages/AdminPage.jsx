@@ -24,7 +24,7 @@ export const AdminPage = () => {
           sidebarOpen={sidebarOpen}
           setSidebarOpen={setSidebarOpen}
         />
-        <AdminLayout title={"Prueba"} />
+        <AdminLayout title={""} />
       </div>
     </div>
   );

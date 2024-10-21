@@ -2,7 +2,8 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { EmployeColumns } from "./EmployeColumns";
 import { TableComponent } from "../TableComponent";
-import { getEmployes } from "../../services/EmployeService";
+import { getEmployees } from "../../services/EmployeService";
+import { Button } from "@mui/material";
 export const Employe = () => {
   const { columns } = EmployeColumns();
   const {
@@ -11,7 +12,7 @@ export const Employe = () => {
     data: empleados,
   } = useQuery({
     queryKey: ["empleados"],
-    queryFn: getEmployes,
+    queryFn: getEmployees,
   });
   return (
     <TableComponent

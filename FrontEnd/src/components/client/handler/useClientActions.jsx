@@ -1,3 +1,4 @@
+import { getClient } from "../../../services/ClientService";
 import { ConfirmarDialogo } from "../../dialogos/Dialogos";
 import { useClientMutations } from "../mutations/useClientMutations";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +19,14 @@ export const useClientActions = () => {
   const hanleClientDetail = (id) => {
     navegate(`/app/clients/${id}`);
   };
+  const getClientById = (id) => {
+    return getClient(id).then((data) => {
+      console.log(data);
+      return data;
+    });
+  };
   return {
+    getClientById,
     createCliente,
     deleteCliente,
     updateCliente,
