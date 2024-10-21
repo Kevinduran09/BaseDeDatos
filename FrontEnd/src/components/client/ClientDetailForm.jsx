@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { FormField } from "../FormField";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, TextField } from "@mui/material";
 import { useParams } from "react-router-dom";
 import useClientData from "./useClientData";
 import { Loading } from "../../utils/loading";
@@ -17,8 +17,7 @@ export const ClientDetailForm = () => {
   });
 
   const [modalOpen, setModalOpen] = useState(false); // Estado para controlar el modal
-  const [coordenadas, setCoordenadas] = useState(""); // Estado para almacenar las coordenadas
-  const coordenadasRef = useRef(null); // Referencia para el campo de coordenadas
+  const [coordenadas, setCoordenadas] = useState({ lat: "", lng: "" }); // Almacena latitud y longitud
 
   useEffect(() => {
     if (cliente) {
@@ -37,14 +36,12 @@ export const ClientDetailForm = () => {
     }
   });
 
-  // Nueva función para manejar la selección de coordenadas
+  // Maneja la selección de coordenadas desde el mapa
   const handleSelectCoordinates = (coords) => {
-    const coordinatesString = coords.join(", ");
-    setCoordenadas(coordinatesString); // Actualiza las coordenadas
-    methods.setValue("direccion.coordenadas", coordinatesString); // Establece las coordenadas en el formulario
-    if (coordenadasRef.current) {
-      coordenadasRef.current.focus(); // Establece el enfoque en el campo de coordenadas
-    }
+    const [lat, lng] = coords;
+    setCoordenadas({ lat, lng }); // Actualiza lat y lng en el estado
+    methods.setValue("direccion.lat", lat); // Establece latitud en el formulario
+    methods.setValue("direccion.lng", lng); // Establece longitud en el formulario
   };
 
   return (
@@ -89,18 +86,24 @@ export const ClientDetailForm = () => {
                 rowGap: 1,
               }}
             >
-              <Button
+              <TextField
+                label="Coordenadas"
+                value={
+                  coordenadas.lat && coordenadas.lng
+                    ? `${coordenadas.lat}, ${coordenadas.lng}`
+                    : "Seleccionar dirección"
+                }
+                InputProps={{
+                  readOnly: true,
+                }}
+                onClick={() => setModalOpen(true)} // Al hacer clic, abre el mapa
+                fullWidth
                 variant="outlined"
-                size="small" // Cambiar el tamaño del botón
-                onClick={() => setModalOpen(true)}
-                sx={{ marginTop: "16px", marginBottom: "8px" }}
-              >
-                Seleccionar Ubicación
-              </Button>
-              <FormField
-                label={"Coordenadas"}
-                name={"direccion.coordenadas"}
-                inputRef={coordenadasRef} // Establece la referencia en el campo de coordenadas
+                sx={{
+                  marginTop: "16px",
+                  marginBottom: "8px",
+                  cursor: "pointer",
+                }}
               />
               <FormField
                 label={"Nombre direccion"}
