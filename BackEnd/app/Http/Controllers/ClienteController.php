@@ -20,7 +20,7 @@ class ClienteController extends Controller
      */
     public function index() //funcion para mostrar todos los datos
     {
-        $clientes = DB::table('vwClientesUsuarios')->get();
+        $clientes = DB::table('vClientesConTelefonos')->get();
         // $telefonos = DB::table("vwAllPhones")->get();
 
 
@@ -151,7 +151,7 @@ class ClienteController extends Controller
      */
     public function show($id)
     {
-        $cliente = DB::select('EXEC buscarCliente :clientId', ['clientId' => $id]);
+        $cliente = DB::select('EXEC paBuscarClientePorID :idCliente', ['idCliente' => $id]);
 
 
         // $telefonos = DB::select("EXEC phonesByClient :clientId", ['clientId' => $id]);
@@ -166,14 +166,14 @@ class ClienteController extends Controller
 
         // Buscar la dirección asociada al cliente
         if (isset($cliente->idCliente)) {
-            $direccion = DB::select("EXEC findDireccionById ?", [$cliente->idCliente]);
+            $direccion = DB::select("EXEC paConsultarDireccionesDeCliente ?", [$cliente->idCliente]);
             if ($direccion) {
                 $cliente->direccion = $direccion[0]; // Asumiendo que solo hay una dirección
             } else {
                 $cliente->direccion = null; // Si no se encuentra la dirección
             }
         }
-
+        
 
 
         return response()->json($cliente, 200);

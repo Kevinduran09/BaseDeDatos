@@ -50,6 +50,17 @@ export const ConfirmarDialogo = (mutation, data, onSuccess) => {
   });
 };
 
+export const ErrorDialogo = (title, data) => {
+  Swal.fire({
+    title: title,
+    text: data,
+    icon: "error",
+    customClass: {
+      popup: "swal-custom-zindex",
+    },
+  });
+};
+
 export const SuccessDialogo = (title, tipo, accion) => {
   Swal.fire({
     title: title,

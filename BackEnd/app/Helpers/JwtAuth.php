@@ -15,38 +15,31 @@ class JwtAuth
         $this->key = "wasdxyz02468auuu";
     }
 
-    public function getToken($user)
-    {
-        if (is_object($user) && $user->idCliente != null) {
-            $token = [
-                'iss' => $user->idUsuario,
-                'issCliente' => $user->idCliente,
-                'tipo' => 'cliente',
-                'exp' => time() + (1200000) //(20 * 60) //Equivale a 20 minutos
-            ];
+  public function getToken($user)
+{
+    $tokenData = [
+        'iss' => $user->idUsuario,
+        'iat' => time(),
+        'exp' => time() + 1200,
+    ];
 
-            $response = JWT::encode($token, $this->key, 'HS256');
-
-            return $response;
-        } else if (is_object($user) && $user->idEmpleado != null) {
-            $token = [
-                'iss' => $user->idUsuario,
-                'issEmpleado' => $user->idEmpleado,
-                'tipo' => 'empleado',
-                'cargo' => $user->empleado->Puesto->cargo,
-                'exp' => time() + (1200000) //(20 * 60) //Equivale a 20 minutos
-                
-            ];
-            $response = JWT::encode($token, $this->key, 'HS256');
-            return $response;
-        } else {
-            $response = array(
-                'message' => 'Datos de autentificacion incorrectos',
-                'status' => 401,
-            );
-        }
-        return $response;
+    if (isset($user->idCliente)) {
+        $tokenData['tipo'] = 'cliente';
+        $tokenData['issCliente'] = $user->idCliente;
+    } elseif (isset($user->idEmpleado)) {
+        $tokenData['tipo'] = 'empleado';
+        $tokenData['issEmpleado'] = $user->idEmpleado;
+        $tokenData['cargo'] = $user->empleado->Puesto->cargo;
+    } else {
+        return [
+            'message' => 'Datos de autentificación incorrectos',
+            'status' => 401,
+        ];
     }
+
+    return JWT::encode($tokenData, $this->key, 'HS256');
+}
+
 
     public function verifyToken($jwt, $getId = false)
     {

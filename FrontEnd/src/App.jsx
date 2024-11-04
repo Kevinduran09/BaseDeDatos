@@ -1,10 +1,11 @@
-import { RoutesApp } from "./components/routes/RoutesApp";
+// import { RoutesApp } from "./components/routes/RoutesApp";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   useRoutes,
 } from "react-router-dom";
+import { RoutesApp } from "./components/routes/Routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 function App() {
@@ -19,7 +20,8 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <Router>
-          <RoutesApp />
+          {/* <RoutesApp /> */}
+          <RoutesApp/>
         </Router>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
