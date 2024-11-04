@@ -9,9 +9,18 @@ import {
   Divider,
   Link,
 } from "@mui/material";
+
+import {
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+
+
+
 import { useNavigate } from "react-router-dom";
-import { loginSession, currentUser } from "../../services/AuthAPI";
-import { msjDialogo } from "../dialogos/Dialogos";
+import { loginSession } from "../../services/AuthAPI";
+import { ErrorDialogo, msjDialogo } from "../dialogos/Dialogos";
 import { GitHub, Google, LockOutlined } from "@mui/icons-material";
 import { useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -22,6 +31,7 @@ const SignIn = () => {
     nombreUsuario: "",
     contrasena: "",
   });
+  const [VisiblePassword, setVisiblePassword] = useState(false)
   const [isLoading, setisLoading] = useState(false);
   const hanleSubmit = async (e) => {
     e.preventDefault();
@@ -38,9 +48,11 @@ const SignIn = () => {
       );
 
       setisLoading(false);
+      navegate('/')
     } catch (error) {
-      console.error(error);
+      console.error(error.response.data);
       setisLoading(false);
+      ErrorDialogo("Error", error.response.data);
     }
   };
   const hanleOnChange = (e) => {
@@ -57,7 +69,6 @@ const SignIn = () => {
       p={3}
       sx={{ maxWidth: 400, mx: "auto" }}
     >
-      {/* Icono de candado */}
       <LockOutlined
         sx={{
           fontSize: 50,
@@ -69,17 +80,16 @@ const SignIn = () => {
         }}
       />
 
-      {/* Título */}
+    
       <Typography variant="h5" color="black" gutterBottom>
         Sign in
       </Typography>
 
-      {/* Subtítulo */}
       <Typography variant="body1" color="gray" gutterBottom>
         Welcome user, please sign in to continue
       </Typography>
 
-      {/* Botón de Sign In con GitHub */}
+  
       <Button
         variant="contained"
         startIcon={<GitHub />}
@@ -98,7 +108,7 @@ const SignIn = () => {
         Sign In With GitHub
       </Button>
 
-      {/* Botón de Sign In con Google */}
+    
       <Button
         variant="contained"
         startIcon={<Google />}
@@ -117,7 +127,7 @@ const SignIn = () => {
         Sign In With Google
       </Button>
 
-      {/* Divider con texto */}
+     
       <Box
         sx={{
           width: "100%",
@@ -164,11 +174,11 @@ const SignIn = () => {
           }}
         />
 
-        {/* Campo de contraseña */}
+      
         <TextField
           variant="outlined"
           label="Password"
-          type="password"
+          type={VisiblePassword ? "text" : "password"}
           name="contrasena"
           fullWidth
           margin="normal"
@@ -180,6 +190,13 @@ const SignIn = () => {
               backgroundColor: "#393d3f",
               borderColor: "#333",
             },
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton style={{ color:'#c2aff0'}} onClick={()=>setVisiblePassword(!VisiblePassword)} edge="end">
+                  {VisiblePassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
           sx={{
             "& .MuiOutlinedInput-root": {
@@ -197,14 +214,14 @@ const SignIn = () => {
           }}
         />
 
-        {/* Checkbox para recordar */}
+     
         <FormControlLabel
           control={<Checkbox style={{ color: "#2196f3" }} />}
           label={<Typography color="gray">Remember me</Typography>}
           sx={{ alignSelf: "flex-start", marginBottom: 2 }}
         />
 
-        {/* Botón de Sign In */}
+  
         <Button
           variant="contained"
           fullWidth
@@ -221,9 +238,9 @@ const SignIn = () => {
           {isLoading ? "Iniciando..." : "Ingresar"}
         </Button>
       </form>
-      {/* Campo de correo */}
+   
 
-      {/* Enlace de registro */}
+     
       <Typography variant="body1" marginTop={2} color="gray" gutterBottom>
         Aun no tiene una cuenta?{" "}
         <Link

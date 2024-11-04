@@ -24,36 +24,29 @@ export const RoutesApp = () => {
   const routes = [
     {
       path: "/",
-      element:
-        currentUser.Administrador == null ? (
-          <MainPage />
-        ) : (
-          <Navigate to="app" />
-        ),
+      element: currentUser!=null? <MainPage /> : <Navigate to="app" />,
     },
     {
       path: "/login",
-      element: isAuthenticated ? <Navigate to="/" /> : <LoginPage />,
+      element: <LoginPage />,
     },
     {
       path: "/register",
-      element: isAuthenticated ? <Navigate to="/" /> : <RegisterPage />,
+      element:  <RegisterPage />,
     },
     {
       path: "/user",
       element: (
-        <ProtectedRouter role={"user"}>
-          <AccountPage />
-        </ProtectedRouter>
+      
+       <AccountPage />
+    
       ),
     },
     { path: "/*", element: <Navigate to="/" /> },
     {
       path: "/app",
       element: (
-        <ProtectedRouter role={"admin"}>
           <AdminPage />
-        </ProtectedRouter>
       ),
       children: [
         { path: "dashboard", element: <Dashboard /> },

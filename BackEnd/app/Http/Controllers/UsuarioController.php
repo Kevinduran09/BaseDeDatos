@@ -169,6 +169,8 @@ class UsuarioController extends Controller
 
         return response()->json(['message' => 'usuario eliminado correctamente'], 200);
     }
+
+    
     public function login(request $request)
     {
         $validator = Validator::make(

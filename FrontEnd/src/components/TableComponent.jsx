@@ -47,6 +47,14 @@ export const TableComponent = ({
             "&::-webkit-scrollbar-thumb:hover": {
               background: "#555",
             },
+            '.MuiTablePagination-displayedRows': {
+              'margin-top': '1em',
+              'margin-bottom': '1em'
+            },
+            '.MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel': {
+              'margin-top': '1em',
+              'margin-bottom': '1em'
+            }
           }}
           // className={`rowsPerPage ${theme == "light" ? "light" : "dark"}`}
           columns={columns}

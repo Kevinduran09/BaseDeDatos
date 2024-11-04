@@ -10,7 +10,7 @@ export const loginSession = async (data) => {
 export const currentUser = async () => {
   return await AuthAPI.options("/current", {
     headers: {
-      Authorization: `Bearer ${sessionStorage.getItem("token")}`, // Agrega el token al encabezado Authorization
+      Authorization: `Bearer ${sessionStorage.getItem("token")}`, 
     },
   });
 };

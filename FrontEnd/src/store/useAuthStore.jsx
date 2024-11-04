@@ -21,6 +21,6 @@ export const useAuthStore = create(
           token: null,
         }),
     }),
-    { name: "authState", storage: createJSONStorage(() => localStorage) }
+    { name: "auth-State", storage: createJSONStorage(() => localStorage) }
   )
 );

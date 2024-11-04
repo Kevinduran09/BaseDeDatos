@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { FormField } from "../FormField";
 import { Box, Typography, Button, TextField } from "@mui/material";
@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import useClientData from "./useClientData";
 import { Loading } from "../../utils/loading";
 import { useClientActions } from "./handler/useClientActions";
-import LocationSelector from "../map/LocationSelector"; // Importa el nuevo componente
+import LocationSelector from "../map/LocationSelector";
 
 export const ClientDetailForm = () => {
   const { createCliente, updateCliente } = useClientActions();
@@ -16,8 +16,8 @@ export const ClientDetailForm = () => {
     defaultValues: cliente,
   });
 
-  const [modalOpen, setModalOpen] = useState(false); // Estado para controlar el modal
-  const [coordenadas, setCoordenadas] = useState({ lat: "", lng: "" }); // Almacena latitud y longitud
+  const [modalOpen, setModalOpen] = useState(false);
+  const [coordenadas, setCoordenadas] = useState({ lat: "", lng: "" });
 
   useEffect(() => {
     if (cliente) {
@@ -73,8 +73,30 @@ export const ClientDetailForm = () => {
               <FormField label={"Contraseña"} name={"contrasena"} />
             </Box>
           </Box>
+
+          {/* Sección de Teléfonos */}
           <Box mt={3}>
-            <Typography variant="h6">Direccion</Typography>
+            <Typography variant="h6">Teléfonos</Typography>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: {
+                  xs: "repeat(2,1fr)",
+                  md: "repeat(3,1fr)",
+                },
+                gap: 2,
+                rowGap: 1,
+              }}
+            >
+              <FormField label={"Teléfono Fijo"} name={"telefonoFijo"} />
+              <FormField label={"Teléfono Móvil"} name={"telefonoMovil"} />
+              <FormField label={"Teléfono Trabajo"} name={"telefonoTrabajo"} />
+            </Box>
+          </Box>
+
+          {/* Sección de Dirección */}
+          <Box mt={3}>
+            <Typography variant="h6">Dirección</Typography>
             <Box
               sx={{
                 display: "grid",
@@ -120,6 +142,7 @@ export const ClientDetailForm = () => {
             </Box>
           </Box>
         </div>
+
         <Box>
           <Button
             variant="contained"
