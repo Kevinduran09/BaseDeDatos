@@ -12,16 +12,40 @@ import { FaTruckFront } from "react-icons/fa6";
 import { TbReport } from "react-icons/tb";
 import { FaRoute } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-
+import { FaAddressBook } from "react-icons/fa";
 import "../styles/sidebar.css";
+import Swal from "sweetalert2";
+
+import { useAuthStore } from "../store/useAuthStore";
 export function Sidebar({ sidebarOpen, setSidebarOpen, setTheme, theme }) {
   const ModSidebaropen = () => {
     setSidebarOpen(!sidebarOpen);
   };
-
+  const { logout } = useAuthStore()
   const CambiarTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
+  const { currentUser } = useAuthStore()
+
+  const closeSession = (e) => {
+ 
+    Swal.fire({
+      title: "¿Desea cerrar su sesión?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#015dfc",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Confirmar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout();
+        navigate('/login');
+      }
+    });
+  };
+
+  const isChofer = currentUser?.cargo === "Chofer";
 
   return (
     <div
@@ -41,32 +65,45 @@ export function Sidebar({ sidebarOpen, setSidebarOpen, setTheme, theme }) {
       </div>
       <div className="content-navegation">
         <div className="navegation-list">
-          {linksArray.map(({ icon, label, to }) => (
+          {!isChofer && linksArray.map(({ icon, label, to }) => (
             <div className="link-container" key={label}>
-              <NavLink
-                to={to}
-                className={({ isActive }) =>
-                  `links${isActive ? ` active` : ``}`
-                }
-              >
+              <NavLink to={to} className={({ isActive }) => `links${isActive ? ` active` : ``}`}>
                 <div className="link-icon">{icon}</div>
                 {sidebarOpen && <span>{label}</span>}
               </NavLink>
             </div>
           ))}
+          {/* Si es chofer, solo mostrar "Mis Viajes" */}
+          {isChofer && (
+            <div className="link-container" key="Mis Viajes">
+              <NavLink to="mis-viajes" className={({ isActive }) => `links${isActive ? ` active` : ``}`}>
+                <div className="link-icon"><FaRoute /></div>
+                {sidebarOpen && <span>Mis Viajes</span>}
+              </NavLink>
+            </div>
+          )}
         </div>
         <div className="divider" />
-        {secondarylinksArray.map(({ icon, label, to }) => (
+        {!isChofer && secondarylinksArray.map(({ icon, label, to }) => (
           <div className="link-container" key={label}>
-            <NavLink
-              to={to}
-              className={({ isActive }) => `links${isActive ? ` active` : ``}`}
-            >
+            <NavLink to={to} className={({ isActive }) => `links${isActive ? ` active` : ``}`}>
               <div className="link-icon">{icon}</div>
               {sidebarOpen && <span>{label}</span>}
             </NavLink>
           </div>
         ))}
+
+        <div className="link-container" key={'Salir'}>
+          <NavLink
+            className={'links exit'}
+            style={{color:'black !important'}}
+            onClick={closeSession}
+          >
+            <div className="link-icon"><MdLogout /></div>
+            {sidebarOpen && <span>Salir</span>}
+          </NavLink>
+        </div>
+
 
         <div className="divider" />
         <div className="theme-content">
@@ -118,18 +155,19 @@ const linksArray = [
   {
     label: "Viajes",
     icon: <FaRoute />,
-    to: "routes",
+    to: "travels",
+  },
+  {
+    label: "Auditorias",
+    icon: <FaAddressBook />,
+    to: "auditorias",
   },
 ];
 const secondarylinksArray = [
   {
     label: "Configuración",
     icon: <AiOutlineSetting />,
-    to: "null",
+    to: "config",
   },
-  {
-    label: "Salir",
-    icon: <MdLogout />,
-    to: "null",
-  },
+
 ];

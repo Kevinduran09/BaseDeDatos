@@ -30,16 +30,26 @@ class DestinoController extends Controller
         }
 
         return response()->json($response, 200);
-    } 
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
+    public function calcularDistancia(Request $request)
+    {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->get('https://api.openrouteservice.org/v2/directions/driving-car', [
+            'query' => [
+                'api_key' => '5b3ce3597851110001cf624889d963bdcb7f40bfabd88b8566ef183f',
+                'start' => "{$request->lonA},{$request->latA}",
+                'end' => "{$request->lonB},{$request->latB}"
+            ]
+        ]);
+        $data = json_decode($response->getBody(), true);
+
+        return response()->json([
+            'distancia_km' => $data['features'][0]['properties']['segments'][0]['distance'] / 1000,
+            'tiempo_estimado' => $data['features'][0]['properties']['segments'][0]['duration'] / 60   // en horas
+        ]);
+    }
+    
     /**
      * Store a newly created resource in storage.
      */

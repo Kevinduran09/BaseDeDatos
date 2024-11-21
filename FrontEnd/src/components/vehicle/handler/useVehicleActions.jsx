@@ -1,32 +1,78 @@
-import { useVehicleMutations } from "../mutations/useVehicleMutations";
-import { useNavigate } from "react-router-dom";
-import { ConfirmarDialogo } from "../../dialogos/Dialogos";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import {
+  createVehicle,
+  deleteVehicle,
+  updateVehicle,
+  getVehicle,
+} from "../../../services/VehicleService";
+import { SuccessDialogo, ConfirmarDialogo } from "../../dialogos/Dialogos";
+import { useState } from "react";
 
 export const useVehicleActions = () => {
-  const navegate = useNavigate();
-  const { createMutation, updateMutation, deleteMutation } =
-    useVehicleMutations();
+  const queryClient = useQueryClient();
+  const [vehiculo, setVehiculo] = useState({});
 
-  const createVehicle = (vehicle) => {
-    ConfirmarDialogo(createMutation, vehicle);
+  const deleteMutation = useMutation({
+    mutationFn: deleteVehicle,
+    onSuccess: () => {
+      queryClient.invalidateQueries("vehiculos");
+      SuccessDialogo("Eliminado", "Vehículo", "eliminado");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: createVehicle,
+    onSuccess: () => {
+      queryClient.invalidateQueries("vehiculos");
+      SuccessDialogo("Creado", "Vehículo", "creado");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: updateVehicle,
+    onSuccess: () => {
+      queryClient.invalidateQueries("vehiculos");
+      SuccessDialogo("Actualizado", "Vehículo", "actualizado");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
+  const deleteVehiculo = (id) => {
+    ConfirmarDialogo(deleteMutation, id, () => {
+      // Este callback puede estar vacío o incluir lógica adicional si es necesario.
+    });
   };
 
-  const deleteVehicle = (id) => {
-    ConfirmarDialogo(deleteMutation, id);
+  const createVehiculo = (data) => {
+    ConfirmarDialogo(createMutation, data, () => {
+      // Este callback puede estar vacío o incluir lógica adicional si es necesario.
+    });
   };
 
-  const updateVehicle = (vehicle) => {
-    ConfirmarDialogo(updateMutation, vehicle);
+  const updateVehiculo = (data) => {
+    ConfirmarDialogo(updateMutation, data, () => {
+      // Este callback puede estar vacío o incluir lógica adicional si es necesario.
+    });
   };
 
-  const handleVehicleDetail = (id) => {
-    navegate(`/app/vehicles/${id}`);
+  const fetchVehiculo = async (id) => {
+    const vehiculo = await getVehicle(id);
+    setVehiculo(vehiculo); // Almacena el vehículo en el estado
+    return vehiculo;
   };
 
   return {
-    createVehicle,
-    deleteVehicle,
-    updateVehicle,
-    handleVehicleDetail,
+    createVehiculo,
+    updateVehiculo,
+    deleteVehiculo,
+    fetchVehiculo,
   };
 };

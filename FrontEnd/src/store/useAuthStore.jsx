@@ -7,13 +7,14 @@ export const useAuthStore = create(
       isAuthenticated: false,
       token: "",
       currentUser: { admin: false },
+      perfil:null,
       login: (user, token) =>
         set({
           isAuthenticated: true,
           currentUser: user,
           token: token,
         }),
-
+      setPerfil: (perfil) => set({ perfil }),
       logout: () =>
         set({
           isAuthenticated: false,

@@ -3,6 +3,7 @@ import L from "leaflet";
 import { TileLayer, MapContainer, Marker, Popup } from "react-leaflet";
 import "leaflet-control-geocoder/dist/Control.Geocoder.css";
 import Control from "leaflet-control-geocoder";
+import { Loading } from "../../utils/loading";
 
 const maps = {
   base: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -54,7 +55,7 @@ const MapComponent = () => {
 
   // No renderizar el mapa hasta que la posición esté disponible
   if (!position) {
-    return <div>Cargando mapa...</div>; // O un componente de carga más elaborado
+    return <Loading/>; // O un componente de carga más elaborado
   }
 
   return (

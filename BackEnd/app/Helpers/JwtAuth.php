@@ -20,7 +20,7 @@ class JwtAuth
     $tokenData = [
         'iss' => $user->idUsuario,
         'iat' => time(),
-        'exp' => time() + 1200,
+        'exp' => time() + 1200000,
     ];
 
     if (isset($user->idCliente)) {

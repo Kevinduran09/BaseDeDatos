@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 export const LoginPage = () => {
   return (
     <>
-      <Box height="100vh" bgcolor="#fdfdff" className="">
+      <Box sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <SignIn />
       </Box>
     </>

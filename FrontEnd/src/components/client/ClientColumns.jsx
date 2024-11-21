@@ -1,17 +1,20 @@
 import React from "react";
-import { DeleteButton } from "../buttons/DeleteButton";
-import { UpdateButton } from "../buttons/UpdateButton";
-import { FormControl, Select, MenuItem } from "@mui/material";
+import { CustomButton } from "../CustomButton"; 
 import { useClientActions } from "./handler/useClientActions";
+import { useNavigate } from "react-router-dom";
+import { Delete02Icon } from 'hugeicons-react';
+import { PencilEdit02Icon } from 'hugeicons-react';
 export const ClientColumns = () => {
-  const { deleteCliente, hanleClientDetail } = useClientActions();
+  const { deleteCliente } = useClientActions();
+  const navigate = useNavigate(); 
+
   const columns = [
     {
       field: "idCliente",
       headerName: "ID",
       width: 50,
     },
-    { field: "cedula", headerName: "Cedula", width: 150 },
+    { field: "cedula", headerName: "Cédula", width: 150 },
     { field: "nombre", headerName: "Nombre", width: 150 },
     { field: "apellido", headerName: "Apellido", width: 150 },
     { field: "correoElectronico", headerName: "Email", width: 150 },
@@ -21,9 +24,17 @@ export const ClientColumns = () => {
       headerName: "Eliminar",
       width: 130,
       renderCell: (params) => (
-        <>
-          <DeleteButton handleDelete={deleteCliente} id={params.row.id} />
-        </>
+        <CustomButton
+          icon={<Delete02Icon
+            size={24}
+            color={"#ffffff"}
+            variant={"stroke"}
+          />}
+          action={() => deleteCliente(params.row.id)}
+          text="Eliminar"
+          color="error"
+          variant="contained"
+        />
       ),
     },
     {
@@ -31,12 +42,17 @@ export const ClientColumns = () => {
       headerName: "Editar",
       width: 130,
       renderCell: (params) => (
-        <>
-          <UpdateButton
-            handleUpdate={hanleClientDetail}
-            id={params.row.idCliente}
-          />
-        </>
+        <CustomButton
+          icon={<PencilEdit02Icon
+            size={24}
+            color={"#ffffff"}
+            variant={"stroke"}
+          />}
+          action={() => navigate(`edit/${params.row.idCliente}`)}
+          text="Editar"
+          color="primary"
+          variant="contained"
+        />
       ),
     },
   ];

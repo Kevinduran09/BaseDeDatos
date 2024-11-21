@@ -1,11 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 
 import { NavLink } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import YabiLogo from "../../assets/YabiLogo.png";
+import { SolicitudFormulario } from "../SolicitudServicio/SolicitudFormulario";
 
 export const Header = () => {
   const { isAuthenticated, logout } = useAuthStore();
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
 
   useEffect(()=>{
@@ -27,7 +31,10 @@ export const Header = () => {
               {isAuthenticated ? (
                 <>
                   <li className="nav-list-item">
-                    <NavLink to="/client/Solicitar">Solicitar Servicio</NavLink>
+                    <NavLink onClick={handleOpen}>Solicitar Servicio</NavLink>
+                  </li>
+                  <li className="nav-list-item">
+                    <NavLink to={'/account'}>Mi Cuenta</NavLink>
                   </li>
                   <li className="nav-list-item">
                     <NavLink onClick={() => logout()}>Cerrar Sesion</NavLink>
@@ -43,6 +50,8 @@ export const Header = () => {
           </div>
         </nav>
       </header>
+
+      <SolicitudFormulario open={open} handleClose={handleClose} />
     </>
   );
 };

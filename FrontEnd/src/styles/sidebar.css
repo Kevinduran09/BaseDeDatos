@@ -1,4 +1,5 @@
 @import "./index.css";
+
 /* Estilos para el contenedor del Sidebar */
 .sidebar-container {
   color: var(--icons-color);
@@ -7,11 +8,13 @@
   /* padding-top: 20px; */
   top: 0;
   height: 100vh;
+
 }
 
 .sidebar-button {
   position: absolute;
-  top: 48px; /* Ajusta según el diseño */
+  top: 48px;
+  /* Ajusta según el diseño */
   right: -18px;
   width: 32px;
   height: 32px;
@@ -33,6 +36,7 @@
   font-family: inherit;
   outline: none;
 }
+
 .sidebar-container.active .sidebar-button {
   transform: initial;
 }
@@ -41,7 +45,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 24px; /* Ajusta según el diseño */
+  padding-bottom: 24px;
+  /* Ajusta según el diseño */
   margin-top: 25px;
 }
 
@@ -51,23 +56,29 @@
   transform: scale(1.5);
   transition: all 0.3s;
 }
+
 .sidebar-container.active .img-content {
   transform: scale(0.7);
 }
+
 .logo-content img {
   max-width: 100%;
   height: auto;
   image-rendering: optimizeQuality;
 }
+
 :root[data-theme="dark"] .logo-content img {
   filter: invert();
 }
+
 .logo-content h2 {
   display: none;
 }
+
 .sidebar-container.active .logo-content h2 {
   display: block;
 }
+
 .link-container {
   margin: 8px 0;
   padding: 0 15%;
@@ -84,6 +95,10 @@
   padding: 0.5rem 0;
   color: var(--icons-color);
   height: 50px;
+}
+
+.link.exit {
+  color: black !important
 }
 
 .link-icon {
@@ -114,9 +129,11 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
 .sidebar-container.active .title-theme {
   opacity: 1;
 }
+
 .toggle-content {
   margin: auto 15px;
   width: 36px;
@@ -125,9 +142,11 @@
   transition: all 0.3s;
   position: relative;
 }
+
 .sidebar-container.active .toggle-content {
   margin: auto 40px;
 }
+
 .theme-container {
   background-blend-mode: multiply, multiply;
   transition: 0.4s;
@@ -159,7 +178,7 @@
   height: 0;
 }
 
-.theme-swither:checked + .slider::before {
+.theme-swither:checked+.slider::before {
   left: 4px;
   content: "🌑";
   transform: translateX(26px);
@@ -211,34 +230,43 @@
     top: auto;
     height: auto;
   }
+
   .content-navegation {
     display: none;
   }
+
   .sidebar-container.active .content-navegation {
     display: block;
   }
+
   .link-container {
     margin: 0;
     padding: 0;
   }
+
   .navegation-list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
   }
+
   .content-navegation span:not(.slider.round) {
     font-size: 0.74rem;
   }
+
   .sidebar-button {
     top: auto;
     right: 15px;
   }
+
   .divider {
     margin: 2px 0;
   }
+
   .sidebar-container.active .toggle-content {
     margin: auto 40px;
     margin-bottom: 17px;
   }
+
   .link-icon {
     padding: 0.5rem 0.3rem;
   }

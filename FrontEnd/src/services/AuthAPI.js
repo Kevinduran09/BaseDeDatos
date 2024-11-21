@@ -16,5 +16,5 @@ export const currentUser = async () => {
 };
 
 export const registerClient = async (data) => {
-  return await AuthAPI.post("/cliente/register", data);
+  return await AuthAPI.post("/register", data);
 };

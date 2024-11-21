@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UsuarioController;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\DB;
 class EmpleadoController extends Controller
 {
     /**
@@ -15,7 +16,7 @@ class EmpleadoController extends Controller
      */
     public function index()
     {
-        $empleado = Empleado::with(["puesto",'usuario'])->get();
+        $empleado = DB::table('viEmpleado')->get();
 
         if ($empleado->isEmpty()) {
             $response = [
@@ -44,9 +45,8 @@ class EmpleadoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(request $request)
+    public function store(Request $request)
     {
-    
         $validator = Validator::make(
             $request->all(),
             [
@@ -54,70 +54,83 @@ class EmpleadoController extends Controller
                 "cedula" => "required",
                 "nombre" => "required",
                 "apellido" => "required",
-                "correoElectronico" => "required | email",
-                "telefono" => "required",
+                "correoElectronico" => "required|email",
                 "direccion" => "required",
-                "fechaNacimiento" => "required",
-                "fechaContratacion" => "required"
+                "fechaNacimiento" => "required|date",
+                "fechaContratacion" => "required|date",
+                "telefonoMovil" => "required|numeric",
             ]
         );
 
         if ($validator->fails()) {
-            $data =
-                [
-                    'message' => 'Error en la validacion de los datos',
-                    'error' => $validator->errors(),
-                    'status' => 400
-                ];
-            return response()->json($data, 400);
+            return response()->json([
+                'message' => 'Error en la validación de los datos',
+                'errors' => $validator->errors(),
+                'status' => 400
+            ], 400);
         }
 
-        $empleado = Empleado::create(
-            [
-                "idPuesto" => $request->idPuesto,
-                "cedula" => $request->cedula,
-                "nombre" => $request->nombre,
-                "apellido" => $request->apellido,
-                "correoElectronico" => $request->correoElectronico,
-                "telefono" => $request->telefono,
-                "direccion" => $request->direccion,
-                "fechaNacimiento" => $request->fechaNacimiento,
-                "fechaContratacion" => $request->fechaContratacion
-            ]
-        );
+        DB::beginTransaction(); // Inicia la transacción
 
-        if (!$empleado) {
-            $data = [
-                'message' => 'Error al crear el registro de empleado',
+        try {
+            // Llamar al procedimiento almacenado para insertar el empleado
+            $result = DB::select('EXEC paInsertarEmpleado @idPuesto = ?, @cedula = ?, @nombre = ?, @apellido = ?, @correoElectronico = ?, @direccion = ?, @fechaNacimiento = ?', [
+                $request->idPuesto,
+                $request->cedula,
+                $request->nombre,
+                $request->apellido,
+                $request->correoElectronico,
+                $request->direccion,
+                $request->fechaNacimiento,
+            ]);
+
+            // Asumiendo que el procedimiento retorna el ID del empleado creado
+            $idEmpleado = $result[0]->idEmpleado ?? null;
+
+            if (!$idEmpleado) {
+                throw new \Exception('Error al crear el registro de empleado');
+            }
+
+            // Llamar al procedimiento almacenado para insertar el teléfono
+            DB::statement('EXEC paInsertarTelefono @numeroTelefono = ?, @idEmpleado = ?, @TipoTelefono = ?', [
+                $request->telefonoMovil,
+                $idEmpleado,
+                'Móvil'
+            ]);
+
+            // Insertar usuario
+            DB::statement('EXEC paInsertarUsuario null, ?, ?, ?', [
+                $idEmpleado,
+                $request->nombreUsuario,
+                $request->contrasena
+            ]);
+
+            DB::commit(); // Confirma la transacción si todo va bien
+
+            return response()->json([
+                'message' => 'Empleado, teléfono y usuario creados correctamente',
+                'idEmpleado' => $idEmpleado,
+                'status' => 200
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack(); // Revierte la transacción si algo falla
+
+            // Manejo de errores
+            return response()->json([
+                'message' => 'Error al crear el empleado o el teléfono: ' . $e->getMessage(),
                 'status' => 500
-            ];
-            return response()->json($data, 500);
+            ], 500);
         }
-        $user = new UsuarioController();
-
-        $usuario = $user->store([
-            'nombreUsuario' => $request->nombreUsuario,
-            'contrasena' => $request->contrasena,
-            'idEmpleado' => $empleado->idEmpleado
-        ]);
-        if(!$usuario){
-            $data = [
-                'message' => 'Error al crear el registro de usuario',
-                'status' => 500
-            ];
-            return response()->json($data, 500);
-        }
-
-        return response()->json($usuario,200);
-        
     }
+
 
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        $empleado = Empleado::with(["puesto"])->where("idEmpleado", $id)->first();
+        $empleado = DB::select('EXEC paBuscarEmpleado :idEmpleado', ['idEmpleado' => $id]);
 
         if (!$empleado) {
             return response()->json(['message' => 'Empleado no encontrado'], 404);
@@ -131,39 +144,59 @@ class EmpleadoController extends Controller
         return response()->json($response, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Empleado $empleado)
+    public function availableEmployees(Request $request)
     {
-        //
-    }
+        try {
+            // Validar que el parámetro 'fecha' esté presente en la solicitud
+            if (!$request->has('fecha')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El parámetro "fecha" es requerido.'
+                ], 400);
+            }
 
+            $fecha = $request->input('fecha');
+
+            // Llamada al procedimiento almacenado con el parámetro 'fecha'
+            $empleados = DB::select('EXEC buscarEmpleadosPorDisponibilidad ?', [$fecha]);
+
+            // Verificar si la respuesta está vacía
+            if (empty($empleados)) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'No hay empleados disponibles en la fecha seleccionada.',
+                    'data' => []
+                ], 200);
+            }
+
+            // Respuesta en caso de éxito
+            return response()->json([
+                'success' => true,
+                'data' => $empleados
+            ], 200);
+
+        } catch (\Exception $e) {
+            // Manejo de errores
+            return response()->json([
+                'success' => false,
+                'message' => 'Hubo un error al consultar los empleados disponibles.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     /**
      * Update the specified resource in storage.
      */
-    public function update(request $request, $id)
+    public function update(Request $request, $id)
     {
-        $empleado = Empleado::find($id);
-
-        if (!$empleado) {
-            $response = [
-                'message' => 'Empleado no encontrado',
-                'status' => 404
-            ];
-            return response()->json($response, 404);
-        }
-
         $validator = Validator::make($request->all(), [
-            "idPuesto" => 'exists:puesto,idPuesto',
-            "cedula" => 'required',
-            "nombre" => 'required',
-            "apellido" => 'required',
-            "correoElectronico" => 'required | email',
-            "telefono" => 'required',
-            "direccion" => 'required',
-            "fechaNacimiento" => 'required',
-            "fechaContratacion" => 'required'
+            "idPuesto" => "required|numeric|exists:Puesto,idPuesto",
+            "cedula" => "required",
+            "nombre" => "required",
+            "apellido" => "required",
+            "correoElectronico" => "required|email",
+            "direccion" => "required",
+            "telefonoMovil" => "numeric",
         ]);
 
         if ($validator->fails()) {
@@ -175,52 +208,84 @@ class EmpleadoController extends Controller
             return response()->json($response, 400);
         }
 
-        $empleado->idPuesto = $request->idPuesto;
-        $empleado->cedula = $request->cedula;
-        $empleado->nombre = $request->nombre;
-        $empleado->apellido = $request->apellido;
-        $empleado->correoElectronico = $request->correoElectronico;
-        $empleado->telefono = $request->telefono;
-        $empleado->direccion = $request->direccion;
-        $empleado->fechaNacimiento = $request->fechaNacimiento;
-        $empleado->fechaContratacion = $request->fechaContratacion;
+        try {
 
-        $empleado->save();
+            $idEmpleado = (int) $id;
+            $idPuesto = (int) $request['idPuesto'];
 
-        $user = Usuario::updateOrCreate(
-            ['idEmpleado' => $request->idEmpleado],
-            ['nombreUsuario' => $request->nombreUsuario, 'contrasena' => $request->contrasena]
-        );    
+            $params = [
+                'idEmpleado' => $idEmpleado,
+                'idPuesto' => $idPuesto,
+                'nombre' => $request['nombre'],
+                'apellido' => $request['apellido'],
+                'correoElectronico' => $request['correoElectronico'],
+                'direccion' => $request['direccion'],
+            ];
+            $result = DB::statement('EXEC paActualizarEmpleado :idEmpleado,:idPuesto, :nombre, :apellido, :correoElectronico, :direccion', $params);
 
-        $response = [
-            'message' => 'Empleado actualizado correctamente',
-            'status' => 201,
-            'empleado' => $empleado,
-        ];
-        return response()->json($response, 200);
+            if ($result === false) {
+                throw new \Exception('Error al actualizar los datos del empleado');
+            }
+           
+            $usuario = DB::select('EXEC paObtenerUsuarioPorEmpleadoOCliente ?, null', [$id]);
+
+            if (!$usuario) {
+                return response()->json([
+                    'message' => 'Usuario asociado al cliente no encontrado',
+                    'status' => 404
+                ], 404);
+            }
+
+
+            DB::statement('EXEC paActualizarUsuario ?, null, ?, ?, ?', [
+                (int) $usuario[0]->idUsuario,
+                (int) $id,
+                $request->nombreUsuario,
+                $request->contrasena
+            ]);
+
+
+            if ($request->has('telefonoMovil')) {
+                // Llamar al procedimiento almacenado para actualizar el teléfono móvil
+                DB::statement('EXEC paActualizarTelefono ?, ?, ?, ?', [
+                    $request->telefonoMovil,
+                    1,
+                    null,
+                    $id,
+                ]);
+            }
+
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Error al actualizar el empleado',
+                'error' => $th->getMessage(),
+                'status' => 500
+            ], 500);
+        }
+
+        return response()->json('Se actualizó con éxito', 200);
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
-        $empleado = Empleado::find($id);
+        $result = DB::statement('EXEC paEliminarEmpleado ?', [
+            $id
+        ]);
 
-        if (!$empleado) {
-            $response = [
-                'message' => 'Empleado no encontrado',
-                'status' => 404
+
+        if ($result === false) {
+            $data = [
+                'message' => 'Error al eliminar los datos del empleado',
+                'status' => 500
             ];
-            return response()->json($response, 404);
+            return response()->json($data, 500);
         }
 
-        $empleado->delete();
-
-        $response = [
-            'message' => 'Empleado eliminado correctamente',
-            'status' => 200
-        ];
-        return response()->json($response, 200);
+        return response()->json(['message' => 'empleado eliminado correctamente'], 200);
     }
 }

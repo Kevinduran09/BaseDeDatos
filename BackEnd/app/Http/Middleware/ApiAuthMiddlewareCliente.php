@@ -19,12 +19,14 @@ class ApiAuthMiddlewareCliente
         $jwt = new JwtAuth();
         $token = $request->bearerToken();
         $logged = $jwt->verifyToken($token,true);
+
         if (is_object($logged) && $logged->tipo == "cliente") {
             return $next($request);
         } else {
             $response = array(
                 'message' => 'El cliente no tiene la autorización para acceder',
                 'status' => 401,
+                'data'=> $logged
             );
             return response()->json($response, 401);
         }

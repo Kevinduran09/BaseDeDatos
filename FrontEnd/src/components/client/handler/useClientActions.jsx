@@ -1,35 +1,76 @@
-import { getClient } from "../../../services/ClientService";
-import { ConfirmarDialogo } from "../../dialogos/Dialogos";
-import { useClientMutations } from "../mutations/useClientMutations";
-import { useNavigate } from "react-router-dom";
-export const useClientActions = () => {
-  const navegate = useNavigate();
-  const { createMutation, updateMutation, deleteMutation } =
-    useClientMutations();
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import {
+  createClient,
+  deleteClient,
+  updateClient,
+  getClient,
+} from "../../../services/ClientService";
+import { SuccessDialogo, ConfirmarDialogo } from "../../dialogos/Dialogos";
+import { useState } from "react";
 
-  const createCliente = (client) => {
-    ConfirmarDialogo(createMutation, client);
-  };
+export const useClientActions = () => {
+  const queryClient = useQueryClient();
+  const [cliente, setCliente] = useState({});
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteClient,
+    onSuccess: () => {
+      queryClient.invalidateQueries("clientes");
+      SuccessDialogo("Eliminado", "Cliente", "eliminado");
+    },
+    onError: (error) => {
+      console.error('error al eliminar el cliente',error);
+    },
+  });
+  const createMutation = useMutation({
+    mutationFn: createClient,
+    onSuccess: () => {
+      queryClient.invalidateQueries("clientes");
+      SuccessDialogo("Creado", "Cliente", "creado");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+  const updateMutation = useMutation({
+    mutationFn: updateClient,
+    onSuccess: () => {
+      queryClient.invalidateQueries("clientes");
+      SuccessDialogo("Actualizado", "Cliente", "Actualizado");
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
+
   const deleteCliente = (id) => {
-    ConfirmarDialogo(deleteMutation, id);
-  };
-  const updateCliente = (client) => {
-    ConfirmarDialogo(updateMutation, client);
-  };
-  const hanleClientDetail = (id) => {
-    navegate(`/app/clients/${id}`);
-  };
-  const getClientById = (id) => {
-    return getClient(id).then((data) => {
-      console.log(data);
-      return data;
+    ConfirmarDialogo(deleteMutation, id, () => {
+      // Este callback puede estar vacío o incluir lógica adicional si es necesario.
     });
   };
+
+  const createCliente = (data) => {
+    ConfirmarDialogo(createMutation, data, () => {
+      // Este callback puede estar vacío o incluir lógica adicional si es necesario.
+    });
+  };
+
+  const updateCliente = (data) => {
+    ConfirmarDialogo(updateMutation, data, () => {
+      // Este callback puede estar vacío o incluir lógica adicional si es necesario.
+    });
+  };
+
+  const fetchCliente = async (id) => {
+    const cliente = await getClient(id);
+    setCliente(cliente); // Almacena el cliente en el estado
+    return cliente;
+  };
+
   return {
-    getClientById,
     createCliente,
-    deleteCliente,
     updateCliente,
-    hanleClientDetail,
+    deleteCliente,
+    fetchCliente,
   };
 };

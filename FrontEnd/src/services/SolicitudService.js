@@ -3,14 +3,14 @@ import { URLBASE } from "../config";
 
 // Crear una instancia de axios con la baseURL configurada
 const solicitudAPI = axios.create({
-  baseURL: `${URLBASE}/api/v1/administrador/solicitud`,
+  baseURL: `${URLBASE}/api/v1/administrador/solicitudes`,
 });
 
 // Interceptor para agregar el token a todas las solicitudes
 solicitudAPI.interceptors.request.use(
   (config) => {
     // Obtener el token desde el localStorage
-    let state = localStorage.getItem("authState");
+    let state = localStorage.getItem("auth-State");
     state = JSON.parse(state);
     if (state && state.state.token) {
       config.headers.Authorization = `Bearer ${state.state.token}`;
@@ -26,6 +26,15 @@ solicitudAPI.interceptors.request.use(
 export const getSolicitudes = async () => {
   try {
     const res = await solicitudAPI.get("");
+    return res.data.data;
+  } catch (error) {
+    console.error("Error al obtener solicitudes:", error);
+    return error.response;
+  }
+};
+export const getSolicitudesbyDate = async (date) => {
+  try {
+    const res = await solicitudAPI.post("/getBydate",date);
     return res.data.data;
   } catch (error) {
     console.error("Error al obtener solicitudes:", error);
@@ -76,3 +85,14 @@ export const deleteSolicitud = async (id) => {
     return error.response;
   }
 };
+
+export const verificarAlcance = async (idsArray)=>{
+  try {
+    const res = await solicitudAPI.post('/verificar-alcance', { 'idsSolicitudes': idsArray })
+    return res.data
+  } catch (error) {
+    console.error("Error ocurrido",error);
+    return error.response;
+    
+  }
+}

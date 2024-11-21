@@ -1,51 +1,65 @@
 import React from "react";
-import { DeleteButton } from "../buttons/DeleteButton";
-import { UpdateButton } from "../buttons/UpdateButton";
+import { CustomButton } from "../CustomButton";
+import { useNavigate } from "react-router-dom";
+import { useSolicitudActions } from "./useSolicitudActions";
+import { EyeIcon } from 'hugeicons-react'
+import { Delete02Icon } from 'hugeicons-react';
 
 export const SolicitudColumns = () => {
+  const navigate = useNavigate(); 
+  const {deleteSolicitud}= useSolicitudActions()
   const columns = [
     { field: "idSolicitud", headerName: "ID", width: 50 },
     {
-      field: "idCliente",
+      field: "cliente",
       headerName: "Cliente",
       width: 150,
-      renderCell: (params) => params.row.cliente.nombre,
+      renderCell: (params) => params.row.cliente,
     },
     {
-      field: "idServicio",
-      headerName: "Servicio",
+      field: "tipoServicio",
+      headerName: "tipoServicio",
       width: 200,
-      renderCell: (params) => params.row.servicio.tipoServicio,
+      renderCell: (params) => params.row.tipoServicio,
     },
-    {
-      field: "idDireccion",
-      headerName: "Destino",
-      width: 259,
-      renderCell: (params) => params.row.cliente.direccion,
-    },
+  
     { field: "fecha", headerName: "Fecha", width: 150 },
     { field: "observacion", headerName: "Observación", width: 150 },
     { field: "estado", headerName: "Estado", width: 150 },
     {
-      field: "eliminar",
+      field: "Eliminar",
       headerName: "Eliminar",
       width: 130,
       renderCell: (params) => (
-        <>
-          <DeleteButton
-            handleDelete={() => console.log(params.row.idSolicitud)}
-          />
-        </>
+        <CustomButton
+          icon={<Delete02Icon
+            size={24}
+            color={"#ffffff"}
+            variant={"stroke"}
+          />}
+          action={() => deleteSolicitud(params.row.idSolicitud)} // Acción de eliminación
+          text="Eliminar"
+          color="error"
+          variant="contained"
+        />
       ),
     },
     {
-      field: "editar",
-      headerName: "Editar",
+      field: "Ver",
+      headerName: "Ver",
       width: 130,
       renderCell: (params) => (
-        <>
-          <UpdateButton handleUpdate={() => console.log(params.row)} />
-        </>
+        <CustomButton
+          icon={<EyeIcon
+            size={24}
+            color={"#FFFFFF"}
+            variant={"stroke"}
+          />}
+          action={() => navigate(`ver/${params.row.idSolicitud}`)} // Redirección a la edición
+          text="Ver"
+          color="primary"
+          variant="contained"
+        />
       ),
     },
   ];

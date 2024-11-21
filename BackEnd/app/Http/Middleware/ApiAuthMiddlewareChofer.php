@@ -16,18 +16,23 @@ class ApiAuthMiddlewareChofer
      */
     public function handle(Request $request, Closure $next): Response
     {
+         
         $jwt = new JwtAuth();
         $token = $request->bearerToken();
-        $logged = $jwt->verifyToken($token,true);
 
-        if ($logged && $logged->tipo == "empleado" && $logged->cargo == "Chofer") {
+       
+        $logged = $jwt->verifyToken($token, true);
+
+      
+        if ($logged && $logged->tipo === 'empleado' && $logged->cargo === 'Chofer') {
             return $next($request);
-        } else {
-            $response = array(
-                'message' => 'El empleado no tiene la autorización para acceder',
-                'status' => 401,
-            );
-            return response()->json($response, 401);
         }
+
+      
+        return response()->json([
+            'message' => 'El usuario no tiene la autorización para acceder a esta área',
+            'status' => 403, 
+        ], 403);
+    
     }
 }

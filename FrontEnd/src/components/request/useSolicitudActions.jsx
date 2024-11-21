@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useSolicitudMutations } from "./useSolicitudMutations";
-
+import { ConfirmarDialogo } from "../dialogos/Dialogos";
 export const useSolicitudActions = () => {
   const navegate = useNavigate();
   const { createMutation, updateMutation, deleteMutation } =

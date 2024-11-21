@@ -176,7 +176,7 @@ class UsuarioController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                "nombreUsuario" => "required|exists:Usuario,nombreUsuario",
+                "nombreUsuario" => "required|",
                 "contrasena" => "required"
             ]
         );

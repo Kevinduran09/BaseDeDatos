@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet, useParams } from "react-router-dom";
 export const FormLayout = () => {
-  console.log("fdfd");
+   ("fdfd");
 
   const { entity, id } = useParams();
   return (

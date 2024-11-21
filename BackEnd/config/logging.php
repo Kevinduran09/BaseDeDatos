@@ -57,7 +57,11 @@ return [
             'channels' => explode(',', env('LOG_STACK', 'single')),
             'ignore_exceptions' => false,
         ],
-
+        'viaje' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/viaje.log'),
+            'level' => 'debug',
+        ],
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
