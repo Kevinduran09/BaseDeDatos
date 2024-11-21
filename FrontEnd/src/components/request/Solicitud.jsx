@@ -3,7 +3,7 @@ import { TableComponent } from "../TableComponent";
 import { SolicitudColumns } from "./SolicitudColumns";
 import { getSolicitudes } from "../../services/SolicitudService";
 import { useQuery } from "@tanstack/react-query";
-import { useSolicitudActions } from "./useSolicitudActions";
+
 
 export const Solicitud = () => {
   const { columns } = SolicitudColumns();

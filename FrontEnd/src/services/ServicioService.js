@@ -1,79 +1,103 @@
 import axios from "axios";
 import { URLBASE } from "../config";
 
-// Crear una instancia de axios con la baseURL configurada
-const servicioAPI = axios.create({
-  baseURL: `${URLBASE}/api/v1/administrador/servicio`,
+// Instancias de axios para las rutas específicas
+const servicioAPICliente = axios.create({
+  baseURL: `${URLBASE}/api/v1/cliente`,
+});
+
+const servicioAPIAdmin = axios.create({
+  baseURL: `${URLBASE}/api/v1/administrador`,
+});
+
+const servicioAPIPublico = axios.create({
+  baseURL: `${URLBASE}/api/v1`,
 });
 
 // Interceptor para agregar el token a las solicitudes
-servicioAPI.interceptors.request.use(
-  (config) => {
-    // Obtener el token desde el localStorage
-    let state = localStorage.getItem("authState");
-    state = JSON.parse(state);
-    if (state && state.state.token) {
-      config.headers.Authorization = `Bearer ${state.state.token}`;
-    }
-
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+const agregarToken = (config) => {
+  let state = localStorage.getItem("auth-State");
+  state = JSON.parse(state);
+  if (state && state.state.token) {
+    config.headers.Authorization = `Bearer ${state.state.token}`;
   }
-);
+  return config;
+};
 
-// Función para obtener todos los servicios
-export const getServices = async () => {
+// Agregar interceptores a las instancias
+servicioAPICliente.interceptors.request.use(agregarToken, (error) => Promise.reject(error));
+servicioAPIAdmin.interceptors.request.use(agregarToken, (error) => Promise.reject(error));
+
+// ** Rutas públicas **
+
+// Función para obtener todos los servicios (público)
+export const getAllServices = async () => {
   try {
-    const response = await servicioAPI.get("/");
-    return response.data;
+    const response = await servicioAPIPublico.get("/servicios");
+    return response.data.data;
   } catch (error) {
-    console.error("Error al obtener servicios:", error);
+    console.error("Error al obtener servicios públicos:", error);
     throw error;
   }
 };
 
-// Función para obtener un servicio por ID
-export const getService = async (id) => {
+// ** Rutas de cliente **
+
+// Función para crear una solicitud (Cliente)
+export const createSolicitudCliente = async (data) => {
   try {
-    const response = await servicioAPI.get(`/${id}`);
+    console.log(data);
+    
+    const response = await servicioAPICliente.post(`/solicitudes/${data.clienteId}`, data);
     return response.data;
   } catch (error) {
-    console.error("Error al obtener servicio:", error);
+    console.error("Error al crear solicitud para cliente:", error);
     throw error;
   }
 };
 
-// Función para crear un nuevo servicio
-export const createService = async (data) => {
+// ** Rutas de administrador **
+
+// Función para obtener los servicios (Administrador)
+export const getServicesAdmin = async () => {
   try {
-    const response = await servicioAPI.post("/", data);
+    const response = await servicioAPIAdmin.get("/servicios");
     return response.data;
   } catch (error) {
-    console.error("Error al crear servicio:", error);
+    console.error("Error al obtener servicios para administrador:", error);
     throw error;
   }
 };
 
-// Función para actualizar un servicio
-export const updateService = async (data) => {
+// Función para crear un nuevo servicio (Administrador)
+export const createServiceAdmin = async (data) => {
   try {
-    const response = await servicioAPI.put(`/${data.idServicio}`, data);
+    const response = await servicioAPIAdmin.post("/servicios", data);
     return response.data;
   } catch (error) {
-    console.error("Error al actualizar servicio:", error);
+    console.error("Error al crear servicio para administrador:", error);
     throw error;
   }
 };
 
-// Función para eliminar un servicio
-export const deleteService = async (id) => {
+// Función para actualizar un servicio (Administrador)
+export const updateServiceAdmin = async (id, data) => {
   try {
-    const response = await servicioAPI.delete(`/${id}`);
+    const response = await servicioAPIAdmin.put(`/servicios/${id}`, data);
     return response.data;
   } catch (error) {
-    console.error("Error al eliminar servicio:", error);
+    console.error("Error al actualizar servicio para administrador:", error);
+    throw error;
+  }
+};
+
+// Función para eliminar un servicio (Administrador)
+export const deleteServiceAdmin = async (id) => {
+  try {
+    const response = await servicioAPIAdmin.delete(`/servicios/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al eliminar servicio para administrador:", error);
     throw error;
   }
 };

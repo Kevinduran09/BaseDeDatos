@@ -2,15 +2,15 @@ import axios from "axios";
 import { URLBASE } from "../config";
 
 // Crear una instancia de axios con la baseURL configurada
-const employeeAPI = axios.create({
-  baseURL: `${URLBASE}/api/v1/administrador/empleado`,
+const employeAPI = axios.create({
+  baseURL: `${URLBASE}/api/v1/administrador/empleados`,
 });
 
 // Interceptor para agregar el token a las solicitudes
-employeeAPI.interceptors.request.use(
+employeAPI.interceptors.request.use(
   (config) => {
     // Obtener el token desde el localStorage
-    let state = localStorage.getItem("authState");
+    let state = localStorage.getItem("auth-State");
     state = JSON.parse(state);
     if (state && state.state.token) {
       config.headers.Authorization = `Bearer ${state.state.token}`;
@@ -24,9 +24,9 @@ employeeAPI.interceptors.request.use(
 );
 
 // Función para obtener empleados
-export const getEmployees = async () => {
+export const getEmployes = async () => {
   try {
-    const response = await employeeAPI.get("");
+    const response = await employeAPI.get("");
     return response.data.data;
   } catch (error) {
     console.error("Error al obtener empleados:", error);
@@ -34,10 +34,24 @@ export const getEmployees = async () => {
   }
 };
 
-// Función para crear empleado
-export const createEmployee = async (data) => {
+export const availableEmployees = async (fecha) => await employeAPI.post("/available-employees", { fecha });
+export const getEmploye = async (id) => {
   try {
-    const response = await employeeAPI.post("", data);
+    const res = await employeAPI.get(`/${id}`);
+     (res);
+
+    return res.data.empleado;
+  } catch (error) {
+    console.error("Error al obtener empleado:", error);
+    throw error;
+  }
+};
+
+
+// Función para crear empleado
+export const createEmploye = async (data) => {
+  try {
+    const response = await employeAPI.post("", data);
     return response.data;
   } catch (error) {
     console.error("Error al crear empleado:", error);
@@ -46,20 +60,40 @@ export const createEmployee = async (data) => {
 };
 
 // Función para actualizar empleado
-export const updateEmployee = async (data) => {
+export const updateEmploye = async (data) => {
   try {
-    const response = await employeeAPI.put(`/${data.idEmpleado}`, data);
+    const response = await employeAPI.put(`/${data.idEmpleado}`, data);
     return response.data;
   } catch (error) {
     console.error("Error al actualizar empleado:", error);
     throw error;
   }
 };
+export const getPuestos = async () =>{
 
-// Función para eliminar empleado
-export const deleteEmployee = async (id) => {
+
+  let state = localStorage.getItem("auth-State");
+  state = JSON.parse(state);
+
   try {
-    const response = await employeeAPI.delete(`/${id}`);
+    const result = await axios.get(`${URLBASE}/api/v1/administrador/puestos`, {
+      headers: {
+        Authorization: `Bearer ${state.state.token}`
+      }
+    }) 
+
+    return result.data.data
+  } catch (error) {
+    console.error("Error al cargar los puestos:", error);
+    throw error;
+  }
+
+  
+}
+// Función para eliminar empleado
+export const deleteEmploye = async (id) => {
+  try {
+    const response = await employeAPI.delete(`/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error al eliminar empleado:", error);

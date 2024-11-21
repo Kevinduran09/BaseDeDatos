@@ -17,7 +17,7 @@ export const Vehicle = () => {
 
   return (
     <TableComponent
-      route={"/app/vehicles/:id"}
+      route={"/app/vehicles/create"}
       isLoading={isLoading}
       isError={isError}
       rowsSet={vehicles}

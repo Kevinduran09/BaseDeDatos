@@ -3,14 +3,14 @@ import { URLBASE } from "../config";
 
 // Crear instancia de axios con la baseURL
 const vehiculoAPI = axios.create({
-  baseURL: `${URLBASE}/api/v1/administrador/vehiculo`,
+  baseURL: `${URLBASE}/api/v1/administrador/vehiculos`,
 });
 
 // Interceptor para agregar el token a las solicitudes
 vehiculoAPI.interceptors.request.use(
   (config) => {
     // Obtener el token desde el localStorage
-    let state = localStorage.getItem("authState");
+    let state = localStorage.getItem("auth-State");
     state = JSON.parse(state);
     if (state && state.state.token) {
       config.headers.Authorization = `Bearer ${state.state.token}`;
@@ -32,6 +32,20 @@ export const getVehicles = async () => {
     throw error;
   }
 };
+
+
+export const getVehicle = async (id) => {
+  try {
+    const res = await vehiculoAPI.get(`/${id}`);
+    
+
+    return res.data.data;
+  } catch (error) {
+    console.error("Error al obtener cliente:", error);
+    throw error;
+  }
+};
+
 
 // Crear un vehículo
 export const createVehicle = async (data) => {

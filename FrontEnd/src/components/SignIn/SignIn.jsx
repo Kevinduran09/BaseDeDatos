@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   TextField,
@@ -8,251 +8,205 @@ import {
   Typography,
   Divider,
   Link,
-} from "@mui/material";
-
-import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-
-
-
+import { Visibility, VisibilityOff, GitHub, Google, LockOutlined } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { loginSession } from "../../services/AuthAPI";
 import { ErrorDialogo, msjDialogo } from "../dialogos/Dialogos";
-import { GitHub, Google, LockOutlined } from "@mui/icons-material";
-import { useState } from "react";
 import { useAuthStore } from "../../store/useAuthStore";
+import { useForm, Controller } from "react-hook-form";
+import { getMyInfo } from "../../services/ClientService";
 const SignIn = () => {
-  const { login } = useAuthStore();
-  const navegate = useNavigate();
-  const [loginData, setloginData] = useState({
-    nombreUsuario: "",
-    contrasena: "",
-  });
-  const [VisiblePassword, setVisiblePassword] = useState(false)
-  const [isLoading, setisLoading] = useState(false);
-  const hanleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(loginData);
-    setisLoading(true);
-    try {
-      const res = await loginSession(loginData);
-      const { token, user } = res.data;
-      msjDialogo(
-        "Inicio de sesion exitoso",
-        null,
-        "success",
-        login(user, token)
-      );
+  const { login, setPerfil } = useAuthStore();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const [VisiblePassword, setVisiblePassword] = useState(false);
 
-      setisLoading(false);
-      navegate('/')
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    try {
+      const res = await loginSession(data);
+      const { token, user } = res.data;
+      msjDialogo("Inicio de sesión exitoso", null, "success", login(user, token));
+      setIsLoading(false);
+      if(user.cargo == 'Administrador' || user.cargo == 'Chofer'){
+        navigate('/app')
+      }else{
+        const res = await getMyInfo(user.issCliente)
+        console.log(res);
+        setPerfil(res)
+        navigate("/");
+      }
+      
     } catch (error) {
       console.error(error.response.data);
-      setisLoading(false);
+      setIsLoading(false);
       ErrorDialogo("Error", error.response.data);
     }
   };
-  const hanleOnChange = (e) => {
-    const { name, value } = e.target;
-    setloginData((loginData) => ({ ...loginData, [name]: value }));
-  };
+
+  
+
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      height="100%"
-      justifyContent="center"
-      p={3}
-      sx={{ maxWidth: 400, mx: "auto" }}
-    >
-      <LockOutlined
-        sx={{
-          fontSize: 50,
-          color: "#fff",
-          marginBottom: 2,
-          backgroundColor: "#2196f3",
-          borderRadius: "50%",
-          padding: 1,
-        }}
-      />
-
-    
-      <Typography variant="h5" color="black" gutterBottom>
-        Sign in
-      </Typography>
-
-      <Typography variant="body1" color="gray" gutterBottom>
-        Welcome user, please sign in to continue
-      </Typography>
-
   
-      <Button
-        variant="contained"
-        startIcon={<GitHub />}
-        fullWidth
-        sx={{
-          backgroundColor: "#333",
-          color: "#fff",
-          marginBottom: 1.5,
-          textTransform: "none",
-          fontWeight: "bold",
-          padding: 1.5,
-          borderRadius: 3,
-          "&:hover": { backgroundColor: "#555" },
-        }}
-      >
-        Sign In With GitHub
-      </Button>
-
-    
-      <Button
-        variant="contained"
-        startIcon={<Google />}
-        fullWidth
-        sx={{
-          backgroundColor: "#EA4335",
-          color: "#fff",
-          marginBottom: 1.5,
-          textTransform: "none",
-          fontWeight: "bold",
-          padding: 1.5,
-          borderRadius: 3,
-          "&:hover": { backgroundColor: "#d32f2f" },
-        }}
-      >
-        Sign In With Google
-      </Button>
-
-     
       <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          marginBottom: 2,
-        }}
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        p={4}
+        sx={{ maxWidth: 400, mx: "auto", borderRadius: 2, backgroundColor: "#fff", boxShadow: 3, maxHeight: { md: '700px' ,xs:'700px'}}}
       >
-        <Divider sx={{ flexGrow: 1, bgcolor: "gray" }} />
-        <Typography variant="body2" color="gray" sx={{ mx: 2 }}>
-          or
+        <LockOutlined sx={{ fontSize: 48, color: "#000", marginBottom: 2 }} />
+
+        <Typography variant="h5" color="black" gutterBottom>
+          Sign In
         </Typography>
-        <Divider sx={{ flexGrow: 1, bgcolor: "gray" }} />
+
+        <Typography variant="body2" color="textSecondary" gutterBottom>
+          Welcome, please sign in to continue
+        </Typography>
+
+        <Box sx={{ width: "100%", marginBottom: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<GitHub />}
+            fullWidth
+            sx={{
+              color: "#000",
+              borderColor: "#000",
+              textTransform: "none",
+              fontWeight: "bold",
+              padding: 1.2,
+              marginBottom: 1,
+              "&:hover": { backgroundColor: "#f7f7f7", borderColor: "#000" },
+            }}
+          >
+            Sign In with GitHub
+          </Button>
+
+          <Button
+            variant="outlined"
+            startIcon={<Google />}
+            fullWidth
+            sx={{
+              color: "#000",
+              borderColor: "#000",
+              textTransform: "none",
+              fontWeight: "bold",
+              padding: 1.2,
+              marginBottom: 2,
+              "&:hover": { backgroundColor: "#f7f7f7", borderColor: "#000" },
+            }}
+          >
+            Sign In with Google
+          </Button>
+        </Box>
+
+        <Divider sx={{ width: "100%", marginBottom: 2 }} />
+
+       
+
+          <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+            <TextField
+              variant="outlined"
+              label="Username"
+              fullWidth
+              margin="normal"
+              {...register("nombreUsuario", { required: "Username is required" })}
+              error={!!errors.nombreUsuario}
+              helperText={errors.nombreUsuario?.message}
+              InputLabelProps={{ style: { color: "#555" } }}
+              InputProps={{
+                style: {
+                  color: "#000",
+                  backgroundColor: "#f0f0f0",
+                },
+              }}
+              sx={{
+                marginBottom: 2,
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "#bbb" },
+                  "&:hover fieldset": { borderColor: "#000" },
+                  "&.Mui-focused fieldset": { borderColor: "#000" },
+                },
+              }}
+            />
+
+            <TextField
+              variant="outlined"
+              label="Password"
+              type={VisiblePassword ? "text" : "password"}
+              fullWidth
+              margin="normal"
+              {...register("contrasena", { required: "Password is required" })}
+              error={!!errors.contrasena}
+              helperText={errors.contrasena?.message}
+              InputLabelProps={{ style: { color: "#555" } }}
+              InputProps={{
+                style: {
+                  color: "#000",
+                  backgroundColor: "#f0f0f0",
+                },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setVisiblePassword(!VisiblePassword)}>
+                      {VisiblePassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              sx={{
+                marginBottom: 2,
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": { borderColor: "#bbb" },
+                  "&:hover fieldset": { borderColor: "#000" },
+                  "&.Mui-focused fieldset": { borderColor: "#000" },
+                },
+              }}
+            />
+
+            <FormControlLabel
+              control={<Checkbox style={{ color: "#000" }} />}
+              label={<Typography color="textSecondary">Remember me</Typography>}
+              sx={{ marginBottom: 2 }}
+            />
+
+            <Button
+              variant="contained"
+              fullWidth
+              type="submit"
+              disabled={isLoading}
+              sx={{
+                backgroundColor: "#000",
+                color: "#fff",
+                fontWeight: "bold",
+                padding: 1.5,
+                textTransform: "none",
+                "&:hover": { backgroundColor: "#333" },
+              }}
+            >
+              {isLoading ? "Loading..." : "Sign In"}
+            </Button>
+          </form>
+
+        <Typography variant="body2" marginTop={2} color="textSecondary">
+          Don't have an account?{" "}
+          <Link
+            onClick={() => navigate("/register")}
+            sx={{ cursor: "pointer", color: "#000", textDecoration: "underline" }}
+          >
+            Register Now
+          </Link>
+        </Typography>
       </Box>
-      <form onSubmit={hanleSubmit}>
-        <TextField
-          variant="outlined"
-          label="Nombre usuario"
-          onChange={hanleOnChange}
-          name="nombreUsuario"
-          fullWidth
-          margin="normal"
-          InputLabelProps={{ style: { color: "#c2aff0" } }}
-          InputProps={{
-            style: {
-              color: "#fff",
-              backgroundColor: "#393d3f",
-              borderColor: "#333",
-            },
-          }}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: "#333",
-              },
-              "&:hover fieldset": {
-                borderColor: "#555",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#2196f3",
-              },
-            },
-            marginBottom: 2,
-          }}
-        />
-
-      
-        <TextField
-          variant="outlined"
-          label="Password"
-          type={VisiblePassword ? "text" : "password"}
-          name="contrasena"
-          fullWidth
-          margin="normal"
-          onChange={hanleOnChange}
-          InputLabelProps={{ style: { color: "#c2aff0" } }}
-          InputProps={{
-            style: {
-              color: "#fff",
-              backgroundColor: "#393d3f",
-              borderColor: "#333",
-            },
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton style={{ color:'#c2aff0'}} onClick={()=>setVisiblePassword(!VisiblePassword)} edge="end">
-                  {VisiblePassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: "#333",
-              },
-              "&:hover fieldset": {
-                borderColor: "#555",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#2196f3",
-              },
-            },
-            marginBottom: 2,
-          }}
-        />
-
-     
-        <FormControlLabel
-          control={<Checkbox style={{ color: "#2196f3" }} />}
-          label={<Typography color="gray">Remember me</Typography>}
-          sx={{ alignSelf: "flex-start", marginBottom: 2 }}
-        />
-
-  
-        <Button
-          variant="contained"
-          fullWidth
-          type="submit"
-          sx={{
-            backgroundColor: "#2196f3",
-            color: "#fff",
-            fontWeight: "bold",
-            padding: 1.5,
-            textTransform: "none",
-            "&:hover": { backgroundColor: "#1976d2" },
-          }}
-        >
-          {isLoading ? "Iniciando..." : "Ingresar"}
-        </Button>
-      </form>
-   
-
-     
-      <Typography variant="body1" marginTop={2} color="gray" gutterBottom>
-        Aun no tiene una cuenta?{" "}
-        <Link
-          sx={{ cursor: "pointer" }}
-          onClick={() => {
-            navegate("/dsdds");
-          }}
-        >
-          Registrarse Ahora
-        </Link>
-      </Typography>
-    </Box>
   );
 };
 

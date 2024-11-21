@@ -2,183 +2,149 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Vehiculo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+
 class VehiculoController extends Controller
 {
-    public function index() //funcion para mostrar todos los datos
+    public function index(Request $request) // Mostrar todos los vehículos o buscar por placa
     {
-        $vehiculo = Vehiculo::all();
+        $vehiculos = DB::table('viVehiculo')->get();
 
-        if (count($vehiculo) === 0) {
-            $response = [
-                "status" => 200,
-                "message" => "El sistema no cuenta con vehiculos"
-            ];
-        } else {
-            $response = [
-                "status" => 200,
-                "message" => "vehiculo obtenidos correctamente",
-                "data" => $vehiculo
-            ];
-        }
+        return response()->json([
+            "status" => 200,
+            "message" => "Vehículos obtenidos correctamente",
+            "data" => $vehiculos
+        ]);
+    }
 
-        return response()->json($response, 200);
-    } 
-
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(request $request)
+    public function store(Request $request)
     {
-
-       $validator= Validator::make($request->all(), 
-        [
-        
-        "tipoVehiculo"=> "required",
-        "placa" => "required",
-        "capacidad" => "required",
-        "modelo"=> "required",
-        "fechaCompra"=> "required",
-        "anoVehiculo"=> "required",
-        "fichaTecnica"=> "required"
-       
-    
-        ]
-    );
-
-        if ($validator->fails())
-        {
-            $data = 
-            [
-                'message' => 'Error en la validacion de los datos',
-                'error' => $validator->errors(),
-                'status' => 400
-            ];
-            return response()->json($data, 400);
-        }
-
-        $vehiculo = Vehiculo::create(
-            [
-                "tipoVehiculo"=> $request->tipoVehiculo,
-                "placa"=> $request->placa,
-                "capacidad" => $request->capacidad,
-                "modelo"=> $request->modelo,
-                "fechaCompra"=> $request->fechaCompra,
-                "anoVehiculo"=> $request->anoVehiculo,
-                "fichaTecnica"=> $request->fichaTecnica
+        $validator = Validator::make($request->all(), [
+            "tipoVehiculo" => "required|string|max:40",
+            "placa" => "required|string|max:20",
+            "capacidad" => "required|integer|min:1",
+            "modelo" => "required|string|max:45",
+            "fechaCompra" => "required|date",
+            "anoVehiculo" => "required|integer|between:1900," . date('Y'),
+            "potencia" => "required|integer|min:0",
+            "transmision" => "required|string|max:20",
+            "combustible" => "required|string|max:20",
+            "color" => "required|string|max:20",
+            "numeroPuertas" => "required|integer",
+            "kilometraje" => "nullable|integer|min:0",
+            "fechaUltimoMantenimiento" => "nullable|date",
+            "carnetCirculacion" => "nullable|string|max:20",
         ]);
 
-        if(!$vehiculo) {
-            $data = [
-                'message' => 'Error al crear el vehiculo',
-                'status' => 500
-            ];
-            return response()->json($data, 500);
-        } else {
-            $data = [
-                'vehiculo' => $vehiculo,
-                'status' => 201
-            ];
-            return response()->json($data, 201);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Error en la validación de los datos',
+                'error' => $validator->errors(),
+                'status' => 400
+            ], 400);
         }
 
+        DB::statement('EXEC paInsertarVehiculo ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?', [
+            $request->tipoVehiculo,
+            $request->placa,
+            $request->capacidad,
+            $request->modelo,
+            $request->fechaCompra,
+            $request->anoVehiculo,
+            $request->potencia,
+            $request->transmision,
+            $request->combustible,
+            $request->color,
+            $request->numeroPuertas,
+            $request->kilometraje,
+            $request->fechaUltimoMantenimiento,
+            $request->carnetCirculacion,
+        ]);
+
+        return response()->json([
+            'message' => 'Vehículo creado correctamente',
+            'status' => 201
+        ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
+    public function show($id) // Mostrar un vehículo específico
     {
-        $vehiculo = Vehiculo::find( $id );        
+        $vehiculo = DB::select('EXEC paBuscarVehiculo ?', [$id]);
 
-        if (!$vehiculo) {
-            return response()->json(['message' => 'vehiculo no encontrado'], 404);
+        if (empty($vehiculo)) {
+            return response()->json([
+                "status" => 404,
+                "message" => "Vehículo no encontrado"
+            ], 404);
         }
 
-        return response()->json($vehiculo, 200);
+        return response()->json([
+            "status" => 200,
+            "message" => "Vehículo obtenido correctamente",
+            "data" => $vehiculo
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            "tipoVehiculo" => "required|string|max:40",
+            "placa" => "required|string|max:20",
+            "capacidad" => "required|integer|min:1",
+            "modelo" => "required|string|max:45",
+            "fechaCompra" => "required|date",
+            "anoVehiculo" => "required|integer|between:1900," . date('Y'),
+            "potencia" => "required|integer|min:0",
+            "transmision" => "required|string|max:20",
+            "combustible" => "required|string|max:20",
+            "color" => "required|string|max:20",
+            "numeroPuertas" => "required|integer",
+            "kilometraje" => "nullable|integer|min:0",
+            "fechaUltimoMantenimiento" => "nullable|date",
+            "carnetCirculacion" => "nullable|string|max:20",
+        ]);
 
-        $vehiculo = Vehiculo::find($id);
-
-        if (!$vehiculo) {
-            $data = [
-                'message' => 'vehiculo no encontrado',
-                'status' => 404
-            ];
-            return response()->json($data, 404);
-        }
-        $validator = Validator::make(
-            $request->all(),
-            [
-
-
-                "tipoVehiculo"=> "required",
-                "placa" => "required",
-                "capacidad" => "required",
-                "modelo"=> "required",
-                "fechaCompra"=> "required",
-                "anoVehiculo"=> "required",
-                "fichaTecnica"=> "required"
-
-            ]
-        );
         if ($validator->fails()) {
-            $data =
-                [
-                    'message' => 'Error en la validacion de los datos',
-                    'error' => $validator->errors(),
-                    'status' => 400
-                ];
-            return response()->json($data, 400);
+            return response()->json([
+                'message' => 'Error en la validación de los datos',
+                'error' => $validator->errors(),
+                'status' => 400
+            ], 400);
         }
-        
-        $vehiculo->tipoVehiculo = $request->tipoVehiculo;
-        $vehiculo->placa = $request->placa;
-        $vehiculo->capacidad = $request->capacidad;
-        $vehiculo->modelo = $request->modelo;
-        $vehiculo->fechaCompra = $request->fechaCompra;
-        $vehiculo->anoVehiculo = $request->anoVehiculo;
-        $vehiculo->fichaTecnica = $request->fichaTecnica;
-        
-        $vehiculo->save();
 
-        $data = [
-            'message' => 'Datos del vehiculo fueron actualizados.',
-            'vehiculo' => $vehiculo,
+        DB::statement('EXEC paActualizarVehiculo ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?', [
+            $id,
+            $request->tipoVehiculo,
+            $request->placa,
+            $request->capacidad,
+            $request->modelo,
+            $request->fechaCompra,
+            $request->anoVehiculo,
+            $request->potencia,
+            $request->transmision,
+            $request->combustible,
+            $request->color,
+            $request->numeroPuertas,
+            $request->kilometraje,
+            $request->fechaUltimoMantenimiento,
+            $request->carnetCirculacion,
+        ]);
+
+        return response()->json([
+            'message' => 'Vehículo modificado correctamente',
             'status' => 200
-        ];
-        return response()->json($data, 200);
+        ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
+    public function destroy($id) // Eliminar un vehículo
     {
-        $vehiculo = Vehiculo::find($id);
+        DB::statement('EXEC paEliminarVehiculo ?', [$id]);
 
-        if (!$vehiculo) {
-            return response()->json(['message' => 'vehiculo no fue encontrado'], 404);
-        }
-
-        $vehiculo->delete();
-
-        return response()->json(['message' => 'vehiculo eliminado correctamente'], 200);
+        return response()->json([
+            'message' => 'Vehículo eliminado correctamente',
+            'status' => 200
+        ]);
     }
-
-
-
-
-
 }

@@ -16,18 +16,34 @@ class ApiAuthMiddlewareAdminChofer
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $jwt = new JwtAuth();
-        $token = $request->bearerToken();
-        $logged = $jwt->verifyToken($token,true);
+        try {
+            $jwt = new JwtAuth();
+            $token = $request->bearerToken();
 
-        if ($logged && $logged->tipo == "empleado" && ($logged->cargo == "Administrador" || $logged->cargo == 'Chofer')) {
-            return $next($request);
-        } else {
-            $response = array(
-                'message' => 'El cliente no tiene la autorización para acceder',
-                'status' => 401,
-            );
-            return response()->json($response, 401);
+            // Verificar el token
+            $logged = $jwt->verifyToken($token, true);
+
+            // Permitir acceso si es chofer o administrador
+            if (
+                $logged && $logged->tipo === 'empleado' &&
+                ($logged->cargo === 'Chofer' || $logged->cargo === 'Administrador')
+            ) {
+                return $next($request);
+            }
+
+            // Si no es chofer ni administrador, denegar el acceso
+            return response()->json([
+                'message' => 'El usuario no tiene la autorización para acceder a esta área',
+                'status' => 403,
+            ], 403);
+
+        } catch (\Exception $ex) {
+            // Manejar posibles errores en la verificación del token
+            return response()->json([
+                'message' => 'Error al procesar la solicitud',
+                'details' => $ex->getMessage(),
+                'status' => 500,
+            ], 500);
         }
     }
 }

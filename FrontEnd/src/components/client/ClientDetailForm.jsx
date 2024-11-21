@@ -1,55 +1,67 @@
 import React, { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { FormField } from "../FormField";
-import { Box, Typography, Button, TextField } from "@mui/material";
+import { Box, Typography, Button, Switch, FormControlLabel } from "@mui/material";
 import { useParams } from "react-router-dom";
-import useClientData from "./useClientData";
 import { Loading } from "../../utils/loading";
 import { useClientActions } from "./handler/useClientActions";
-import LocationSelector from "../map/LocationSelector";
 
 export const ClientDetailForm = () => {
-  const { createCliente, updateCliente } = useClientActions();
+  const { createCliente, updateCliente, fetchCliente } = useClientActions();
   const { id } = useParams();
-  const { cliente, isLoading, isError } = useClientData(id);
-  const methods = useForm({
-    defaultValues: cliente,
-  });
+  const methods = useForm();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [coordenadas, setCoordenadas] = useState({ lat: "", lng: "" });
+
+  const [isTelefonoFijoEnabled, setIsTelefonoFijoEnabled] = useState(true);
+  const [isTelefonoMovilEnabled, setIsTelefonoMovilEnabled] = useState(true);
+  const [isTelefonoTrabajoEnabled, setIsTelefonoTrabajoEnabled] = useState(true);
 
   useEffect(() => {
-    if (cliente) {
-      methods.reset(cliente);
-    }
-  }, [cliente]);
+    const loadCliente = async () => {
+      if (id) {
+        try {
+          const fetchedCliente = await fetchCliente(id);
+          if (fetchedCliente) {
+            methods.reset(fetchedCliente);
+          }
+        } catch (error) {
+          setIsError(true);
+          console.error("Error al cargar el cliente:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    loadCliente();
+  }, [id, methods]);
 
   if (isLoading) return <Loading />;
   if (isError) return <div>Error al cargar el cliente.</div>;
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    if (id !== ":id" && id !== null) {
-      updateCliente(data);
+    
+    if (!isTelefonoFijoEnabled) delete data.telefonoFijo;
+    if (!isTelefonoMovilEnabled) delete data.telefonoMovil;
+    if (!isTelefonoTrabajoEnabled) delete data.telefonoTrabajo;
+
+    if (id) {
+      updateCliente({ ...data, id });
     } else {
       createCliente(data);
     }
   });
 
-  // Maneja la selección de coordenadas desde el mapa
-  const handleSelectCoordinates = (coords) => {
-    const [lat, lng] = coords;
-    setCoordenadas({ lat, lng }); // Actualiza lat y lng en el estado
-    methods.setValue("direccion.lat", lat); // Establece latitud en el formulario
-    methods.setValue("direccion.lng", lng); // Establece longitud en el formulario
-  };
-
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <form onSubmit={onSubmit}>
         <div className="content p-sm-2 p-lg-5">
           <Box>
-            <Typography variant="h6">Informacion General</Typography>
+            <Typography variant="h6">Información General</Typography>
             <Box
               sx={{
                 display: "grid",
@@ -63,9 +75,9 @@ export const ClientDetailForm = () => {
             >
               <FormField label={"Nombre"} name={"nombre"} />
               <FormField label={"Apellido"} name={"apellido"} />
-              <FormField label={"Cedula"} name={"cedula"} />
+              <FormField label={"Cédula"} name={"cedula"} />
               <FormField
-                label={"Correo Electronico"}
+                label={"Correo Electrónico"}
                 name={"correoElectronico"}
                 type={"email"}
               />
@@ -79,66 +91,62 @@ export const ClientDetailForm = () => {
             <Typography variant="h6">Teléfonos</Typography>
             <Box
               sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "repeat(2,1fr)",
-                  md: "repeat(3,1fr)",
-                },
+                display: "flex",
+                flexDirection: "column",
                 gap: 2,
-                rowGap: 1,
+                width: {
+                  xs: '100%',  // En pantallas móviles, ocupa el 100% del contenedor
+                  md: '50%'    // En pantallas grandes, ocupa el 70%
+                },
               }}
             >
-              <FormField label={"Teléfono Fijo"} name={"telefonoFijo"} />
-              <FormField label={"Teléfono Móvil"} name={"telefonoMovil"} />
-              <FormField label={"Teléfono Trabajo"} name={"telefonoTrabajo"} />
-            </Box>
-          </Box>
+              <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: "flex-start", gap: 2}}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={isTelefonoFijoEnabled}
+                      onChange={(e) => setIsTelefonoFijoEnabled(e.target.checked)}
+                
+                    />
+                  }
+                  label="Habilitar Teléfono Fijo"
+                />
+                {isTelefonoFijoEnabled && (
+                  <FormField label={"Teléfono Fijo"} name={"telefonoFijo"} />
+                )}
+              </Box>
 
-          {/* Sección de Dirección */}
-          <Box mt={3}>
-            <Typography variant="h6">Dirección</Typography>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: {
-                  xs: "repeat(2,1fr)",
-                  md: "repeat(3,1fr)",
-                },
-                gap: 2,
-                rowGap: 1,
-              }}
-            >
-              <TextField
-                label="Coordenadas"
-                value={
-                  coordenadas.lat && coordenadas.lng
-                    ? `${coordenadas.lat}, ${coordenadas.lng}`
-                    : "Seleccionar dirección"
-                }
-                InputProps={{
-                  readOnly: true,
-                }}
-                onClick={() => setModalOpen(true)} // Al hacer clic, abre el mapa
-                fullWidth
-                variant="outlined"
-                sx={{
-                  marginTop: "16px",
-                  marginBottom: "8px",
-                  cursor: "pointer",
-                }}
-              />
-              <FormField
-                label={"Nombre direccion"}
-                name={"direccion.nombreDireccion"}
-              />
-              <FormField
-                label={"País"}
-                name={"direccion.pais"}
-                isRequerided={true}
-              />
-              <FormField label={"Estado"} name={"direccion.estado"} />
-              <FormField label={"Ciudad"} name={"direccion.ciudad"} />
-              <FormField label={"Distrito"} name={"direccion.distrito"} />
+              <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: "flex-start", gap: 2 }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={isTelefonoMovilEnabled}
+                      onChange={(e) => setIsTelefonoMovilEnabled(e.target.checked)}
+                    
+                    />
+                  }
+                  label="Habilitar Teléfono Móvil"
+                />
+                {isTelefonoMovilEnabled && (
+                  <FormField label={"Teléfono Móvil"} name={"telefonoMovil"} />
+                )}
+              </Box>
+
+              <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, alignItems: "flex-start", gap: 2 }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={isTelefonoTrabajoEnabled}
+                      onChange={(e) => setIsTelefonoTrabajoEnabled(e.target.checked)}
+                     
+                    />
+                  }
+                  label="Habilitar Teléfono Trabajo"
+                />
+                {isTelefonoTrabajoEnabled && (
+                  <FormField label={"Teléfono Trabajo"} name={"telefonoTrabajo"} />
+                )}
+              </Box>
             </Box>
           </Box>
         </div>
@@ -154,12 +162,6 @@ export const ClientDetailForm = () => {
           </Button>
         </Box>
       </form>
-
-      <LocationSelector
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSelect={handleSelectCoordinates} // Llama a la nueva función aquí
-      />
     </FormProvider>
   );
 };

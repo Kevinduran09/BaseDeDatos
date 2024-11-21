@@ -17,7 +17,7 @@ export const Client = () => {
 
   return (
     <TableComponent
-      route={"/app/clients/:id"}
+      route={"/app/clients/create"}
       isLoading={isLoading}
       isError={isError}
       rowsSet={clientes}

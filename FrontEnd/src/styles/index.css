@@ -85,3 +85,34 @@ html {
 .css-qvtrhg-MuiDataGrid-virtualScroller {
   scrollbar-width: thin;
 }
+
+.swal2-container {
+  z-index: 2000 !important;
+  /* Asegúrate de que este valor sea mayor que el z-index del modal de MUI */
+}
+
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in-out;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 500ms ease-in-out;
+}
+
+
+.viaje-detalle-container {
+  position: relative;
+  z-index: 10;
+  /* Ajustar el z-index según sea necesario */
+}

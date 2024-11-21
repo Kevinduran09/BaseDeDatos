@@ -2,8 +2,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { EmployeColumns } from "./EmployeColumns";
 import { TableComponent } from "../TableComponent";
-import { getEmployees } from "../../services/EmployeService";
-import { Button } from "@mui/material";
+import { getEmployes } from "../../services/EmployeService";
 export const Employe = () => {
   const { columns } = EmployeColumns();
   const {
@@ -12,7 +11,7 @@ export const Employe = () => {
     data: empleados,
   } = useQuery({
     queryKey: ["empleados"],
-    queryFn: getEmployees,
+    queryFn: getEmployes,
   });
   return (
     <TableComponent
@@ -20,7 +19,7 @@ export const Employe = () => {
       isError={isError}
       isLoading={isLoading}
       rowsSet={empleados}
-      route={"/app/employes/:id"}
+      route={"/app/employes/create"}
     />
   );
 };

@@ -20,7 +20,7 @@ export const TableComponent = ({
   //       <NoFiles />
   //     </div>
   //   );
-  console.log(rowsSet);
+   (rowsSet);
 
   const rows =
     rowsSet != null

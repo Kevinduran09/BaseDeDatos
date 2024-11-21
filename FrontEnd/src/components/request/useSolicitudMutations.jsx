@@ -13,7 +13,7 @@ export const useSolicitudMutations = () => {
     mutationFn: createSolicitud,
     onSuccess: () => {
       queryClient.invalidateQueries("solicitudes");
-      SuccessDialogo("Creada con éxito la solicitud");
+      SuccessDialogo("Creada", "Solicitud", "creada");
     },
     onError: (error) => {
       console.error(error);
@@ -24,7 +24,7 @@ export const useSolicitudMutations = () => {
     mutationFn: deleteSolicitud,
     onSuccess: () => {
       queryClient.invalidateQueries("solicitudes");
-      SuccessDialogo("Eliminada con éxito la solicitud");
+      SuccessDialogo("Eliminada", "Solicitud", "eliminada");
     },
     onError: (error) => {
       console.error(error);
@@ -35,7 +35,7 @@ export const useSolicitudMutations = () => {
     mutationFn: updateSolicitud,
     onSuccess: () => {
       queryClient.invalidateQueries("solicitudes");
-      SuccessDialogo("Actualizada con éxito la solicitud");
+      SuccessDialogo("Actualizada", "Solicitud", "Actualizada");
     },
     onError: (error) => {
       console.error(error);

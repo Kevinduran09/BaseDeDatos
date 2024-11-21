@@ -20,7 +20,7 @@ class ClienteController extends Controller
      */
     public function index() //funcion para mostrar todos los datos
     {
-        $clientes = DB::table('vClientesConTelefonos')->get();
+        $clientes = DB::table('vClienteConTelefono')->get();
         // $telefonos = DB::table("vwAllPhones")->get();
 
 
@@ -53,11 +53,13 @@ class ClienteController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                "cedula" => "required|unique:cliente",
+                "cedula" => "required",
                 "nombre" => "required",
                 "apellido" => "required",
                 "correoElectronico" => "required|email",
-                "direccion" => "required|array",
+                "telefonoFijo" => "required|numeric",
+                "telefonoMovil" => "required|numeric",
+                "telefonoTrabajo" => "required|numeric",
                 "nombreUsuario" => "required",
                 "contrasena" => "required"
             ]
@@ -71,109 +73,77 @@ class ClienteController extends Controller
             ], 400);
         }
 
+        DB::beginTransaction(); 
+        $idCliente = 0;
+
         try {
-            // Insertar cliente
-            DB::statement('EXEC agregarCliente ?, ?, ?, ?', [
+           
+            $result = DB::select('EXEC paInsertarCliente ?, ?, ?, ?', [
                 $request->cedula,
                 $request->nombre,
                 $request->apellido,
                 $request->correoElectronico,
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear el cliente',
-                'error' => $e->getMessage(),
-                'status' => 500
-            ], 500);
-        }
+            $idCliente = (int) ($result[0]->idCliente ?? null);
 
-        // Obtener el cliente recién creado
-        try {
-            $cliente = DB::select('SELECT TOP 1 * FROM cliente WHERE cedula = ?', [$request->cedula]);
-
-            if (empty($cliente)) {
-                return response()->json([
-                    'message' => 'Error al recuperar el cliente creado',
-                    'status' => 500
-                ], 500);
+            if (!$idCliente) {
+                throw new \Exception('No se pudo obtener el ID del cliente');
             }
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al buscar el cliente',
-                'error' => $e->getMessage(),
-                'status' => 500
-            ], 500);
-        }
 
-        // Insertar dirección
-        try {
-            DB::statement('EXEC createDireccion ?, ?, ?, ?, ?, ?, ?, ?', [
-                floatval($request->direccion['lat']),
-                floatval($request->direccion['lon']),
-                $request->direccion['nombreDireccion'],
-                $request->direccion['pais'],
-                $request->direccion['estado'],
-                $request->direccion['ciudad'],
-                $request->direccion['distrito'],
-                $cliente[0]->idCliente
+            // Insertar teléfonos
+            DB::statement('EXEC paInsertarTelefono @numeroTelefono = ?, @idCliente = ?, @TipoTelefono = ?', [
+                $request->telefonoFijo,
+                $idCliente,
+                'Fijo'
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al crear la dirección',
-                'error' => $e->getMessage(),
-                'status' => 500
-            ], 500);
-        }
+            DB::statement('EXEC paInsertarTelefono @numeroTelefono = ?, @idCliente = ?, @TipoTelefono = ?', [
+                $request->telefonoMovil,
+                $idCliente,
+                'Móvil'
+            ]);
+            DB::statement('EXEC paInsertarTelefono @numeroTelefono = ?, @idCliente = ?, @TipoTelefono = ?', [
+                $request->telefonoTrabajo,
+                $idCliente,
+                'Trabajo'
+            ]);
 
-        // Insertar usuario
-        try {
-            DB::statement('EXEC createUsuario ?, NULL, ?, ?', [
-                $cliente[0]->idCliente,
+            // Insertar usuario
+            DB::statement('EXEC paInsertarUsuario ?, NULL, ?, ?', [
+                $idCliente,
                 $request->nombreUsuario,
                 $request->contrasena
             ]);
-        } catch (\Exception $e) {
+
+            DB::commit(); 
             return response()->json([
-                'message' => 'Error al crear el usuario',
+                'cliente' => $idCliente,
+                'status' => 201
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack(); 
+            return response()->json([
+                'message' => 'Error durante la creación del cliente',
                 'error' => $e->getMessage(),
                 'status' => 500
             ], 500);
         }
-
-        return response()->json([
-            'cliente' => $cliente[0],
-            'status' => 201
-        ], 201);
     }
+
 
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
-        $cliente = DB::select('EXEC paBuscarClientePorID :idCliente', ['idCliente' => $id]);
+        $cliente = DB::select('EXEC paBuscarCliente :idCliente', ['idCliente' => $id]);
 
 
-        // $telefonos = DB::select("EXEC phonesByClient :clientId", ['clientId' => $id]);
-        // if ($telefonos) {
-        //     $cliente->telefonos =  $telefonos;
-        // }
         $cliente = $cliente[0];
         if (!$cliente) {
             return response()->json(['message' => 'cliente no encontrado'], 404);
         }
 
-
-        // Buscar la dirección asociada al cliente
-        if (isset($cliente->idCliente)) {
-            $direccion = DB::select("EXEC paConsultarDireccionesDeCliente ?", [$cliente->idCliente]);
-            if ($direccion) {
-                $cliente->direccion = $direccion[0]; // Asumiendo que solo hay una dirección
-            } else {
-                $cliente->direccion = null; // Si no se encuentra la dirección
-            }
-        }
-        
 
 
         return response()->json($cliente, 200);
@@ -210,7 +180,6 @@ class ClienteController extends Controller
                 "nombre" => "required",
                 "apellido" => "required",
                 "correoElectronico" => "required|email",
-                "direccion" => "required|array",
                 "nombreUsuario" => "required",
                 "contrasena" => "required"
             ]
@@ -225,60 +194,80 @@ class ClienteController extends Controller
             ], 400);
         }
 
+        DB::beginTransaction(); // Inicia la transacción
+
         try {
-            // Llamada al procedimiento almacenado para modificar cliente
-            $resultCliente = DB::statement('EXEC modificarCliente ?, ?, ?, ?', [
+            // Actualizar cliente
+            $resultCliente = DB::statement('EXEC paActualizarCliente ?, ?, ?, ?, ?', [
                 $id,
+                $request->cedula,
                 $request->nombre,
                 $request->apellido,
                 $request->correoElectronico,
             ]);
 
-            // Verificar si la actualización del cliente fue exitosa
             if ($resultCliente === false) {
-                return response()->json([
-                    'message' => 'Error al actualizar los datos del cliente',
-                    'status' => 500
-                ], 500);
+                throw new \Exception('Error al actualizar los datos del cliente');
             }
 
-            // Actualizar dirección
-            if (isset($request->direccion['idDireccion'])) {
-                $direccionResult = DB::statement('EXEC updateDireccion ?, ?, ?, ?, ?, ?, ?, ?', [
-                    $request->direccion['idDireccion'], // ID de la dirección a actualizar
-                    $request->direccion['lat'],
-                    $request->direccion['lon'],
-                    $request->direccion['nombreDireccion'],
-                    $request->direccion['pais'],
-                    $request->direccion['estado'],
-                    $request->direccion['ciudad'],
-                    $request->direccion['distrito'],
-                    $id // ID del cliente
-                ]);
+            // Obtener el usuario asociado al cliente
+            $usuario = DB::select('EXEC paObtenerUsuarioPorEmpleadoOCliente NULL, ?', [$id]);
 
-                if ($direccionResult === false) {
-                    return response()->json([
-                        'message' => 'Error al actualizar la dirección',
-                        'status' => 500
-                    ], 500);
-                }
+            if (!$usuario) {
+                throw new \Exception('Usuario asociado al cliente no encontrado');
             }
 
-            // Llamada al procedimiento almacenado para actualizar usuario
-            DB::statement('EXEC updateUsuario ?, ?, NULL, ?, ?', [
-                $request->idUsuario, // Asegúrate de tener el ID del usuario
-                $id,                 // ID del cliente
+            // Actualizar usuario
+            DB::statement('EXEC paActualizarUsuario ?, ?, null, ?, ?', [
+                (int) $usuario[0]->idUsuario,
+                (int) $id,
                 $request->nombreUsuario,
                 $request->contrasena
             ]);
 
+
+            // Verificar si los números de teléfono fueron incluidos en el request
+            if ($request->has('telefonoFijo') && $request->telefonoFijo !== null) {
+                // Llamar al procedimiento almacenado para actualizar el teléfono fijo
+                DB::statement('EXEC paActualizarTelefono ?, ?, ?, ?', [
+                    $request->telefonoFijo,
+                    2,  // ID para teléfono fijo
+                    $id,
+                    null
+                ]);
+            }
+         
+            if ($request->has('telefonoMovil') && $request->telefonoMovil !== null) {
+                // Llamar al procedimiento almacenado para actualizar el teléfono móvil
+                DB::statement('EXEC paActualizarTelefono ?, ?, ?, ?', [
+                    $request->telefonoMovil,
+                    1,  // ID para teléfono fijo
+                    $id,
+                    null
+                ]);
+            }
+
+            if ($request->has('telefonoTrabajo') && $request->telefonoTrabajo !== null) {
+                // Llamar al procedimiento almacenado para actualizar el teléfono de trabajo
+                DB::statement('EXEC paActualizarTelefono ?, ?, ?, ?', [
+                    $request->telefonoTrabajo,
+                    3,  // ID para teléfono de trabajo
+                    $id,
+                    null
+                ]);
+            }
+            DB::commit(); 
+
             // Respuesta de éxito
             return response()->json([
-                'message' => 'Los datos del cliente fueron actualizados.',
+                'message' => 'Los datos del cliente y usuario fueron actualizados.',
                 'cliente' => $request->all(),
                 'status' => 200
             ], 200);
+
         } catch (\Exception $e) {
+            DB::rollBack(); // Revierte la transacción si algo falla
+
             // Manejo de errores
             return response()->json([
                 'message' => 'Error al actualizar el cliente o el usuario',
@@ -289,12 +278,13 @@ class ClienteController extends Controller
     }
 
 
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy($id)
     {
-        $result = DB::statement('EXEC eliminarCliente ?', [
+        $result = DB::statement('EXEC paEliminarCliente ?', [
             $id
         ]);
 
@@ -310,6 +300,7 @@ class ClienteController extends Controller
         return response()->json(['message' => 'cliente eliminado correctamente'], 200);
     }
 
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -317,8 +308,6 @@ class ClienteController extends Controller
             "nombre" => "required",
             "apellido" => "required",
             "correoElectronico" => "required|email",
-            "direccion" => "required",
-            "fechaIngreso" => "required",
             'nombreUsuario' => 'required|unique:Usuario',
             'contrasena' => 'required'
         ]);
@@ -331,51 +320,42 @@ class ClienteController extends Controller
             ];
             return response()->json($data, 400);
         }
+        DB::beginTransaction();
+        $idCliente = 0;
 
-        $cliente = Cliente::create(
-            [
-                "cedula" => $request->cedula,
-                "nombre" => $request->nombre,
-                "apellido" => $request->apellido,
-                "correoElectronico" => $request->correoElectronico,
-                "direccion" => $request->direccion,
-                "fechaIngreso" => $request->fechaIngreso
-            ]
-        );
-        Telefono::create([
-            'numeroTelefono' => $request->telefono1,
-            'tipoTelefono' => 'Personal',
-            'idCliente' => $cliente->idCliente
-        ]);
-        Telefono::create([
-            'numeroTelefono' => $request->telefono2,
-            'tipoTelefono' => 'Personal',
-            'idCliente' => $cliente->idCliente
-        ]);
-        if (!$cliente) {
-            $data = [
-                'message' => 'Error al crear el cliente',
+        try {
+            $result = DB::select('EXEC paInsertarCliente ?, ?, ?, ?', [
+                $request->cedula,
+                $request->nombre,
+                $request->apellido,
+                $request->correoElectronico,
+            ]);
+            $idCliente = (int) ($result[0]->idCliente ?? null);
+
+            if (!$idCliente) {
+                throw new \Exception('No se pudo obtener el ID del cliente');
+            }
+
+
+            DB::statement('EXEC paInsertarUsuario ?, NULL, ?, ?', [
+                $idCliente,
+                $request->nombreUsuario,
+                $request->contrasena
+            ]);
+
+            DB::commit();
+            return response()->json([
+                'cliente' => $idCliente,
+                'status' => 201
+            ], 201);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error durante la creación del cliente',
+                'error' => $th->getMessage(),
                 'status' => 500
-            ];
-            return response()->json($data, 500);
+            ], 500);
         }
-
-
-        $user = new UsuarioController();
-
-        $usuario = $user->store([
-            'nombreUsuario' => $request->nombreUsuario,
-            'contrasena' => $request->contrasena,
-            'idCliente' => $cliente->idCliente
-        ]);
-        if (!$usuario) {
-            $data = [
-                'message' => 'Error al crear el registro de usuario',
-                'status' => 500
-            ];
-            return response()->json($data, 500);
-        }
-
-        return response()->json($usuario, 200);
+       
     }
 }

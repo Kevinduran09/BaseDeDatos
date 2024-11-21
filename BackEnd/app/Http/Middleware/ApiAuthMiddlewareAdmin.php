@@ -27,7 +27,7 @@ class ApiAuthMiddlewareAdmin
                 return $next($request);
             } else {
                 $response = array(
-                    'message' => 'El cliente no tiene la autorización para acceder',
+                    'message' => 'El cliente no tiene la autorización para acceder solo administradores',
                     'status' => 401,
                 );
                 return response()->json($response, 401);

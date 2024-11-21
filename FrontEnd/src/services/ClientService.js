@@ -8,8 +8,10 @@ const clientAPI = axios.create({
 clientAPI.interceptors.request.use(
   (config) => {
     // Obtener el token desde el localStorage
-    let state = localStorage.getItem("authState");
+    let state = localStorage.getItem("auth-State");
     state = JSON.parse(state);
+     (state.state.token);
+    
     if (state) {
       state;
       config.headers.Authorization = `Bearer ${state.state.token}`;
@@ -33,11 +35,12 @@ export const getClients = async () => {
   }
 };
 
+
 // Obtener un cliente por ID
 export const getClient = async (id) => {
   try {
     const res = await clientAPI.get(`/${id}`);
-    console.log(res);
+     (res);
 
     return res.data;
   } catch (error) {
@@ -46,18 +49,8 @@ export const getClient = async (id) => {
   }
 };
 
-// Crear un cliente
-export const createClient = async (data) => {
-  try {
-    const res = await clientAPI.post("", data);
-    return res.data;
-  } catch (error) {
-    console.error("Error al crear cliente:", error);
-    return error.response;
-  }
-};
+export const createClient = async (data) => clientAPI.post("", data);
 
-// Actualizar un cliente
 export const updateClient = async (data) => {
   try {
     const res = await clientAPI.put(`/${data.idCliente}`, data);
@@ -68,13 +61,105 @@ export const updateClient = async (data) => {
   }
 };
 
-// Eliminar un cliente
-export const deleteClient = async (id) => {
+export const deleteClient =  (id) => clientAPI.delete(`/${id}`);
+
+const userAPI = axios.create({
+  baseURL: `${URLBASE}/api/v1/cliente`,
+});
+
+userAPI.interceptors.request.use(
+  (config) => {
+    // Obtener el token desde el localStorage
+    let state = localStorage.getItem("auth-State");
+    state = JSON.parse(state);
+
+
+    if (state) {
+      config.headers.Authorization = `Bearer ${state.state.token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export const updateMyInfo = async (id, data) => {
   try {
-    const res = await clientAPI.delete(`/${id}`);
+    const res = await userAPI.put(`/perfil/${id}`, data);
     return res.data;
   } catch (error) {
-    console.error("Error al eliminar cliente:", error);
+    console.error("Error al actualizar mi información:", error);
+    throw error;
+  }
+};
+
+
+export const getMyInfo = async (id) => {
+  try {
+    const res = await userAPI.get(`/perfil/${id}`);
+
+    
+    return res.data;
+  } catch (error) {
+    console.error("Error al obtener mi información:", error);
+    throw error;
+  }
+};
+
+
+export const getRequestsByClientId = async (id) => {
+  try {
+    const res = await userAPI.get(`/solicitudes/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error(error);
     return error.response;
+  }
+};
+
+
+export const getInvoicesByClientId = async (id) => {
+  try {
+    const res = await userAPI.get(`/facturas/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error al obtener facturas del cliente:", error);
+    throw error;
+  }
+};
+
+export const getNotificationsByClientId = async (id) => {
+  try {
+    const res = await userAPI.get(`/notificaciones/${id}`);
+     (res.data.data);
+    
+    return res.data.data;
+  } catch (error) {
+    console.error("Error al obtener notificaciones del cliente:", error);
+    throw error;
+  }
+};
+
+
+export const updateNotificationStatus = async ([idNotificacion, iss]) => {
+  try {
+    const res = await userAPI.put(`/notificaciones/${idNotificacion}/marcar-como-vista/${iss}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error al cambiar estado de la notificación:", error);
+    throw error;
+  }
+};
+
+
+export const cancelRequest = async (id) => {
+  try {
+    const res = await userAPI.post(`/solicitudes/cancelar/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error("Error al actualizar mi información:", error);
+    throw error;
   }
 };

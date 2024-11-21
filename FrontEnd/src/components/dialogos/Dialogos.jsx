@@ -45,10 +45,22 @@ export const ConfirmarDialogo = (mutation, data, onSuccess) => {
             onSuccess();
           }
         },
+        onError: (error) => {
+          if (error.response.status == 400) {
+             (error.response.data.message);
+
+          
+            ErrorDialogo("Error", error.response.data.message);
+          } else {
+             (error);
+            ErrorDialogo(error.response.data.message, error.response.data.error);
+          }
+        },
       });
     }
   });
 };
+
 
 export const ErrorDialogo = (title, data) => {
   Swal.fire({
